@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 3.31)
+project(template)
+
+cmake_policy(SET CMP0072 NEW)
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+   add_compile_definitions(DEBUG_MODE)
+endif()
+
+find_package(OpenGL REQUIRED)
+
+include_directories(libs)
+include_directories(include)
+
+file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE LIBS    ${CMAKE_CURRENT_SOURCE_DIR}/libs/*.c ${CMAKE_CURRENT_SOURCE_DIR}/libs/*.cpp)
+
+add_executable(app ${LIBS} ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+target_link_libraries(app glfw OpenGL::GL)

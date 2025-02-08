@@ -29,7 +29,7 @@ class Object {
             {
                shd.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
                vert.create_VBO(vertices::cube, sizeof(vertices::cube));
-               vert.add_atrib(0, 3, GL_FLOAT);
+               vert.add_atrib(0, 3, GL_FLOAT, 0);
                this->count_vertices = LEN(vertices::cube);
             }
             break;
@@ -38,7 +38,7 @@ class Object {
             {
                shd.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
                vert.create_VBO(vertices::triangle, sizeof(vertices::triangle));
-               vert.add_atrib(0, 3, GL_FLOAT);
+               vert.add_atrib(0, 3, GL_FLOAT, 0);
                this->count_vertices = LEN(vertices::triangle);
             }
             break;
@@ -46,7 +46,7 @@ class Object {
             {
                shd.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
                vert.create_VBO(vertices::rectangle, sizeof(vertices::rectangle));
-               vert.add_atrib(0, 3, GL_FLOAT);
+               vert.add_atrib(0, 3, GL_FLOAT, 0);
                this->count_vertices = LEN(vertices::rectangle);
             }
            break;
@@ -61,7 +61,7 @@ class Object {
          model = glm::rotate(model, rotation_angle, rotation);
          model = glm::scale(model, size);
       }
-      void draw_object(GLenum mode = GL_TRIANGLES);
+      void draw(GLenum mode = GL_TRIANGLES);
       void set_size(glm::vec3 size) { 
          this->size = size; 
       }

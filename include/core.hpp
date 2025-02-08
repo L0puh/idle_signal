@@ -12,6 +12,11 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include "state.hpp"
 
@@ -24,7 +29,16 @@
 
 #define LEN(n) sizeof(n)/sizeof(n[0])
 
+class Mesh;
+class Vertex;
+class Camera;
+class Shader;
 
+struct data_t {
+   glm::vec3 position;
+   glm::vec3 normal;
+   glm::vec2 texcoord;
+};
 
 namespace color {
    const GLfloat white[]  = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -35,12 +49,23 @@ namespace color {
    const GLfloat yellow[] = {1.000, 0.843, 0.000, 1.0f};
 }
 
+class Texture {
+   private:
+      uint id;
+      std::string type;
+};
+
+
 class Vertex { 
    private:
       uint VAO, VBO, EBO;
    public:
-      Vertex()  { VAO = create_VAO(); }
-      ~Vertex() { cleanup(); }
+      Vertex()  { 
+         VAO = create_VAO(); 
+      }
+      ~Vertex() { 
+         //FIXME cleanup(); 
+       }
    public:
       bool with_EBO = false;
    public:
@@ -50,14 +75,73 @@ class Vertex {
 
       void bind()   { glBindVertexArray(VAO);}
       void unbind() { glBindVertexArray(0);  }
+
+      void setup_mesh(Mesh *mesh);
       
-      void add_atrib(uint id, GLint size, GLenum type);
+      void add_atrib(uint id, GLint size, GLenum type, GLsizei stride, void* offset=0);
       int draw_EBO(GLenum mode, size_t size);
       int draw_VBO(GLenum mode, size_t size);
       void update_data(const void *data, size_t);
       int cleanup();
 };
 
+
+
+class Mesh {
+   public:
+      Vertex vertex;
+      Shader *shd;
+      std::vector<data_t> vertices;
+      std::vector<uint> indices;
+      std::vector<Texture> textures;
+
+   public:
+      Mesh(std::vector<data_t> verts,
+           std::vector<uint> ind,
+           std::vector<Texture> text):
+           vertices(verts), indices(ind), textures(text)
+      {
+         vertex.create_VAO();
+         vertex.setup_mesh(this);
+      };
+
+      ~Mesh() {};
+   public:
+      void draw();
+      void set_shader(Shader *shd) { 
+         this->shd = shd;
+      }
+
+   private:
+
+};
+
+class Model {
+   private:
+      Shader *shd;
+   public:
+      std::vector<Mesh> meshes;
+      Model(const std::string src){ 
+         load_model(src);
+      }
+      ~Model(){};
+   public:
+      void draw(){
+         for (uint i=0; i < meshes.size(); i++){
+            meshes.at(i).draw();
+         }
+      }
+      void set_shader(Shader *shd) { 
+         this->shd = shd;
+      }
+   private:
+      void load_model(const std::string src);
+      void process_node(aiNode *node, const aiScene *scene);
+      Mesh process_mesh(aiMesh *mesh, const aiScene *scene);
+
+   // std::vector<Texture> load_textures().... TODO
+
+};
 class Shader {
    private:
       uint id;
@@ -112,7 +196,7 @@ class Camera {
       Camera(GLFWwindow* window, uint8_t flags): window(window),
          speed(1.0f), rotation_speed(1.2f), rotation(0.0f), 
          flags(flags), view(glm::mat4(1.0f)), pos(glm::vec3(0.0f)), 
-         zoom(-3.0f){}
+         zoom(45.0f){}
    public:
       void update_movement();
       glm::vec2 unproject(glm::vec2 pos);
@@ -146,6 +230,7 @@ namespace imgui {
    void frame();
    void render();
    void update_focused();
+   void main_draw();
 
 }
 

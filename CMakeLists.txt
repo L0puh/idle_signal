@@ -18,4 +18,4 @@ file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 file(GLOB_RECURSE LIBS    ${CMAKE_CURRENT_SOURCE_DIR}/libs/*.c ${CMAKE_CURRENT_SOURCE_DIR}/libs/*.cpp)
 
 add_executable(app ${LIBS} ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
-target_link_libraries(app glfw OpenGL::GL)
+target_link_libraries(app glfw OpenGL::GL assimp)

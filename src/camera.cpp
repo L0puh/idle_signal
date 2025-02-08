@@ -10,7 +10,7 @@ glm::mat4 Camera::get_projection_ortho() {
 glm::mat4 Camera::get_projection(){
    glm::mat4 proj;
    float aspect = (float)window_width/window_height;
-   proj = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
+   proj = glm::perspective(glm::radians(zoom), aspect, 0.1f, 100.0f);
    return proj;
       
 }

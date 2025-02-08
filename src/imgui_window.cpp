@@ -1,4 +1,5 @@
 #include "core.hpp"
+#include "imgui/imgui.h"
 
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -16,6 +17,15 @@ namespace imgui {
       ImGui_ImplOpenGL3_NewFrame();
       ImGui_ImplGlfw_NewFrame();
       ImGui::NewFrame();
+   }
+
+   void main_draw(){
+      ImGui::Begin("main window", 0, ImGuiWindowFlags_AlwaysAutoResize);
+      {
+         ImGui::SliderFloat("ZOOM OF CAMERA:", &state.camera->zoom, -90.0f, 90.0f, "%.5f", 0);
+         ImGui::SliderFloat3("POS OF CAMERA:", &state.camera->pos.x, -10.0f, 10.0f, "%.5f", 0);
+      }
+      ImGui::End();
    }
    void render(){
       ImGui::Render();

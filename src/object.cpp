@@ -1,7 +1,7 @@
 #include "object.hpp"
 
 
-void Object::draw_object(GLenum mode){
+void Object::draw(GLenum mode){
    update();
    
    shd.use();

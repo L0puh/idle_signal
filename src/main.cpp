@@ -1,4 +1,5 @@
 #include "core.hpp"
+#include "glm/ext/matrix_transform.hpp"
 #include "object.hpp"
 
 void enable_if_debug();
@@ -22,15 +23,39 @@ int main() {
    state.camera = &camera;
    state.camera->window_width = 3000;
    state.camera->window_height = 5000;
+
+
+   Model model("assets/model.obj");
+   
+   printf("created %zu meshes\n",model.meshes.size());
+   
+   Shader shd;
+   shd.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
    while (!glfwWindowShouldClose(window)){
       imgui::frame();
       update_deltatime();
       camera.update();
-      imgui::render();
-      
-      cube.set_rotation((float)glfwGetTime() * glm::radians(40.0f), glm::vec3(1.0f, 0.3f, 1.3f));
-      cube.draw_object();
+      imgui::main_draw();
+     
+      shd.use();
+      shd.set_mat4fv("_projection", state.camera->get_projection());
+      shd.set_mat4fv("_view", state.camera->get_view());
+   
+      glm::mat4 mod = glm::mat4(1.0f);
+      mod = glm::translate(mod, {0.0f, 0.0f, -13.0f});
+      mod = glm::scale(mod, {0.4f, 0.4f, 0.4f});
 
+      shd.use();
+      shd.set_mat4fv("_projection", state.camera->get_projection());
+      shd.set_mat4fv("_view", state.camera->get_view());
+      shd.set_mat4fv("_model", mod);
+      shd.set_vec3("_color", {color::black[0], color::black[1], color::black[2]});
+      model.draw();
+      shd.unuse();
+
+      cube.draw();
+
+      imgui::render();
       glfwSwapBuffers(window);
       glfwPollEvents();
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

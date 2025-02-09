@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <map>
+#include <string>
 
 class Camera;
 
@@ -13,6 +14,13 @@ class Camera;
 
 #define DEFAULT_SHADER_VERT "shaders/default.vert"
 #define DEFAULT_SHADER_FRAG "shaders/default.frag"
+
+#define DEFAULT_SHADER_TEXTURE_VERT "shaders/default_texture.vert"
+#define DEFAULT_SHADER_TEXTURE_FRAG "shaders/default_texture.frag"
+
+const std::string TEXTURES_DIR = "assets/textures/";
+const std::string MODELS_DIR  =  "assets/models/";
+
 
 struct STATE {
    Camera *camera;

@@ -1,6 +1,7 @@
 #include "core.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "object.hpp"
+#include <GLFW/glfw3.h>
 
 void enable_if_debug();
 void shutdown(GLFWwindow*);
@@ -15,22 +16,21 @@ int main() {
    enable_if_debug();
    Camera camera(window, 0);
 
-   Object cube(object_e::cube);
-   cube.set_pos(glm::vec3(0.0f, 0.0f, -8.0f));
-   cube.set_color(color::green);
-   cube.set_size(glm::vec3(1.0f, 1.0f, 1.0f));
+   // Texture box_texture("box.jpg");
+   // Object cube(object_e::cube, &box_texture);
+   // cube.set_pos(glm::vec3(0.0f, 0.0f, -8.0f));
+   // cube.set_color(color::green);
+   // cube.set_size(glm::vec3(1.0f, 1.0f, 1.0f));
 
    state.camera = &camera;
    state.camera->window_width = 3000;
    state.camera->window_height = 5000;
 
 
-   Model model("assets/model.obj");
-   
-   printf("created %zu meshes\n",model.meshes.size());
+   Model model("backpack.obj");
    
    Shader shd;
-   shd.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
+   shd.init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
    while (!glfwWindowShouldClose(window)){
       imgui::frame();
       update_deltatime();
@@ -42,18 +42,18 @@ int main() {
       shd.set_mat4fv("_view", state.camera->get_view());
    
       glm::mat4 mod = glm::mat4(1.0f);
-      mod = glm::translate(mod, {0.0f, 0.0f, -13.0f});
+      mod = glm::translate(mod, {0.0f, 0.0f, -53.0f});
       mod = glm::scale(mod, {0.4f, 0.4f, 0.4f});
-
+      mod = glm::rotate(mod, (float)glfwGetTime(), {0.0f, 0.0f, 1.0f});
+   
       shd.use();
       shd.set_mat4fv("_projection", state.camera->get_projection());
       shd.set_mat4fv("_view", state.camera->get_view());
       shd.set_mat4fv("_model", mod);
-      shd.set_vec3("_color", {color::black[0], color::black[1], color::black[2]});
       model.draw();
       shd.unuse();
+      // cube.draw();
 
-      cube.draw();
 
       imgui::render();
       glfwSwapBuffers(window);

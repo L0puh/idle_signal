@@ -53,6 +53,31 @@ class Texture {
    private:
       uint id;
       std::string type;
+      std::string path;
+      std::string name;
+
+   public: 
+      Texture(const std::string src): name(src){ 
+         char new_src[TEXTURES_DIR.length() + src.length()];
+         sprintf(new_src, "%s%s", TEXTURES_DIR.c_str(), src.c_str());
+         path = new_src;
+         
+         char info[64];
+         sprintf(info, "loading texture: %s", path.c_str());
+         log_info(info);
+         load_texture(); 
+      };
+      ~Texture(){};
+   public:
+      void use()   { glBindTexture(GL_TEXTURE_2D, id); }
+      void unuse() { glBindTexture(GL_TEXTURE_2D, 0); }
+      void set_type(std::string name){ type = name; }
+      std::string& get_src() { return path; }
+      std::string& get_name() { return name; }
+
+   private:
+      void load_texture();
+      // void cleanup();
 };
 
 
@@ -121,8 +146,11 @@ class Model {
       Shader *shd;
    public:
       std::vector<Mesh> meshes;
+      std::vector<Texture> textures_loaded;
       Model(const std::string src){ 
-         load_model(src);
+         char new_src[MODELS_DIR.length() + src.length()];
+         sprintf(new_src, "%s%s", MODELS_DIR.c_str(), src.c_str());
+         load_model(new_src);
       }
       ~Model(){};
    public:
@@ -131,6 +159,7 @@ class Model {
             meshes.at(i).draw();
          }
       }
+
       void set_shader(Shader *shd) { 
          this->shd = shd;
       }
@@ -138,8 +167,7 @@ class Model {
       void load_model(const std::string src);
       void process_node(aiNode *node, const aiScene *scene);
       Mesh process_mesh(aiMesh *mesh, const aiScene *scene);
-
-   // std::vector<Texture> load_textures().... TODO
+      std::vector<Texture> load_texture(aiMaterial *mat, aiTextureType type, std::string name);
 
 };
 class Shader {

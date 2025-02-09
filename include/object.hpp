@@ -14,8 +14,10 @@ class Object {
    private:
       glm::mat4 model = glm::mat4(1.0f);
       Shader shd;
+      Texture *texture;
       Vertex vert;
 
+      bool with_texture = false;
       int count_vertices;
       float rotation_angle;
       glm::vec3 pos, rotation, size;
@@ -23,30 +25,59 @@ class Object {
 
    public:
       Object(){}
-      Object(object_e type){
+      Object(object_e type, Texture *tex = NULL): texture(tex){
+         if (tex != NULL) with_texture=1;
          switch(type){
          case cube:
             {
-               shd.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
-               vert.create_VBO(vertices::cube, sizeof(vertices::cube));
-               vert.add_atrib(0, 3, GL_FLOAT, 0);
+               if (with_texture) {
+                  shd.init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
+                  vert.create_VBO(vertices::cube_with_texture, sizeof(vertices::cube_with_texture));
+
+                  vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float));
+                  vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float),
+                                          (void*)(3*sizeof(float)));
+               } else {
+                  shd.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
+                  vert.create_VBO(vertices::cube, sizeof(vertices::cube));
+
+                  vert.add_atrib(0, 3, GL_FLOAT, 3 * sizeof(float));
+               }
                this->count_vertices = LEN(vertices::cube);
             }
             break;
 
          case triangle: 
             {
-               shd.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
-               vert.create_VBO(vertices::triangle, sizeof(vertices::triangle));
-               vert.add_atrib(0, 3, GL_FLOAT, 0);
+               if (with_texture) {
+                  shd.init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
+                  vert.create_VBO(vertices::triangle_with_texture,
+                        sizeof(vertices::triangle_with_texture));
+                  vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float));
+                  vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3*sizeof(float)));
+               } else {
+                  shd.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
+                  vert.create_VBO(vertices::triangle, sizeof(vertices::triangle));
+                  vert.add_atrib(0, 3, GL_FLOAT, 3 * sizeof(float));
+               }
                this->count_vertices = LEN(vertices::triangle);
             }
             break;
          case rectangle: 
             {
-               shd.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
-               vert.create_VBO(vertices::rectangle, sizeof(vertices::rectangle));
-               vert.add_atrib(0, 3, GL_FLOAT, 0);
+               if (with_texture){
+                  shd.init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
+                  vert.create_VBO(vertices::rectangle_with_texture,
+                        sizeof(vertices::rectangle_with_texture));
+                  vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
+                  vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float));
+                  vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3*sizeof(float)));
+               } else {
+                  shd.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
+                  vert.create_VBO(vertices::rectangle, sizeof(vertices::rectangle));
+                  vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
+                  vert.add_atrib(0, 3, GL_FLOAT, 3 * sizeof(float));
+               }
                this->count_vertices = LEN(vertices::rectangle);
             }
            break;
@@ -62,6 +93,7 @@ class Object {
          model = glm::scale(model, size);
       }
       void draw(GLenum mode = GL_TRIANGLES);
+      void set_texture(Texture *texture) { this->texture = texture; }
       void set_size(glm::vec3 size) { 
          this->size = size; 
       }

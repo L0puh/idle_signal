@@ -1,11 +1,12 @@
 #include "core.hpp"
+#include <assimp/material.h>
 #include <vector>
 
 
 void Mesh::draw(){
-   // for (uint i = 0; i < textures.size(); i++){
-      //TODO: get texture
-   // }
+   for (uint i = 0; i < textures.size(); i++){
+      textures.at(i).use();
+   }
    vertex.bind();
    vertex.draw_EBO(GL_TRIANGLES, indices.size());
    vertex.unbind();
@@ -55,9 +56,9 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
                         mesh->mNormals[i].z };
       }
       if (mesh->mTextureCoords[0]){
-         //TODO
-         // log_info("MESH WITH TEXTURE\n");
          vert.texcoord = {0.0f, 0.0f};
+         vert.texcoord = {mesh->mTextureCoords[0][i].x,
+                          mesh->mTextureCoords[0][i].y};
       } else {
          vert.texcoord = {0.0f, 0.0f};
       }
@@ -70,5 +71,35 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
          indices.push_back(face.mIndices[j]);
       }
    }
+   if (mesh->mMaterialIndex >= 0){
+      aiMaterial *mat = scene->mMaterials[mesh->mMaterialIndex];
+      std::vector<Texture> diffuse = load_texture(mat, aiTextureType_DIFFUSE, "diffuse");
+      text.insert(text.end(), diffuse.begin(), diffuse.end());
+      return Mesh(verts, indices, text);
+   }
    return Mesh(verts, indices, text);
+}
+
+std::vector<Texture> Model::load_texture(aiMaterial *mat, aiTextureType type, std::string name){
+   bool skip;
+   aiString str;
+   std::vector<Texture> texs;
+   for (uint i=0; i < mat->GetTextureCount(type); i++){
+      mat->GetTexture(type, i, &str);
+      skip = false;
+      for (uint j = 0; j < textures_loaded.size(); j++){
+         if (std::strcmp(textures_loaded[j].get_name().c_str(), str.C_Str()) == 0){
+            texs.push_back(textures_loaded[j]);
+            skip=true;
+            break;
+         }
+      }
+      if (!skip){
+         Texture tex(str.C_Str());
+         tex.set_type(name);
+         texs.push_back(tex);
+         textures_loaded.push_back(tex);
+      }
+   }
+   return texs;
 }

@@ -1,12 +1,19 @@
 BUILDDIR=build
 IS_VERBOSE=0
 
-while getopts "v" opt; do
+while getopts "vc" opt; do
  case $opt in
  v)
    echo " + verbose is on"
    IS_VERBOSE=1
    ;;
+ esac
+ case $opt in
+    c)
+       echo "cleaning..."
+       rm -rf build
+       exit
+       ;;
  esac
 done
 

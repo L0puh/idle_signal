@@ -18,6 +18,7 @@ class Camera;
 #define DEFAULT_SHADER_TEXTURE_VERT "shaders/default_texture.vert"
 #define DEFAULT_SHADER_TEXTURE_FRAG "shaders/default_texture.frag"
 
+#define ASSIMP_FLAGS_LOAD  (aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_GenSmoothNormals)
 const std::string TEXTURES_DIR = "assets/textures/";
 const std::string MODELS_DIR  =  "assets/models/";
 

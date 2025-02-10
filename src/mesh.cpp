@@ -16,7 +16,7 @@ void Model::load_model(const std::string src){
    const aiScene *scene;
    Assimp::Importer importer;
 
-   scene = importer.ReadFile(src, aiProcess_Triangulate | aiProcess_FlipUVs);
+   scene = importer.ReadFile(src, ASSIMP_FLAGS_LOAD);
    if (scene == NULL || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
       //FIXME 
       printf("assimp error: %s\n", importer.GetErrorString());
@@ -56,7 +56,6 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
                         mesh->mNormals[i].z };
       }
       if (mesh->mTextureCoords[0]){
-         vert.texcoord = {0.0f, 0.0f};
          vert.texcoord = {mesh->mTextureCoords[0][i].x,
                           mesh->mTextureCoords[0][i].y};
       } else {

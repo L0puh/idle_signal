@@ -5,17 +5,19 @@
 void Texture::load_texture(){
    unsigned char *data;
    int width, height, channels;   
+   
+   glGenTextures(1, &id);
+   use();
 
    data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-   glGenTextures(1, &id);
+   stbi_set_flip_vertically_on_load(true);
    
-   use();
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
    
-   if (data == NULL){
+   if (!data){
       char info[64];
       sprintf(info, "error in loading texture: %s\n", path.c_str());
       error_and_exit(info);
@@ -34,7 +36,7 @@ void Texture::load_texture(){
    
    glGenerateMipmap(GL_TEXTURE_2D);
    stbi_image_free(data);
-   
+   unuse();
    return;
 }
 

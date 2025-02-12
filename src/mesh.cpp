@@ -1,7 +1,7 @@
 #include "core.hpp"
 #include <assimp/material.h>
 #include <vector>
-
+#include "model.hpp"
 
 void Mesh::draw(){
    for (uint i = 0; i < textures.size(); i++){

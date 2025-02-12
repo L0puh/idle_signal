@@ -22,16 +22,20 @@ class Camera;
 const std::string TEXTURES_DIR = "assets/textures/";
 const std::string MODELS_DIR  =  "assets/models/";
 
+#include <glm/glm.hpp>
 
 struct STATE {
    Camera *camera;
    float bg_color[4];
+   float mouse_sensitivity = 0.05f;
    float deltatime  = 0.0f;
    float last_frame = 0.0f; // for deltatime
    float cooldown   = 0.4f; // seconds
    float last_press = 0.0f; // seconds 
    uint8_t global_state = 0.0f;
    std::map<int, bool> keys;
+   glm::vec2 last_mouse_pos;
+   bool first_mouse;        // just touched the mouse
 };
 
 extern STATE state;

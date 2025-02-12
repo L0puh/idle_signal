@@ -38,6 +38,9 @@ GLFWwindow* init_window(int width, int height){
    glfwSetFramebufferSizeCallback(window, frame_buffer_size);
    glfwSetMouseButtonCallback(window, input::mouse_callback);
    glfwSetKeyCallback(window, input::key_callback);
+   glfwSetCursorPosCallback(window, input::cursor_callback);
+   // glfwSetScrollCallback(window, input::scroll_callback); // TODO
+
 
    log_info("init window");
 

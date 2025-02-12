@@ -1,9 +1,11 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "state.hpp"
+#include "core.hpp"
 #include <GLFW/glfw3.h>
 #include <cstdio>
+
+
 
 namespace input {
    inline bool is_pressed(GLFWwindow* window, int key) {
@@ -39,6 +41,20 @@ namespace input {
             glfwSetWindowShouldClose(window, true);
             return;
       }
+   }
+   inline void cursor_callback(GLFWwindow* window, double xpos, double ypos){
+      if (state.first_mouse) {
+         state.last_mouse_pos = {xpos, ypos};
+         state.first_mouse = false;
+      }
+
+      glm::vec2 offset, pos;
+      pos = {xpos, ypos};
+      offset.x = pos.x - state.last_mouse_pos.x;
+      offset.y = state.last_mouse_pos.y - pos.y;
+      state.last_mouse_pos = pos;
+      offset *= state.mouse_sensitivity;
+      state.camera->update_mouse_turn(offset);
    }
 };
 

@@ -34,6 +34,7 @@ class Vertex;
 class Camera;
 class Shader;
 
+
 struct data_t {
    glm::vec3 position;
    glm::vec3 normal;
@@ -141,35 +142,6 @@ class Mesh {
 
 };
 
-class Model {
-   private:
-      Shader *shd;
-   public:
-      std::vector<Mesh> meshes;
-      std::vector<Texture> textures_loaded;
-      Model(const std::string src){ 
-         char new_src[MODELS_DIR.length() + src.length()];
-         sprintf(new_src, "%s%s", MODELS_DIR.c_str(), src.c_str());
-         load_model(new_src);
-      }
-      ~Model(){};
-   public:
-      void draw(){
-         for (uint i=0; i < meshes.size(); i++){
-            meshes.at(i).draw();
-         }
-      }
-
-      void set_shader(Shader *shd) { 
-         this->shd = shd;
-      }
-   private:
-      void load_model(const std::string src);
-      void process_node(aiNode *node, const aiScene *scene);
-      Mesh process_mesh(aiMesh *mesh, const aiScene *scene);
-      std::vector<Texture> load_texture(aiMaterial *mat, aiTextureType type, std::string name);
-
-};
 class Shader {
    private:
       uint id;
@@ -217,16 +189,21 @@ class Camera {
       uint8_t flags;
       glm::mat4 view;
       glm::vec3 pos; 
-      float speed, rotation_speed, rotation, zoom;
+      float speed, zoom;
       double window_width, window_height;
+
+      glm::vec3 front   = {0.0f, 0.0f, -1.0f};
+      glm::vec3 worldup = {0.0f, 1.0f, 0.0f};
+      glm::vec3 up      = {0.0f, 1.0f, 0.0f};
+      glm::vec3 right;
+
+      float yaw, pitch;
       
    public:
       Camera(GLFWwindow* window, uint8_t flags): window(window),
-         speed(1.0f), rotation_speed(1.2f), rotation(0.0f), 
-         flags(flags), view(glm::mat4(1.0f)), pos(glm::vec3(0.0f)), 
-         zoom(45.0f){}
+         speed(1.5f), flags(flags), 
+         zoom(45.0f), yaw(-90.0f), pitch(0.0f){}
    public:
-      void update_movement();
       glm::vec2 unproject(glm::vec2 pos);
       glm::vec2 project(double x, double y);
       
@@ -234,6 +211,7 @@ class Camera {
       glm::mat4 get_projection_ortho();
       glm::mat4 get_projection();
       void update();
+      void update_mouse_turn(glm::vec2 offset);
 
    public:
       void hide_cursor() { 
@@ -249,6 +227,11 @@ class Camera {
       glm::mat4 get_view()          { return view;}
       void clear_flag(uint8_t flag) { flags &= ~flag; }
       void set_flag(uint8_t flag)   { flags |= flag; }
+
+   private:
+      void update_vectors();
+      void update_movement2D();
+      void update_movement();
 
 };
 

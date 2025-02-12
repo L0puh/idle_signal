@@ -1,5 +1,5 @@
 #include "core.hpp"
-#include "glm/ext/matrix_transform.hpp"
+#include "model.hpp"
 #include <GLFW/glfw3.h>
 
 void enable_if_debug();
@@ -14,6 +14,7 @@ int main() {
   
    enable_if_debug();
    Camera camera(window, 0);
+   camera.set_pos(glm::vec3(1.0f));
 
    state.camera = &camera;
    state.camera->window_width = 3000;
@@ -21,26 +22,21 @@ int main() {
 
 
    Model model("fish.obj");
-   
    Shader shd;
+   model.set_shader(&shd);
    shd.init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
    while (!glfwWindowShouldClose(window)){
+
       imgui::frame();
       update_deltatime();
       camera.update();
+      camera.hide_cursor();
       imgui::main_draw();
      
-      glm::mat4 mod = glm::mat4(1.0f);
-      mod = glm::translate(mod, {0.0f, 0.0f, -4.0f});
-      mod = glm::scale(mod, {0.004f, 0.004f, 0.004f});
-      mod = glm::rotate(mod, (float)glfwGetTime(), {0.0f, 0.0f, 0.3f});
-   
-      shd.use();
-      shd.set_mat4fv("_projection", state.camera->get_projection());
-      shd.set_mat4fv("_view", state.camera->get_view());
-      shd.set_mat4fv("_model", mod);
+      model.set_pos(glm::vec3(1.0f));
+      model.set_size(glm::vec3(0.004f, 0.004f, 0.004f));
+      model.set_rotation(glfwGetTime(), {1.0f, 0.0f, 1.0f});
       model.draw();
-      shd.unuse();
 
 
       imgui::render();

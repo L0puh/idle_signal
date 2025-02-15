@@ -4,16 +4,20 @@
 
 class Model {
    private:
+      glm::mat4 model;
       glm::vec4 color;
-      glm::vec3 pos, rotation, size;
-      glm::mat4 model = glm::mat4(1.0f);
       float rotation_angle;
+      bool with_texture = true;
    private:
       Shader *shd;
    public:
+      glm::vec3 pos, rotation, size;
       std::vector<Mesh> meshes;
       std::vector<Texture> textures_loaded;
-      Model(const std::string src){ 
+      
+      Model(const std::string src):
+      size(glm::vec3(1.0f)), rotation(glm::vec3(1.0f)), 
+      rotation_angle(0.0f), pos(0.0f){ 
          char new_src[MODELS_DIR.length() + src.length()];
          sprintf(new_src, "%s%s", MODELS_DIR.c_str(), src.c_str());
          load_model(new_src);
@@ -23,7 +27,7 @@ class Model {
       void update(){
          model = glm::mat4(1.0f); 
          model = glm::translate(model, pos);
-         model = glm::rotate(model, rotation_angle, rotation);
+         model = glm::rotate(model, (float)rotation_angle, rotation);
          model = glm::scale(model, size);
       }
       void draw(){
@@ -32,11 +36,15 @@ class Model {
          shd->set_mat4fv("_projection", state.camera->get_projection());
          shd->set_mat4fv("_view", state.camera->get_view());
          shd->set_mat4fv("_model", model);
+         if (!with_texture) 
+            shd->set_vec3("_color", color);
+
          for (uint i=0; i < meshes.size(); i++){
             meshes.at(i).draw();
          }
          shd->unuse();
       }
+      void is_with_texture(bool t) { with_texture = t; }
       void set_shader(Shader *shd) { 
          this->shd = shd;
       }

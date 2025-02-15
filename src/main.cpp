@@ -1,6 +1,8 @@
 #include "core.hpp"
 #include "model.hpp"
-#include <GLFW/glfw3.h>
+
+#include "collision.hpp"
+#include "renderer.hpp"
 
 void enable_if_debug();
 void shutdown(GLFWwindow*);
@@ -21,10 +23,24 @@ int main() {
    state.camera->window_height = 5000;
 
 
-   Model model("fish.obj");
+   Model model("cottage_blender.obj");
+   Model model2("fish.obj");
+   Collision collision;
+   collision.add_collider(&model);
+   collision.add_collider(&model2);
+
    Shader shd;
-   model.set_shader(&shd);
    shd.init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
+   model.set_shader(&shd);
+   model.set_size(glm::vec3(0.05f));
+
+   model2.set_shader(&shd);
+   model2.set_size(glm::vec3(0.0005f));
+   
+
+   Renderer render;
+   Shader shd2;
+   shd2.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
    while (!glfwWindowShouldClose(window)){
 
       imgui::frame();
@@ -32,12 +48,15 @@ int main() {
       camera.update();
       camera.hide_cursor();
       imgui::main_draw();
-     
       model.set_pos(glm::vec3(1.0f));
-      model.set_size(glm::vec3(0.004f, 0.004f, 0.004f));
-      model.set_rotation(glfwGetTime(), {1.0f, 0.0f, 1.0f});
       model.draw();
+      model2.set_pos(glm::vec3(0.0, 0.0, 0.0f));
+      model2.draw();
 
+      render.draw_line(model2.pos, 
+            model.pos,
+            color::red, 5.0f, &shd2);
+      collision.update_collisions();
 
       imgui::render();
       glfwSwapBuffers(window);

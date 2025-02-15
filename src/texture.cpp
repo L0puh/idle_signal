@@ -9,8 +9,8 @@ void Texture::load_texture(){
    glGenTextures(1, &id);
    use();
 
+   //stbi_set_flip_vertically_on_load(true);
    data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-   stbi_set_flip_vertically_on_load(true);
    
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

@@ -40,6 +40,12 @@ namespace input {
          case GLFW_KEY_Q:
             glfwSetWindowShouldClose(window, true);
             return;
+         case GLFW_KEY_P:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            break;
+         case GLFW_KEY_F:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            break;
       }
    }
    inline void cursor_callback(GLFWwindow* window, double xpos, double ypos){

@@ -1,7 +1,10 @@
 #include "core.hpp"
 #include <assimp/material.h>
 #include <vector>
+#include "glm/geometric.hpp"
+
 #include "model.hpp"
+#include "collision.hpp"
 
 void Mesh::draw(){
    for (uint i = 0; i < textures.size(); i++){
@@ -102,3 +105,32 @@ std::vector<Texture> Model::load_texture(aiMaterial *mat, aiTextureType type, st
    }
    return texs;
 }
+
+collider_t Model::caclulate_boundaries(){
+   float maxlen = 0.0f;
+   glm::vec3 min, max;
+   for (auto m = meshes.begin(); m != meshes.end(); m++){
+      for (auto v = m->vertices.begin(); v != m->vertices.end(); v++){
+         float len = glm::length(v->position);
+         if (len > maxlen) {
+            maxlen = len;
+         }
+         if (v->position.x < min.x) min.x = v->position.x;
+         if (v->position.y < min.y) min.y = v->position.y;
+         if (v->position.z < min.z) min.z = v->position.z;
+
+         if (v->position.x > max.x) max.x = v->position.x;
+         if (v->position.y > max.y) max.y = v->position.y;
+         if (v->position.z > max.z) max.z = v->position.z;
+
+      }
+   }
+   
+   collider_t collider;
+   collider.min = min;
+   collider.max = max;
+   collider.pos = this->pos;
+   collider.size = this->size;
+   return collider;
+}
+

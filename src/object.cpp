@@ -2,9 +2,7 @@
 
 
 void Object::draw(GLenum mode){
-   if (type != object_e::line)
-      update();
-   else model = glm::mat4(1.0f);
+   update();
    
    shd->use();
    shd->set_mat4fv("_projection", state.camera->get_projection());

@@ -3,6 +3,7 @@
 
 #include "collision.hpp"
 #include "renderer.hpp"
+#include <GLFW/glfw3.h>
 
 void enable_if_debug();
 void shutdown(GLFWwindow*);
@@ -25,9 +26,10 @@ int main() {
 
    Model model("cottage_blender.obj");
    Model model2("fish.obj");
-   Collision collision;
-   collision.add_collider(&model);
-   collision.add_collider(&model2);
+
+   // Collision collision;
+   // collision.add_collider(&model);
+   // collision.add_collider(&model2);
 
    Shader shd;
    shd.init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
@@ -35,12 +37,16 @@ int main() {
    model.set_size(glm::vec3(0.05f));
 
    model2.set_shader(&shd);
-   model2.set_size(glm::vec3(0.0005f));
+   model2.set_size(glm::vec3(0.005f));
    
 
    Renderer render;
    Shader shd2;
    shd2.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
+
+
+   collider_t a = model.caclulate_boundaries();
+   collider_t b = model2.caclulate_boundaries();
    while (!glfwWindowShouldClose(window)){
 
       imgui::frame();
@@ -50,13 +56,17 @@ int main() {
       imgui::main_draw();
       model.set_pos(glm::vec3(1.0f));
       model.draw();
-      model2.set_pos(glm::vec3(0.0, 0.0, 0.0f));
+      
+      model2.set_pos(glm::vec3(2.0, 0.0, 0.0f));
+      model2.set_rotation(glfwGetTime(), glm::vec3(1.0f, 0.0f, 1.0f));
       model2.draw();
 
-      render.draw_line(model2.pos, 
-            model.pos,
-            color::red, 5.0f, &shd2);
-      collision.update_collisions();
+      render.draw_line(b.max, b.min, color::red, 5.0f, &shd2, &model2);
+      render.draw_cube(b.min, b.max, color::black, &shd2, &model2);
+      render.draw_line(a.max, a.min, color::red, 5.0f, &shd2, &model);
+      render.draw_cube(a.min, a.max, color::black, &shd2, &model);
+      
+      // collision.update_collisions();
 
       imgui::render();
       glfwSwapBuffers(window);

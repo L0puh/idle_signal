@@ -2,15 +2,17 @@
 #define MODEL_HPP
 #include "core.hpp"
 
+struct collider_t;
+
 class Model {
    private:
       glm::mat4 model;
       glm::vec4 color;
-      float rotation_angle;
       bool with_texture = true;
    private:
       Shader *shd;
    public:
+      float rotation_angle;
       glm::vec3 pos, rotation, size;
       std::vector<Mesh> meshes;
       std::vector<Texture> textures_loaded;
@@ -63,6 +65,7 @@ class Model {
          this->rotation = pos;
       }
 
+      collider_t caclulate_boundaries();
    private:
       void load_model(const std::string src);
       void process_node(aiNode *node, const aiScene *scene);

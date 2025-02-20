@@ -1,4 +1,5 @@
 #include "core.hpp"
+#include "camera.hpp"
 #include "imgui/imgui.h"
 
 #include <imgui/imgui_impl_glfw.h>

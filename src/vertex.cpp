@@ -11,14 +11,6 @@ int Vertex::cleanup(){
    return 0;
 }
 
-void Vertex::setup_mesh(Mesh *mesh){
-   create_VBO(&mesh->vertices[0], mesh->vertices.size() * sizeof(data_t));
-   create_EBO(&mesh->indices[0], mesh->indices.size() * sizeof(uint));
-   add_atrib(0, 3, GL_FLOAT, sizeof(data_t), 0);
-   add_atrib(1, 3, GL_FLOAT, sizeof(data_t), (void*)offsetof(data_t, normal)); 
-   add_atrib(2, 2, GL_FLOAT, sizeof(data_t), (void*)offsetof(data_t, texcoord)); 
-}
-
 int Vertex::create_VBO(const void* data, size_t size, GLenum type){
    bind();
 
@@ -44,7 +36,6 @@ int Vertex::create_EBO(const void* data, size_t size, GLenum type){
 
    return EBO;
 }
-
 
 int Vertex::draw_EBO(GLenum mode, size_t size){
    bind();

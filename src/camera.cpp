@@ -1,7 +1,4 @@
-#include "core.hpp"
-#include "glm/ext/matrix_transform.hpp"
-#include "glm/geometric.hpp"
-#include "glm/trigonometric.hpp"
+#include "camera.hpp"
 #include "input.hpp"
 
 glm::mat4 Camera::get_projection_ortho() {

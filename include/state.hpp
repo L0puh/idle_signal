@@ -4,8 +4,7 @@
 #include <cstdint>
 #include <map>
 #include <string>
-
-class Camera;
+#include <glm/glm.hpp>
 
 #define MOUSE_CLICKED 0b1000
 #define MOUSE_CHANGED 0b0100
@@ -22,7 +21,8 @@ class Camera;
 const std::string TEXTURES_DIR = "assets/textures/";
 const std::string MODELS_DIR  =  "assets/models/";
 
-#include <glm/glm.hpp>
+
+class Camera;
 
 struct STATE {
    Camera *camera;

@@ -1,5 +1,6 @@
 #include "core.hpp"
 #include "model.hpp"
+#include "camera.hpp"
 
 #include "collision.hpp"
 #include "renderer.hpp"
@@ -26,6 +27,8 @@ int main() {
 
    Model model("cottage_blender.obj");
    Model model2("fish.obj");
+   Model model3("house.obj");
+
 
    // Collision collision;
    // collision.add_collider(&model);
@@ -38,15 +41,17 @@ int main() {
 
    model2.set_shader(&shd);
    model2.set_size(glm::vec3(0.005f));
-   
+
+   model3.set_shader(&shd);
+   model3.set_size(glm::vec3(0.5f));
 
    Renderer render;
    Shader shd2;
    shd2.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
 
-
    collider_t a = model.caclulate_boundaries();
    collider_t b = model2.caclulate_boundaries();
+   collider_t c = model3.caclulate_boundaries();
    while (!glfwWindowShouldClose(window)){
 
       imgui::frame();
@@ -61,11 +66,17 @@ int main() {
       model2.set_rotation(glfwGetTime(), glm::vec3(1.0f, 0.0f, 1.0f));
       model2.draw();
 
+      model3.set_pos(glm::vec3(10.0, -10.0, 0.0f));
+      model3.set_rotation(glfwGetTime(), glm::vec3(1.0f, 0.0f, 1.0f));
+      model3.draw();
+      
+      render.draw_line(c.max, c.min, color::red, 5.0f, &shd2, &model3);
+      render.draw_cube(c.min, c.max, color::black, &shd2, &model3);
       render.draw_line(b.max, b.min, color::red, 5.0f, &shd2, &model2);
       render.draw_cube(b.min, b.max, color::black, &shd2, &model2);
       render.draw_line(a.max, a.min, color::red, 5.0f, &shd2, &model);
       render.draw_cube(a.min, a.max, color::black, &shd2, &model);
-      
+
       // collision.update_collisions();
 
       imgui::render();

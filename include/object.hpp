@@ -11,6 +11,10 @@ typedef enum {
    line
 } object_e;
 
+
+
+/* TODO: needs refactoring... */
+
 class Object {
    private:
       glm::mat4 model = glm::mat4(1.0f);

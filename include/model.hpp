@@ -1,8 +1,45 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
+
+#include <vector>
+
 #include "core.hpp"
+#include "camera.hpp"
 
 struct collider_t;
+
+class Mesh;
+class Model;
+
+
+class Mesh {
+   public:
+      Vertex vertex;
+      Shader *shd;
+      std::vector<data_t> vertices;
+      std::vector<uint> indices;
+      std::vector<Texture> textures;
+
+   public:
+      Mesh(std::vector<data_t> verts,
+           std::vector<uint> ind,
+           std::vector<Texture> text):
+           vertices(verts), indices(ind), textures(text)
+      {
+         vertex.create_VAO();
+         vertex.setup_mesh(this);
+      };
+
+      ~Mesh() {};
+   public:
+      void draw();
+      void set_shader(Shader *shd) { 
+         this->shd = shd;
+      }
+
+   private:
+
+};
 
 class Model {
    private:

@@ -2,10 +2,7 @@
 #define INPUT_H
 
 #include "core.hpp"
-#include <GLFW/glfw3.h>
-#include <cstdio>
-
-
+#include "camera.hpp"
 
 namespace input {
    inline bool is_pressed(GLFWwindow* window, int key) {

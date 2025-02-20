@@ -1,5 +1,5 @@
 #include "object.hpp"
-
+#include "camera.hpp"
 
 void Object::draw(GLenum mode){
    update();

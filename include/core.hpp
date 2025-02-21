@@ -36,6 +36,13 @@ class Model;
 class Camera;
 class Object;
 
+struct line_data_t {
+   glm::vec3 pos;
+   glm::vec3 size;
+   float rotation_angle = 0.0f;
+   glm::vec3 rotation = glm::vec3(1.0f);
+};
+
 struct data_t {
    glm::vec3 position;
    glm::vec3 normal;

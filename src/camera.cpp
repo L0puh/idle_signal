@@ -31,6 +31,10 @@ void Camera::update_movement(){
    if (input::is_pressed(window, GLFW_KEY_A)){
       pos -= right * vel;
    }
+
+   if (!is_flying && pos.y != ground_level ) {
+      pos.y = ground_level;
+   }
 }
 
 void Camera::update_movement2D(){
@@ -96,6 +100,8 @@ glm::vec2 Camera::get_mouse_pos() {
 void Camera::update(){ 
    update_movement();
    view = glm::lookAt(pos, pos+front, up);
-   model->set_pos(pos + glm::vec3(0.0f));
-   model->set_size(size);
+   if (model != NULL) {
+      model->set_pos(pos);
+      model->set_size(size);
+   }
 }

@@ -83,6 +83,8 @@ class Model {
          }
          shd->unuse();
       }
+
+      line_data_t get_line_data();
       void is_with_texture(bool t) { with_texture = t; }
       void set_shader(Shader *shd) { 
          this->shd = shd;

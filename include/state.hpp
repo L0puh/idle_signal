@@ -23,9 +23,13 @@ const std::string MODELS_DIR  =  "assets/models/";
 
 
 class Camera;
+class Renderer;
+class Shader;
 
 struct STATE {
+   Renderer *renderer;
    Camera *camera;
+   Shader *default_shader;
    float bg_color[4];
    float mouse_sensitivity = 0.05f;
    float deltatime  = 0.0f;

@@ -14,6 +14,9 @@ class Camera {
       float speed, zoom;
       double window_width, window_height;
 
+      float ground_level = 0.0f;
+      bool is_flying = false;
+
       glm::vec3 front   = {0.0f, 0.0f, -1.0f};
       glm::vec3 worldup = {0.0f, 1.0f, 0.0f};
       glm::vec3 up      = {0.0f, 1.0f, 0.0f};

@@ -12,6 +12,9 @@
 //                                MODEL                                   //
 ////////////////////////////////////////////////////////////////////////////
 
+line_data_t Model::get_line_data(){
+   return {pos, size, rotation_angle, rotation};
+}
 
 void Model::load_model(const std::string src){
    const aiScene *scene;
@@ -129,6 +132,7 @@ collider_t Model::caclulate_boundaries(){
    collider.max = max;
    collider.pos = this->pos;
    collider.size = this->size;
+   collider.model = this;
    return collider;
 }
 

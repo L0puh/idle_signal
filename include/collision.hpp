@@ -3,7 +3,8 @@
 
 #include "core.hpp"
 #include "model.hpp"
-#include "object.hpp"
+#include "renderer.hpp"
+
 #include <vector>
 
 struct collider_t {
@@ -19,43 +20,45 @@ class Collision {
       std::vector<collider_t> colliders;
    public:
       void add_collider(Model *model) {
-         collider_t collider;
-         collider.pos = model->pos;
-         collider.size = model->size;
-         collider.min = collider.pos - collider.size * 0.5f;
-         collider.max = collider.pos + collider.size * 0.5f;
+         collider_t collider = model->caclulate_boundaries();
+         
          collider.model = model;
          colliders.push_back(collider);
       }
       void update_colliders(){
-         for (auto collider = colliders.begin(); collider != colliders.end(); collider++){
-            Model *model = collider->model;
-            collider->pos = model->pos;
-            collider->size = model->size;
-            collider->min = collider->pos - collider->size * 0.5f;
-            collider->max = collider->pos + collider->size * 0.5f;
+         collider_t coll;
+         line_data_t data;
+         for (int i = 0; i  < colliders.size(); i++){
+            coll = colliders.at(i);
+            data = coll.model->get_line_data();
+            state.renderer->draw_line(coll.max, coll.min,
+                  color::red, 5.0f, state.default_shader,
+                  data);
+            state.renderer->draw_cube(coll.min, coll.max, color::black, state.default_shader, 
+                  data);
+            colliders.at(i) = {data.pos, data.size, coll.min, coll.max, coll.model};
          }
       }
       void update_collisions(){
          update_colliders();
          for (int i = 0; i < colliders.size(); i++){
-            for (int j = 0; j < colliders.size(); j++){
-               if (i != j && check_AABB(colliders.at(i), colliders.at(j))) {
-                  // printf("COLLISION DETECTED: %f\n\n", state.deltatime);
+            for (int j = i+1; j < colliders.size(); j++){
+               if (check_AABB(colliders.at(i), colliders.at(j))) {
+                  // TODO: resolve collision:::
+                  printf("COLLISION DETECTED: %f\n", state.deltatime);
                }
             }
          }
       }
 
       bool check_AABB(collider_t a, collider_t b){
-         return (
-          a.min.x <= b.max.x &&
-          a.max.x >= b.min.x &&
-          a.min.y <= b.max.y &&
-          a.max.x >= b.min.y &&
-          a.min.z <= b.max.z &&
-          a.max.z >= b.min.z
-        );
+         a.max = glm::normalize(a.max) + a.pos;
+         a.min = glm::normalize(a.min) + a.pos;
+         b.max = glm::normalize(b.max) + b.pos;
+         b.min = glm::normalize(b.min) + b.pos;
+         return (a.max.x >= b.min.x && a.min.x <= b.max.x) &&
+                (a.max.y >= b.min.y && a.min.y <= b.max.y) &&
+                (a.max.z >= b.min.z && a.min.z <= b.max.z);
       }
 
       

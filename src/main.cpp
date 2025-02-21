@@ -24,7 +24,7 @@ int main() {
    state.camera->window_width = 3000;
    state.camera->window_height = 5000;
 
-
+   Model camera_model("camera.obj");
    Model model("cottage_blender.obj");
    Model model2("fish.obj");
    Model model3("house.obj");
@@ -33,6 +33,7 @@ int main() {
    // Collision collision;
    // collision.add_collider(&model);
    // collision.add_collider(&model2);
+
 
    Shader shd;
    shd.init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
@@ -44,6 +45,9 @@ int main() {
 
    model3.set_shader(&shd);
    model3.set_size(glm::vec3(0.5f));
+
+   camera_model.set_shader(&shd);
+   camera.set_model(&camera_model);
 
    Renderer render;
    Shader shd2;
@@ -76,8 +80,9 @@ int main() {
       render.draw_cube(b.min, b.max, color::black, &shd2, &model2);
       render.draw_line(a.max, a.min, color::red, 5.0f, &shd2, &model);
       render.draw_cube(a.min, a.max, color::black, &shd2, &model);
+      
+      render.draw_circle(glm::vec3(3.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, color::green, &shd2, &model);
 
-      // collision.update_collisions();
 
       imgui::render();
       glfwSwapBuffers(window);

@@ -1,11 +1,13 @@
 #include "camera.hpp"
 #include "input.hpp"
+#include "model.hpp"
 
 glm::mat4 Camera::get_projection_ortho() {
    float aspect = (float)window_width/window_height;
    glm::mat4 proj = glm::ortho(-aspect * zoom, aspect*zoom, -aspect*zoom, aspect*zoom, -1.0f, 1.0f);
    return proj;
 }
+
 
 glm::mat4 Camera::get_projection(){
    glm::mat4 proj;
@@ -94,4 +96,6 @@ glm::vec2 Camera::get_mouse_pos() {
 void Camera::update(){ 
    update_movement();
    view = glm::lookAt(pos, pos+front, up);
+   model->set_pos(pos + glm::vec3(0.0f));
+   model->set_size(size);
 }

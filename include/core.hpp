@@ -58,7 +58,17 @@ namespace color {
    const GLfloat yellow[] = {1.000, 0.843, 0.000, 1.0f};
 }
 
+struct character_t {
+   uint id;
+   glm::ivec2 size;
+   glm::ivec2 bearing;
+   uint advance;
+};
+
 class Texture {
+   public:
+      std::map<char, character_t> characters;
+   
    private:
       uint id;
       std::string type;
@@ -66,6 +76,7 @@ class Texture {
       std::string name;
 
    public: 
+      Texture(){}
       Texture(const std::string src): name(src){ 
          char new_src[TEXTURES_DIR.length() + src.length()];
          sprintf(new_src, "%s%s", TEXTURES_DIR.c_str(), src.c_str());
@@ -78,6 +89,7 @@ class Texture {
       };
       ~Texture(){};
    public:
+      void load_font();
       void use()   { glBindTexture(GL_TEXTURE_2D, id); }
       void unuse() { glBindTexture(GL_TEXTURE_2D, 0); }
       void set_type(std::string name){ type = name; }
@@ -107,11 +119,14 @@ class Vertex {
       int create_EBO(const void* data, size_t, GLenum type=GL_STATIC_DRAW);
       int create_VBO(const void* data, size_t, GLenum type=GL_STATIC_DRAW);
 
-      void bind()   { glBindVertexArray(VAO);}
-      void unbind() { glBindVertexArray(0);  }
+      void bind()       { glBindVertexArray(VAO);}
+      void bind_vbo()   { glBindBuffer(GL_ARRAY_BUFFER, VBO);}
+      void unbind()     { glBindVertexArray(0);  }
+      void unbind_vbo()  { glBindBuffer(GL_ARRAY_BUFFER, 0);  }
 
       void setup_mesh(Mesh *mesh);
       
+      void sub_data(const void* data, size_t size);
       void add_atrib(uint id, GLint size, GLenum type, GLsizei stride, void* offset=0);
       int draw_EBO(GLenum mode, size_t size);
       int draw_VBO(GLenum mode, size_t size);

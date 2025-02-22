@@ -1,6 +1,8 @@
 #include "camera.hpp"
 #include "input.hpp"
 #include "model.hpp"
+#include "collision.hpp"
+#include <GLFW/glfw3.h>
 
 glm::mat4 Camera::get_projection_ortho() {
    float aspect = (float)window_width/window_height;
@@ -18,23 +20,40 @@ glm::mat4 Camera::get_projection(){
 }
 
 void Camera::update_movement(){
+   collider_t collider;
+   glm::vec3 p = pos;
    float vel = speed * state.deltatime;
+
+   is_walking = 0;
    if (input::is_pressed(window, GLFW_KEY_W)){
-      pos += front * vel; 
+      p += front * vel; 
+      is_walking = true;
    }
    if (input::is_pressed(window, GLFW_KEY_S)){
-      pos -= front * vel;
+      p -= front * vel;
+      is_walking = true;
    }
    if (input::is_pressed(window, GLFW_KEY_D)){
-      pos += right * vel;
+      p += right * vel;
+      is_walking = true;
    }
    if (input::is_pressed(window, GLFW_KEY_A)){
-      pos -= right * vel;
+      p -= right * vel;
+      is_walking = true;
    }
+   
+   if (is_walking){
+      walk_offset = sin(glfwGetTime() * 5.0f) * 0.01f;
+   } else walk_offset = 0.0f;
 
-   if (!is_flying && pos.y != ground_level ) {
+   collider = model->caclulate_boundaries();
+   collider.pos = p;
+   //TODO:: add sliding 
+   if (!state.collision->AABB_collision_with(&collider))
+      this->pos = p;
+   
+   if (!is_flying && pos.y != ground_level ) 
       pos.y = ground_level;
-   }
 }
 
 void Camera::update_movement2D(){
@@ -99,7 +118,7 @@ glm::vec2 Camera::get_mouse_pos() {
       
 void Camera::update(){ 
    update_movement();
-   view = glm::lookAt(pos, pos+front, up);
+   view = glm::lookAt(pos + glm::vec3(0.0f, walk_offset, 0.0f), pos+front, up);
    if (model != NULL) {
       model->set_pos(pos);
       model->set_size(size);

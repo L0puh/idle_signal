@@ -1,8 +1,8 @@
+#include "collision.hpp"
 #include "core.hpp"
 #include "model.hpp"
 #include "camera.hpp"
 
-#include "collision.hpp"
 #include "renderer.hpp"
 #include <GLFW/glfw3.h>
 
@@ -23,30 +23,39 @@ int main() {
 
    Renderer render;
    Model camera_model("camera.obj");
-   Model model("fish.obj");
+   Model model("house.obj");
+   Model model2("monkey.obj");
 
 
-   Shader shd, shd2;
+   Shader shd, shd2, text_shader;
+   Texture text_tx;
+   Object text_obj(object_e::line, &text_tx);
+
+
    shd.init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
    shd2.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
 
    model.set_shader(&shd);
-   model.set_pos(glm::vec3(2.0, -0.5, 0.0f));
-   model.set_size(glm::vec3(0.005f));
+   model.set_pos(glm::vec3(4.0, 0.0, 0.0f));
+   model.set_size(glm::vec3(0.05f));
+   model2.set_shader(&shd);
+   model2.set_pos(glm::vec3(-2.0, 0.0, 0.0f));
+   model2.set_size(glm::vec3(0.05f));
 
    camera_model.set_shader(&shd);
    camera_model.set_size(camera.size);
    camera.set_model(&camera_model);
 
    Collision collision;
-   collision.add_collider(&camera_model);
    collision.add_collider(&model);
+   collision.add_collider(&model2);
 
    state.default_shader = &shd2;
    state.renderer = &render;
    state.camera = &camera;
    state.camera->window_width = 3000;
    state.camera->window_height = 5000;
+   state.collision = &collision;
 
    while (!glfwWindowShouldClose(window)){
 
@@ -57,12 +66,13 @@ int main() {
       imgui::main_draw();
       
       model.draw();
+      model2.draw();
 
       render.draw_circle(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f),
-            1.0f, color::green, &shd2, {camera.pos + glm::vec3(0.0f,
-                  -camera.size.y, 0.0f), camera.size});
+               0.4f, color::green, &shd2, {camera.pos + glm::vec3(0.0f,
+               -camera.size.y, 0.0f), camera.size});
+      render.draw_text(&text_obj, "TEST", {1.0f, 0.0f}, 0.5, color::red);
    
-      collision.update_collisions();
       imgui::render();
       glfwSwapBuffers(window);
       glfwPollEvents();

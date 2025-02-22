@@ -6,6 +6,8 @@
 
 class Camera {
    public:
+      float walk_offset = 0.0f;
+      bool is_walking = false;
       Model *model;
       GLFWwindow* window;
       uint8_t flags;

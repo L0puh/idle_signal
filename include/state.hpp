@@ -17,6 +17,11 @@
 #define DEFAULT_SHADER_TEXTURE_VERT "shaders/default_texture.vert"
 #define DEFAULT_SHADER_TEXTURE_FRAG "shaders/default_texture.frag"
 
+#define TEXT_SHADER_VERT "shaders/text.vert"
+#define TEXT_SHADER_FRAG "shaders/text.frag"
+
+#define FONT_PATH "assets/fonts/ElaineSans-Medium.ttf"
+
 #define ASSIMP_FLAGS_LOAD  (aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_GenSmoothNormals)
 const std::string TEXTURES_DIR = "assets/textures/";
 const std::string MODELS_DIR  =  "assets/models/";
@@ -25,8 +30,10 @@ const std::string MODELS_DIR  =  "assets/models/";
 class Camera;
 class Renderer;
 class Shader;
+class Collision;
 
 struct STATE {
+   Collision *collision;
    Renderer *renderer;
    Camera *camera;
    Shader *default_shader;

@@ -1,5 +1,9 @@
 #include "core.hpp"
 
+
+void Vertex::sub_data(const void* data, size_t size){
+   glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+}
 int Vertex::create_VAO(){
    glGenVertexArrays(1, &VAO);
    return VAO;

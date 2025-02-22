@@ -44,11 +44,21 @@ class Collision {
          for (int i = 0; i < colliders.size(); i++){
             for (int j = i+1; j < colliders.size(); j++){
                if (check_AABB(colliders.at(i), colliders.at(j))) {
-                  // TODO: resolve collision:::
+                  // TODO: resolve collision:??
                   printf("COLLISION DETECTED: %f\n", state.deltatime);
                }
             }
          }
+      }
+
+      bool AABB_collision_with(collider_t *collider){
+         update_colliders();
+         for (int i = 0; i < colliders.size(); i++){
+            if (check_AABB(*collider, colliders.at(i))) {
+               return 1;
+            }
+         }
+         return 0;
       }
 
       bool check_AABB(collider_t a, collider_t b){

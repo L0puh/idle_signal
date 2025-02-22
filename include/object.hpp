@@ -8,7 +8,8 @@ typedef enum {
    cube,
    triangle,
    rectangle,
-   line
+   line,
+   text
 } object_e;
 
 
@@ -16,11 +17,12 @@ typedef enum {
 /* TODO: needs refactoring... */
 
 class Object {
-   private:
-      glm::mat4 model = glm::mat4(1.0f);
+   public:
       Shader *shd;
       Texture *texture;
       Vertex vert;
+   private:
+      glm::mat4 model = glm::mat4(1.0f);
       object_e type;
       bool with_texture = false;
       int count_vertices;
@@ -47,6 +49,16 @@ class Object {
          texture(tex), type(type){
          if (tex != NULL) with_texture=1;
          switch(type){
+         case text: 
+            {
+               shd->init_shader(TEXT_SHADER_VERT, TEXT_SHADER_FRAG);
+               vert.create_VBO(NULL, sizeof(float) * 2 * 6, GL_DYNAMIC_DRAW);
+               vert.add_atrib(0, 2, GL_FLOAT, 2 * sizeof(float), 0);
+               vert.add_atrib(1, 2, GL_FLOAT, 2 * sizeof(float), (void*) (2 * sizeof(float)));
+               texture->load_font();
+
+               break;
+            }
          case cube:
             {
                if (with_texture) {

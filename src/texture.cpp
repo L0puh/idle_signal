@@ -7,11 +7,15 @@
 
 
 void Texture::load_font(){
-   FT_Library ft;
-   if (FT_Init_FreeType(&ft)) error_and_exit("error in init freetype library");
    FT_Face face;
+   FT_Library ft;
+   
+   if (FT_Init_FreeType(&ft)) 
+      error_and_exit("error in init freetype library");
+
    if (FT_New_Face(ft, FONT_PATH, 0, &face)) {
       error_and_exit("error in font loading");
+      return;
    } else {
       FT_Set_Pixel_Sizes(face, 0, 48);
       glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -19,8 +23,9 @@ void Texture::load_font(){
          if (FT_Load_Char(face, c, FT_LOAD_RENDER)) 
             error_and_exit("failed to load glyph");
 
+         uint id;
          glGenTextures(1, &id);
-         use();
+         use(id);
          glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width,
                      face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE,
                      face->glyph->bitmap.buffer);
@@ -35,8 +40,8 @@ void Texture::load_font(){
                                       face->glyph->bitmap_top),
                            static_cast<uint>(face->glyph->advance.x) };
          characters[c] = ch;
+         unuse();
       }
-      unuse();
    }
    FT_Done_Face(face);
    FT_Done_FreeType(ft);
@@ -54,9 +59,10 @@ void Texture::load_texture(){
    //stbi_set_flip_vertically_on_load(true);
    data = stbi_load(path.c_str(), &width, &height, &channels, 0);
    
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
    
    if (!data){
@@ -65,7 +71,7 @@ void Texture::load_texture(){
       error_and_exit(info);
       return;
    }
-
+   
    if (path.find(".png") != -1){
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
                    width, height, 0, GL_RGBA,

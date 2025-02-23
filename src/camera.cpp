@@ -5,8 +5,7 @@
 #include <GLFW/glfw3.h>
 
 glm::mat4 Camera::get_projection_ortho() {
-   float aspect = (float)window_width/window_height;
-   glm::mat4 proj = glm::ortho(-aspect * zoom, aspect*zoom, -aspect*zoom, aspect*zoom, -1.0f, 1.0f);
+   glm::mat4 proj = glm::ortho(0.0f, (float)window_width, 0.0f, (float)window_height);
    return proj;
 }
 

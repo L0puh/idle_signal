@@ -18,7 +18,7 @@ typedef enum {
 
 class Object {
    public:
-      Shader *shd;
+      Shader *shd; 
       Texture *texture;
       Vertex vert;
    private:
@@ -32,6 +32,14 @@ class Object {
 
    public:
       Object(){}
+
+      //for text (FIXME)
+      Object(object_e type, Texture *tex, Shader *shd): shd(shd), texture(tex){
+         texture->load_font();
+         shd->init_shader(TEXT_SHADER_VERT, TEXT_SHADER_FRAG);
+         vert.create_VBO(NULL, sizeof(float) * 4 * 6, GL_DYNAMIC_DRAW);
+         vert.add_atrib(0, 4, GL_FLOAT, 4 * sizeof(float), 0);
+      }
 
       //for a line
       Object(object_e type, glm::vec3 from, glm::vec3 to, Shader *shd):
@@ -49,16 +57,6 @@ class Object {
          texture(tex), type(type){
          if (tex != NULL) with_texture=1;
          switch(type){
-         case text: 
-            {
-               shd->init_shader(TEXT_SHADER_VERT, TEXT_SHADER_FRAG);
-               vert.create_VBO(NULL, sizeof(float) * 2 * 6, GL_DYNAMIC_DRAW);
-               vert.add_atrib(0, 2, GL_FLOAT, 2 * sizeof(float), 0);
-               vert.add_atrib(1, 2, GL_FLOAT, 2 * sizeof(float), (void*) (2 * sizeof(float)));
-               texture->load_font();
-
-               break;
-            }
          case cube:
             {
                if (with_texture) {

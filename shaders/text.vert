@@ -1,12 +1,11 @@
 #version 330 core
-layout (location = 0) in vec2 pos; 
-layout (location = 1) in vec2 tex; 
+layout (location = 0) in vec4 data; 
 
 out vec2 _tex_coord;
-uniform mat4 projection;
+uniform mat4 _projection;
 
 void main()
 {
-    gl_Position = projection * vec4(pos.xy, 0.0, 1.0);
-    _tex_coord = tex;
+    gl_Position = _projection * vec4(data.xy, 0.0, 1.0);
+    _tex_coord = data.zw;
 }

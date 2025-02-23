@@ -75,8 +75,9 @@ class Model {
          shd->set_mat4fv("_projection", state.camera->get_projection());
          shd->set_mat4fv("_view", state.camera->get_view());
          shd->set_mat4fv("_model", model);
-         if (!with_texture) 
+         if (!with_texture) {
             shd->set_vec3("_color", color);
+         }
 
          for (uint i=0; i < meshes.size(); i++){
             meshes.at(i).draw();

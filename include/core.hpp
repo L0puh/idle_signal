@@ -90,7 +90,8 @@ class Texture {
       ~Texture(){};
    public:
       void load_font();
-      void use()   { glBindTexture(GL_TEXTURE_2D, id); }
+      void use()        { glBindTexture(GL_TEXTURE_2D, id); }
+      void use(uint id) {glBindTexture(GL_TEXTURE_2D, id); }
       void unuse() { glBindTexture(GL_TEXTURE_2D, 0); }
       void set_type(std::string name){ type = name; }
       std::string& get_src() { return path; }

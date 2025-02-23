@@ -60,9 +60,11 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
                         mesh->mNormals[i].z };
       }
       if (mesh->mTextureCoords[0]){
+         with_texture = 1;
          vert.texcoord = {mesh->mTextureCoords[0][i].x,
                           mesh->mTextureCoords[0][i].y};
       } else {
+         with_texture = 0;
          vert.texcoord = {0.0f, 0.0f};
       }
       verts.push_back(vert);
@@ -87,6 +89,8 @@ std::vector<Texture> Model::load_texture(aiMaterial *mat, aiTextureType type, st
    bool skip;
    aiString str;
    std::vector<Texture> texs;
+   if (mat->GetTextureCount(type) > 0) with_texture = 1;
+   else with_texture = 0;
    for (uint i=0; i < mat->GetTextureCount(type); i++){
       mat->GetTexture(type, i, &str);
       skip = false;
@@ -148,6 +152,8 @@ void Mesh::draw(){
    vertex.bind();
    vertex.draw_EBO(GL_TRIANGLES, indices.size());
    vertex.unbind();
+   if (textures.size() > 0)    
+      textures.at(0).unuse();
 }
 
 void Vertex::setup_mesh(Mesh *mesh){

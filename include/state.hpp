@@ -20,7 +20,8 @@
 #define TEXT_SHADER_VERT "shaders/text.vert"
 #define TEXT_SHADER_FRAG "shaders/text.frag"
 
-#define FONT_PATH "assets/fonts/ElaineSans-Medium.ttf"
+#define FONT_PATH "assets/fonts/freeSans.ttf"
+
 
 #define ASSIMP_FLAGS_LOAD  (aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_GenSmoothNormals)
 const std::string TEXTURES_DIR = "assets/textures/";

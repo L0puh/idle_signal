@@ -2,7 +2,9 @@
 
 
 void Vertex::sub_data(const void* data, size_t size){
+   bind_vbo();
    glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+   unbind_vbo();
 }
 int Vertex::create_VAO(){
    glGenVertexArrays(1, &VAO);

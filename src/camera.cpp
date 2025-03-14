@@ -41,7 +41,7 @@ void Camera::update_movement(){
       is_walking = true;
    }
    
-   if (is_walking){
+   if (is_walking && !is_flying){
       walk_offset = sin(glfwGetTime() * 5.0f) * 0.01f;
    } else walk_offset = 0.0f;
 

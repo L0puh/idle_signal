@@ -25,6 +25,10 @@ namespace imgui {
       {
          ImGui::SliderFloat("ZOOM OF CAMERA:", &state.camera->zoom, -90.0f, 90.0f, "%.5f", 0);
          ImGui::SliderFloat3("POS OF CAMERA:", &state.camera->pos.x, -10.0f, 10.0f, "%.5f", 0);
+         if (state.camera->is_flying)
+            ImGui::Text("FLYING ON");
+         else
+            ImGui::Text("FLYING OFF");
       }
       ImGui::End();
    }

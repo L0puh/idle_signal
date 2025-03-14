@@ -3,6 +3,7 @@
 
 #include "core.hpp"
 #include "camera.hpp"
+#include <GLFW/glfw3.h>
 
 namespace input {
    inline bool is_pressed(GLFWwindow* window, int key) {
@@ -28,10 +29,6 @@ namespace input {
       }
    }
    inline void key_callback(GLFWwindow* window, int key, int code, int action, int mods){
-      if (action == GLFW_PRESS) 
-         state.keys[key] = true;
-      else if (action == GLFW_RELEASE)
-         state.keys[key] = false;
 
       switch(key){
          case GLFW_KEY_Q:
@@ -43,7 +40,17 @@ namespace input {
          case GLFW_KEY_F:
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             break;
+         case GLFW_KEY_G:
+            if (!state.keys_lastpress[GLFW_KEY_G] || state.cooldown < glfwGetTime() - state.keys_lastpress[GLFW_KEY_G]){
+               state.keys_lastpress[GLFW_KEY_G] = glfwGetTime(); 
+               state.camera->is_flying = !state.camera->is_flying;
+            }
+            break;
       }
+      if (action == GLFW_PRESS) 
+         state.keys[key] = true;
+      else if (action == GLFW_RELEASE)
+         state.keys[key] = false;
    }
    inline void cursor_callback(GLFWwindow* window, double xpos, double ypos){
       if (state.first_mouse) {

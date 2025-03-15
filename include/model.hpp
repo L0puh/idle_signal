@@ -49,6 +49,7 @@ class Model {
    private:
       Shader *shd;
    public:
+      bool is_picked = false;
       float rotation_angle;
       glm::vec3 pos, rotation, size;
       std::vector<Mesh> meshes;
@@ -85,7 +86,6 @@ class Model {
          shd->unuse();
       }
 
-      line_data_t get_line_data();
       void is_with_texture(bool t) { with_texture = t; }
       void set_shader(Shader *shd) { 
          this->shd = shd;
@@ -105,6 +105,9 @@ class Model {
          this->rotation = pos;
       }
 
+      line_data_t get_line_data(){
+         return {pos, size, rotation_angle, rotation};
+      }
       collider_t caclulate_boundaries();
    private:
       void load_model(const std::string src);

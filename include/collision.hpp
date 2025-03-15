@@ -28,12 +28,13 @@ class Collision {
       void update_colliders(){
          collider_t coll;
          line_data_t data;
+
          for (int i = 0; i  < colliders.size(); i++){
             coll = colliders.at(i);
             data = coll.model->get_line_data();
             state.renderer->draw_line(coll.max, coll.min,
-                  color::red, 5.0f, state.default_shader,
-                  data);
+                     color::red, 5.0f, state.default_shader,
+                     data);
             state.renderer->draw_cube(coll.min, coll.max, color::black, state.default_shader, 
                   data);
             colliders.at(i) = {data.pos, data.size, coll.min, coll.max, coll.model};

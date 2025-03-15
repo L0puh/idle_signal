@@ -47,6 +47,7 @@ class Camera {
       void show_cursor() { 
          glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
       }
+      
       void set_pos(glm::vec3 pos)   { this->pos   = pos; }
       void set_speed(float speed)   { this->speed = speed; }
       void set_zoom(float zoom)     { this->zoom  = zoom; }
@@ -56,6 +57,12 @@ class Camera {
       void set_flag(uint8_t flag)   { flags |= flag; }
       void set_model(Model* model)  { this->model = model; }
 
+   public:
+      bool is_pointing_to_object(glm::vec3& pos, float threshold=0.9f);
+      inline bool is_close_to_object(glm::vec3& pos, float threshold=1.5f) {
+         float dist = glm::length(this->pos - pos);
+         return dist < threshold;
+      }
    private:
       void update_vectors();
       void update_movement2D();

@@ -18,6 +18,18 @@ glm::mat4 Camera::get_projection(){
       
 }
 
+bool Camera::is_pointing_to_object(glm::vec3& pos, float threshold){
+   float prod, norm;
+   glm::vec3 direction = pos - this->pos;
+   
+   norm = glm::length(direction);
+   if (norm == 0) return false; 
+   prod = glm::dot(glm::normalize(front), direction / norm);
+
+   return prod > threshold;
+}
+
+
 void Camera::update_movement(){
    collider_t collider;
    glm::vec3 p = pos;

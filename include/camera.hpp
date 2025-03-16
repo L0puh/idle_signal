@@ -6,6 +6,7 @@
 
 class Camera {
    public:
+      bool is_picked_object = false;
       float walk_offset = 0.0f;
       bool is_walking = false;
       Model *model;

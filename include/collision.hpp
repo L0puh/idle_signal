@@ -55,7 +55,7 @@ class Collision {
       bool AABB_collision_with(collider_t *collider){
          update_colliders();
          for (int i = 0; i < colliders.size(); i++){
-            if (check_AABB(*collider, colliders.at(i))) {
+            if (!colliders.at(i).model->is_picked && check_AABB(*collider, colliders.at(i))) {
                return 1;
             }
          }

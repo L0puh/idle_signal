@@ -25,7 +25,7 @@ int main() {
    Renderer render;
    Model camera_model("camera.obj");
    Model house("house.obj");
-   Model monkey("monkey.obj");
+   Model aircraft("aircraft.obj");
    Model ball("ball.obj");
    Model plane_model("plane.obj");
 
@@ -40,9 +40,9 @@ int main() {
    house.set_pos(glm::vec3(4.0, 0.0, 0.0f));
    house.set_size(glm::vec3(0.05f));
 
-   monkey.set_shader(&shd);
-   monkey.set_pos(glm::vec3(-2.0, 0.0, 0.0f));
-   monkey.set_size(glm::vec3(0.05f));
+   aircraft.set_shader(&shd);
+   aircraft.set_pos(glm::vec3(-2.0, 0.0, 0.0f));
+   aircraft.set_size(glm::vec3(0.05f));
 
    ball.set_shader(&shd);
    ball.set_pos(glm::vec3(-3.0f, -0.20f, 0.0f));
@@ -58,8 +58,8 @@ int main() {
 
    Collision collision;
    collision.add_collider(&house);
-   collision.add_collider(&monkey);
-   // collision.add_collider(&ball);
+   collision.add_collider(&aircraft);
+   collision.add_collider(&ball);
 
    state.default_shader = &shd2;
    state.renderer = &render;
@@ -67,7 +67,10 @@ int main() {
    state.camera->window_width = 3000;
    state.camera->window_height = 5000;
    state.collision = &collision;
-
+      
+   std::vector<Model*> pickables;
+   pickables.push_back(&aircraft);
+   pickables.push_back(&ball);
    while (!glfwWindowShouldClose(window)){
 
       imgui::frame();
@@ -79,24 +82,32 @@ int main() {
       imgui::main_draw();
       
       house.draw();
-      monkey.draw();
+      aircraft.draw();
       plane_model.draw();
       ball.draw();
-      if (camera.is_close_to_object(ball.pos) && camera.is_pointing_to_object(ball.pos) && !ball.is_picked){
-         render.draw_text(&text_obj, "PICK UP (E)", {state.camera->window_width/2.0f,
-                     state.camera->window_height/2.0f - 40.0f }, 0.5, color::black);
+      for (auto& p: pickables){
+         //FIXME:: not really precise when two objects confront  
+         if (!camera.is_picked_object && camera.is_close_to_object(p->pos) 
+                     && camera.is_pointing_to_object(p->pos) && !p->is_picked){
+            render.draw_text(&text_obj, "PICK UP (E)", {state.camera->window_width/2.0f,
+                        state.camera->window_height/2.0f - 40.0f }, 0.5, color::black);
+            if (state.keys[GLFW_KEY_E]){
+               p->is_picked = true;
+               camera.is_picked_object = true;
+            }
+            break;
+         }
 
-         if (state.keys[GLFW_KEY_E])
-            ball.is_picked = true;
-      }
-
-      if (state.keys[GLFW_KEY_E] && ball.is_picked){
-         ball.set_pos(camera.pos - 0.1f);
-      } else if (!state.keys[GLFW_KEY_E] && ball.is_picked){
-         ball.is_picked = false;
+         if (state.keys[GLFW_KEY_E] && p->is_picked){
+            p->set_pos(camera.pos + camera.front);
+         } else if (!state.keys[GLFW_KEY_E] && p->is_picked){
+            p->set_pos(camera.pos + camera.front * 1.04f);
+            p->is_picked = false;
+            camera.is_picked_object = false;
+         }
       }
       render.draw_circle(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f),
-               0.4f, color::green, &shd2, {camera.pos + glm::vec3(0.0f,
+               0.4f, color::red, &shd2, {camera.pos + glm::vec3(0.0f,
                -camera.size.y, 0.0f), camera.size});
       
       render.draw_text(&text_obj, "+", {state.camera->window_width/2.0f,

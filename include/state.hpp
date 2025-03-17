@@ -27,7 +27,7 @@
 const std::string TEXTURES_DIR = "assets/textures/";
 const std::string MODELS_DIR  =  "assets/models/";
 
-
+class World;
 class Camera;
 class Renderer;
 class Shader;
@@ -38,6 +38,7 @@ struct STATE {
    Renderer *renderer;
    Camera *camera;
    Shader *default_shader;
+   World *world;
    
    float bg_color[4];
    float mouse_sensitivity = 0.05f;

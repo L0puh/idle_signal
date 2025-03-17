@@ -1,11 +1,15 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP 
 
+#include <btBulletCollisionCommon.h>
 #include <glm/glm.hpp>
+#include "BulletCollision/CollisionShapes/btBoxShape.h"
 #include "core.hpp"
+#include "world.hpp"
 
 class Camera {
    public:
+      btCollisionObject* collision_obj;
       bool is_picked_object = false;
       float walk_offset = 0.0f;
       bool is_walking = false;
@@ -30,7 +34,14 @@ class Camera {
    public:
       Camera(GLFWwindow* window, uint8_t flags): window(window),
          speed(1.5f), flags(flags), 
-         zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f){}
+         zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f)
+   {
+      collision_obj = new btCollisionObject();
+      btBoxShape* shape = new btBoxShape(btVector3(0.2, 0.4, 0.2));
+      collision_obj->setCollisionShape(shape);
+      state.world->add_collision_object(collision_obj);
+   }
+
    public:
       glm::vec2 unproject(glm::vec2 pos);
       glm::vec2 project(double x, double y);

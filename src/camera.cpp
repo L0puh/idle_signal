@@ -127,6 +127,8 @@ glm::vec2 Camera::get_mouse_pos() {
       
 void Camera::update(){ 
    update_movement();
+   collision_obj->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), 
+                                          btVector3(pos.x, pos.y, pos.z)));
    view = glm::lookAt(pos + glm::vec3(0.0f, walk_offset, 0.0f), pos+front, up);
    if (model != NULL) {
       model->set_pos(pos);

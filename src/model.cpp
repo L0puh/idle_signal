@@ -1,4 +1,4 @@
-
+#include <btBulletDynamicsCommon.h>
 #include <vector>
 #include <assimp/material.h>
 #include <glm/geometric.hpp>
@@ -16,7 +16,8 @@
 void Model::load_model(const std::string src){
    const aiScene *scene;
    Assimp::Importer importer;
-
+   
+   trigmesh = new btTriangleMesh();
    scene = importer.ReadFile(src, ASSIMP_FLAGS_LOAD);
    if (scene == NULL || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
       //FIXME 
@@ -28,6 +29,7 @@ void Model::load_model(const std::string src){
    log_info(info);
 
    process_node(scene->mRootNode, scene);
+   collision_shape = new btBvhTriangleMeshShape(trigmesh, true);
 }
 
 void Model::process_node(aiNode* node, const aiScene* scene){
@@ -66,19 +68,29 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
       }
       verts.push_back(vert);
    }
-
+  
    for (uint i = 0; i < mesh->mNumFaces; i++){
       aiFace face = mesh->mFaces[i];
       for (uint j = 0; j < face.mNumIndices; j++){
+         aiVector3D v = mesh->mVertices[face.mIndices[j]];
+         trigmesh->addTriangle(btVector3(v.x, v.y, v.z),
+                   btVector3(mesh->mVertices[face.mIndices[(j + 1) % face.mNumIndices]].x,
+                              mesh->mVertices[face.mIndices[(j + 1) % face.mNumIndices]].y,
+                              mesh->mVertices[face.mIndices[(j + 1) % face.mNumIndices]].z),
+                   btVector3(mesh->mVertices[face.mIndices[(j + 2) % face.mNumIndices]].x,
+                              mesh->mVertices[face.mIndices[(j + 2) % face.mNumIndices]].y,
+                              mesh->mVertices[face.mIndices[(j + 2) % face.mNumIndices]].z));
          indices.push_back(face.mIndices[j]);
       }
    }
+
    if (mesh->mMaterialIndex >= 0){
       aiMaterial *mat = scene->mMaterials[mesh->mMaterialIndex];
       std::vector<Texture> diffuse = load_texture(mat, aiTextureType_DIFFUSE, "diffuse");
       text.insert(text.end(), diffuse.begin(), diffuse.end());
       return Mesh(verts, indices, text);
    }
+
    return Mesh(verts, indices, text);
 }
 

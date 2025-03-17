@@ -1,0 +1,34 @@
+ + verbose is on
+ + verbose is off
+ + build folder exists
+ + running
+[  5%] Building CXX object CMakeFiles/app.dir/src/model.cpp.o
+[ 10%] Linking CXX executable app
+ + verbose is on
+ + verbose is off
+ + build folder exists
+ + running
+[  5%] Building CXX object CMakeFiles/app.dir/src/camera.cpp.o
+[ 10%] Building CXX object CMakeFiles/app.dir/src/main.cpp.o
+[ 15%] Building CXX object CMakeFiles/app.dir/src/model.cpp.o
+[ 21%] Linking CXX executable app
+ + verbose is on
+ + verbose is off
+ + build folder exists
+ + running
+[  5%] Building CXX object CMakeFiles/app.dir/src/camera.cpp.o
+[ 10%] Building CXX object CMakeFiles/app.dir/src/main.cpp.o
+[ 15%] Building CXX object CMakeFiles/app.dir/src/model.cpp.o
+[ 21%] Linking CXX executable app
+ + verbose is on
+ + verbose is off
+ + build folder exists
+ + running
+[  5%] Building CXX object CMakeFiles/app.dir/src/main.cpp.o
+[ 10%] Linking CXX executable app
+ + verbose is on
+ + verbose is off
+ + build folder exists
+ + running
+[  5%] Building CXX object CMakeFiles/app.dir/src/main.cpp.o
+[ 10%] Linking CXX executable app

@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include <btBulletDynamicsCommon.h>
 #include "core.hpp"
 #include "camera.hpp"
 
@@ -46,9 +47,11 @@ class Model {
       glm::mat4 model;
       glm::vec4 color;
       bool with_texture = true;
+      btTriangleMesh *trigmesh; 
    private:
       Shader *shd;
    public:
+      btBvhTriangleMeshShape* collision_shape;
       bool is_picked = false;
       float rotation_angle;
       glm::vec3 pos, rotation, size;

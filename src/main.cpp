@@ -1,14 +1,30 @@
+#include <btBulletDynamicsCommon.h>
 #include "collision.hpp"
 #include "core.hpp"
 #include "model.hpp"
 #include "camera.hpp"
-
 #include "renderer.hpp"
-#include <GLFW/glfw3.h>
 
 void enable_if_debug();
 void shutdown(GLFWwindow*);
 
+void get_rigid_body(btDiscreteDynamicsWorld *world, Model &house, btCollisionObject* cam_obj){
+   btCollisionShape* house_coll = house.collision_shape;
+   btDefaultMotionState* houseMotionState = new
+               btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1),
+               btVector3(house.pos.x, house.pos.y, house.pos.z)));
+   btScalar mass = 0; 
+   btVector3 inertia(0, 0, 0);
+   house_coll->calculateLocalInertia(mass, inertia);
+   btRigidBody::btRigidBodyConstructionInfo houseRigidBodyCI(mass, houseMotionState, house_coll, inertia);
+   btRigidBody* houseRigidBody = new btRigidBody(houseRigidBodyCI);
+   world->addRigidBody(houseRigidBody, 1, 1);
+
+   btSphereShape* cameraShape = new btSphereShape(0.0);
+   cam_obj = new btCollisionObject();
+   cam_obj ->setCollisionShape(cameraShape);
+   world->addCollisionObject(cam_obj, 1, 1);
+}
 
 int main() {
    memcpy(state.bg_color, color::blue, 
@@ -19,12 +35,19 @@ int main() {
   
    enable_if_debug();
    
+   btDefaultCollisionConfiguration* conf = new btDefaultCollisionConfiguration();
+   btCollisionDispatcher* disp = new btCollisionDispatcher(conf);
+   btBroadphaseInterface* broadphase = new btDbvtBroadphase();
+   btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
+   btDiscreteDynamicsWorld* world = new btDiscreteDynamicsWorld(disp, broadphase, solver, conf);
+   world->setGravity(btVector3(0, -9.81f, 0));
+   
    Camera camera(window, 0);
    camera.set_pos(glm::vec3(1.0f));
 
    Renderer render;
    Model camera_model("camera.obj");
-   Model house("house.obj");
+   Model house("tower.obj");
    Model aircraft("aircraft.obj");
    Model ball("ball.obj");
    Model plane_model("plane.obj");
@@ -37,8 +60,8 @@ int main() {
    shd2.init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
 
    house.set_shader(&shd);
-   house.set_pos(glm::vec3(4.0, 0.0, 0.0f));
-   house.set_size(glm::vec3(0.05f));
+   house.set_pos(glm::vec3(4.0, -1.0, 0.0f));
+   house.set_size(glm::vec3(0.4f));
 
    aircraft.set_shader(&shd);
    aircraft.set_pos(glm::vec3(-2.0, 0.0, 0.0f));
@@ -57,7 +80,7 @@ int main() {
    camera.set_model(&camera_model);
 
    Collision collision;
-   collision.add_collider(&house);
+   // collision.add_collider(&house);
    collision.add_collider(&aircraft);
    collision.add_collider(&ball);
 
@@ -71,15 +94,29 @@ int main() {
    std::vector<Model*> pickables;
    pickables.push_back(&aircraft);
    pickables.push_back(&ball);
-   while (!glfwWindowShouldClose(window)){
 
+   btCollisionObject *camera_obj;
+   get_rigid_body(world, house, camera_obj);
+
+   while (!glfwWindowShouldClose(window)){
       imgui::frame();
       update_deltatime();
-     
       camera.update();
       camera.hide_cursor();
-
       imgui::main_draw();
+      
+      world->stepSimulation(state.deltatime, 10);
+      camera_obj->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), 
+               btVector3(camera.pos.x, camera.pos.y, camera.pos.z)));
+
+       world->performDiscreteCollisionDetection();
+       for (int i = 0; i < disp->getNumManifolds(); i++) {
+           btPersistentManifold* contactManifold = disp->getManifoldByIndexInternal(i);
+           const btCollisionObject* obA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
+           const btCollisionObject* obB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
+
+           printf("COLLISION!: %f\n", state.deltatime);
+       }
       
       house.draw();
       aircraft.draw();
@@ -119,6 +156,12 @@ int main() {
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    }
    
+   delete world;
+   delete solver;
+   delete broadphase;
+   delete disp;
+   delete conf;
+
    shutdown(window);
    return 0;
 }

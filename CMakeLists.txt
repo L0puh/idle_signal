@@ -11,13 +11,16 @@ endif()
 
 find_package(OpenGL REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(Bullet REQUIRED)
 
 include_directories(libs)
 include_directories(include)
 include_directories(${FREETYPE_INCLUDE_DIRS})
+include_directories(${BULLET_INCLUDE_DIRS})
 
 file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 file(GLOB_RECURSE LIBS    ${CMAKE_CURRENT_SOURCE_DIR}/libs/*.c ${CMAKE_CURRENT_SOURCE_DIR}/libs/*.cpp)
 
 add_executable(app ${LIBS} ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
-target_link_libraries(app glfw OpenGL::GL assimp ${FREETYPE_LIBRARIES})
+target_link_libraries(app glfw OpenGL::GL assimp ${FREETYPE_LIBRARIES}
+   BulletDynamics BulletCollision LinearMath)

@@ -33,6 +33,7 @@ class Camera;
 class Renderer;
 class Shader;
 class Collision;
+class Map;
 
 struct STATE {
    uint8_t mode;
@@ -41,6 +42,7 @@ struct STATE {
    Camera *camera;
    Shader *default_shader;
    World *world;
+   Map *map;
    
    float bg_color[4];
    float mouse_sensitivity = 0.05f;

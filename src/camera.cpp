@@ -111,14 +111,17 @@ glm::vec2 Camera::unproject(glm::vec2 pos){
     return screen;
 }
 
+
 glm::vec2 Camera::project(double x, double y) {
    double normx, normy;
-   normx = (x / window_width ) *  2.0f - 1.0f; 
-   normy = (y / window_height) * -2.0f + 1.0f; 
-   glm::mat4 proj = inverse(get_projection() * get_view());
-   glm::vec4 world = glm::vec4(normx, normy, 1.0f, 1.0f) * proj;
+   normx = (2.0f * x) / window_width - 1.0f;
+   normy = 1.0f - (2.0f * y) / window_height;
+   glm::vec4 clip = glm::vec4(normx, normy, 1.0f, 1.0f); 
+   glm::mat4 invproj = glm::inverse(get_projection());
+   glm::vec4 world = invproj * clip;
    return world;
 }
+
 glm::vec2 Camera::get_mouse_pos() {
    double x, y;
    glfwGetCursorPos(window, &x, &y);

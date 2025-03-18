@@ -1,6 +1,7 @@
 #include <btBulletDynamicsCommon.h>
 #include "collision.hpp"
 #include "core.hpp"
+#include "glm/trigonometric.hpp"
 #include "map.hpp"
 
 void enable_if_debug();
@@ -75,6 +76,7 @@ int main() {
 
    Map map;
    state.mode |= EDIT_MODE;
+   state.map = &map;
 
    while (!glfwWindowShouldClose(window)){
       imgui::frame();
@@ -82,17 +84,25 @@ int main() {
       if (state.mode & PLAY_MODE){
          camera.update();
          camera.hide_cursor();
+      } else {
+         camera.show_cursor();
+         map.editor_popup();
       }
+
       imgui::main_draw();
       world.update();
-      map.editor_popup();
-      
       house.draw();
       aircraft.draw();
       plane_model.draw();
       ball.draw();
+
+      for (const auto& wall: map.walls){
+         render.draw_line(wall.first, wall.second, color::red, 3.0f, &shd2, {glm::vec3(0.0f), glm::vec3(1.0f)}); 
+         // FIXME:
+         // render.draw_rectangle({wall.first.x, 0.0f, wall.first.z}, wall.second, color::black, &shd2, {glm::vec3(0.0f), glm::vec3(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0)});
+      
+      }
       for (auto& p: pickables){
-         //FIXME:: not really precise when two objects confront  
          if (!camera.is_picked_object && camera.is_close_to_object(p->pos) 
                      && camera.is_pointing_to_object(p->pos) && !p->is_picked){
             render.draw_text(&text_obj, "PICK UP (E)", {state.camera->window_width/2.0f,

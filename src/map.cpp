@@ -13,6 +13,12 @@ void Map::editor_popup(){
    {
       
       ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+      // TODO: add different objects
+      ImGui::DragFloat("Scale:", &scale, 1.0f, 0.0f, 100.0f, "%.3f"); ImGui::SameLine(); 
+      ImGui::Text("Choose object:"); ImGui::SameLine();
+      ImGui::RadioButton("Wall", 0); ImGui::SameLine();
+      ImGui::RadioButton("Door", 0);
       draw_grid(draw_list, ImGui::GetCursorScreenPos(), 20.f, imgui_color::white);
 
       ImGui::InvisibleButton("canvas", ImGui::GetContentRegionAvail());
@@ -21,8 +27,9 @@ void Map::editor_popup(){
          if (!ImGui::IsMouseDown(0)){
             is_drawing = false;
             lines.push_back({current_start, pos});
-         }
-         else 
+         } else if (ImGui::IsMouseDown(1)){
+            is_drawing = false;
+         } else 
             draw_list->AddLine(current_start, pos, imgui_color::red, 2.0f);
         }
         if (ImGui::IsItemHovered()) {
@@ -32,11 +39,12 @@ void Map::editor_popup(){
             }
         }
 
-      for (const auto& l: lines)
+      for (const auto& l: lines){
          draw_list->AddLine(l.first, l.second, imgui_color::yellow, 2.0f);
+      }
+      
       ImGui::End();
    }
-
 }
 
 
@@ -46,7 +54,7 @@ void draw_grid(ImDrawList* draw_list, ImVec2 origin, float cell_size, ImU32 colo
    int width, height;
    width = state.camera->window_width, height = state.camera->window_height;
    height /= cell_size;
-   width /= cell_size;
+   width  /= cell_size;
 
    for (int i = 0; i <= height; i++){
       draw_list->AddLine(

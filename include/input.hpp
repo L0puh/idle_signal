@@ -3,6 +3,7 @@
 
 #include "core.hpp"
 #include "camera.hpp"
+#include "map.hpp"
 #include <GLFW/glfw3.h>
 
 namespace input {
@@ -46,6 +47,17 @@ namespace input {
                state.camera->is_flying = !state.camera->is_flying;
             }
             break;
+         case GLFW_KEY_M:
+            if (!state.keys_lastpress[GLFW_KEY_M] || state.cooldown < glfwGetTime() - state.keys_lastpress[GLFW_KEY_M]){
+               state.keys_lastpress[GLFW_KEY_M] = glfwGetTime(); 
+               if (state.mode & EDIT_MODE){
+                  state.mode = PLAY_MODE;
+                  state.map->generate_walls_coord();
+               }
+               else state.mode = EDIT_MODE;
+            }
+            break;
+            
       }
       if (action == GLFW_PRESS) 
          state.keys[key] = true;

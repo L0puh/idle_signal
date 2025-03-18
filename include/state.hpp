@@ -21,7 +21,8 @@
 #define TEXT_SHADER_FRAG "shaders/text.frag"
 
 #define FONT_PATH "assets/fonts/freeSans.ttf"
-
+#define EDIT_MODE 0b1000
+#define PLAY_MODE 0b0100
 
 #define ASSIMP_FLAGS_LOAD  (aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_GenSmoothNormals)
 const std::string TEXTURES_DIR = "assets/textures/";
@@ -34,6 +35,7 @@ class Shader;
 class Collision;
 
 struct STATE {
+   uint8_t mode;
    Collision *collision;
    Renderer *renderer;
    Camera *camera;

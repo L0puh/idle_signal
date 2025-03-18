@@ -56,6 +56,7 @@ namespace color {
    const GLfloat blue[]   = {0.255, 0.412, 0.882, 1.0f};
    const GLfloat green[]  = {0.596, 0.984, 0.596, 1.0f};
    const GLfloat yellow[] = {1.000, 0.843, 0.000, 1.0f};
+
 }
 
 struct character_t {

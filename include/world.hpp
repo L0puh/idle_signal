@@ -1,8 +1,9 @@
 #ifndef WORLD_H
 #define WORLD_H 
-#include "state.hpp"
+
 #include <btBulletDynamicsCommon.h>
 
+#include "state.hpp"
 
 class World {
    private:
@@ -33,7 +34,6 @@ class World {
          obj->setCollisionShape(shape);
          world->addCollisionObject(obj, 1, 1);
       }
-
       void update() {
          world->stepSimulation(state.deltatime, 10);
          world->performDiscreteCollisionDetection();
@@ -41,7 +41,6 @@ class World {
             btPersistentManifold* contactManifold = disp->getManifoldByIndexInternal(i);
             const btCollisionObject* obA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
             const btCollisionObject* obB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
-
             printf("COLLISION!: %f\n", state.deltatime);
          }
 
@@ -58,5 +57,6 @@ class World {
       }
 
 };
+
 
 #endif 

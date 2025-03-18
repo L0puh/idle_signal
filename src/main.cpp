@@ -1,9 +1,7 @@
 #include <btBulletDynamicsCommon.h>
 #include "collision.hpp"
 #include "core.hpp"
-#include "model.hpp"
-#include "camera.hpp"
-#include "renderer.hpp"
+#include "map.hpp"
 
 void enable_if_debug();
 void shutdown(GLFWwindow*);
@@ -74,16 +72,20 @@ int main() {
    std::vector<Model*> pickables;
    pickables.push_back(&aircraft);
    pickables.push_back(&ball);
-   
+
+   Map map;
+   state.mode |= EDIT_MODE;
 
    while (!glfwWindowShouldClose(window)){
       imgui::frame();
       update_deltatime();
-      camera.update();
-      camera.hide_cursor();
+      if (state.mode & PLAY_MODE){
+         camera.update();
+         camera.hide_cursor();
+      }
       imgui::main_draw();
       world.update();
-      
+      map.editor_popup();
       
       house.draw();
       aircraft.draw();

@@ -17,6 +17,9 @@
 #define DEFAULT_SHADER_TEXTURE_VERT "shaders/default_texture.vert"
 #define DEFAULT_SHADER_TEXTURE_FRAG "shaders/default_texture.frag"
 
+#define WALL_SHADER_TEXTURE_VERT "shaders/wall_texture.vert"
+#define WALL_SHADER_TEXTURE_FRAG "shaders/default_texture.frag"
+
 #define TEXT_SHADER_VERT "shaders/text.vert"
 #define TEXT_SHADER_FRAG "shaders/text.frag"
 

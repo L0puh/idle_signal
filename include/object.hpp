@@ -5,17 +5,14 @@
 #include "vertices.hpp"
 
 typedef enum {
-   cube,
-   triangle,
-   rectangle,
-   line,
-   text
+   wall,
+   text,
+   line
 } object_e;
 
 
 
 /* TODO: needs refactoring... */
-
 class Object {
    public:
       Shader *shd; 
@@ -33,17 +30,10 @@ class Object {
    public:
       Object(){}
 
-      //for text (FIXME)
-      Object(object_e type, Texture *tex, Shader *shd): shd(shd), texture(tex){
-         texture->load_font();
-         shd->init_shader(TEXT_SHADER_VERT, TEXT_SHADER_FRAG);
-         vert.create_VBO(NULL, sizeof(float) * 4 * 6, GL_DYNAMIC_DRAW);
-         vert.add_atrib(0, 4, GL_FLOAT, 4 * sizeof(float), 0);
-      }
-
       //for a line
       Object(object_e type, glm::vec3 from, glm::vec3 to, Shader *shd):
-      shd(shd), type(type){
+                                                shd(shd), type(type)
+      {
          const float vertices[] = {
             from.x, from.y, from.z,
             to.x, to.y, to.z
@@ -53,78 +43,42 @@ class Object {
          count_vertices = LEN(vertices);
       }
 
-      Object(object_e type, Texture *tex = NULL): 
-         texture(tex), type(type){
-         if (tex != NULL) with_texture=1;
+
+      Object(object_e type, Texture *tex, Shader *shd, 
+            glm::vec3 min = {}, glm::vec3 max = {}): 
+         shd(shd), texture(tex)
+      {
+         if (texture != NULL) with_texture = true;
          switch(type){
-         case cube:
+         case wall:
             {
-               if (with_texture) {
-                  shd->init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
-                  vert.create_VBO(vertices::cube_with_texture, sizeof(vertices::cube_with_texture));
-
-                  vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float));
-                  //FIXME: add normals?
-                  vert.add_atrib(1, 3, GL_FLOAT, 5 * sizeof(float), (void*) (0*sizeof(float)));
-                  vert.add_atrib(2, 2, GL_FLOAT, 5 * sizeof(float),
-                                          (void*)(3*sizeof(float)));
-                  this->count_vertices = LEN(vertices::cube_with_texture);
-               } else {
-                  shd->init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
-                  vert.create_VBO(vertices::cube, sizeof(vertices::cube));
-                  vert.add_atrib(0, 3, GL_FLOAT, 3 * sizeof(float));
-                  this->count_vertices = LEN(vertices::cube);
-               }
+               const float vertices[] = {
+                  max.x, max.y, max.z, 1.0f, 1.0f,
+                  max.x, min.y, max.z, 1.0f, 0.0f,
+                  min.x, min.y, max.z, 0.0f, 0.0f,
+                  min.x, max.y, max.z, 0.0f, 1.0f
+               };
+               
+               vert.create_VBO(vertices, sizeof(vertices));
+               vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
+               vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float)); //pos
+               vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3*sizeof(float))); //tex
+               this->count_vertices = LEN(vertices);
+               break;
             }
-            break;
-
-         case triangle: 
+         case text:
             {
-               if (with_texture) {
-                  shd->init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
-                  vert.create_VBO(vertices::triangle_with_texture,
-                        sizeof(vertices::triangle_with_texture));
-
-                  vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float));
-                  //FIXME: add normals?
-                  vert.add_atrib(1, 3, GL_FLOAT, 5 * sizeof(float), (void*) (0*sizeof(float)));
-                  vert.add_atrib(2, 2, GL_FLOAT, 5 * sizeof(float),
-                                          (void*)(3*sizeof(float)));
-                  this->count_vertices = LEN(vertices::triangle_with_texture);
-               } else {
-                  shd->init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
-                  vert.create_VBO(vertices::triangle, sizeof(vertices::triangle));
-                  vert.add_atrib(0, 3, GL_FLOAT, 3 * sizeof(float));
-                  this->count_vertices = LEN(vertices::triangle);
-               }
+               texture->load_font();
+               shd->init_shader(TEXT_SHADER_VERT, TEXT_SHADER_FRAG);
+               vert.create_VBO(NULL, sizeof(float) * 4 * 6, GL_DYNAMIC_DRAW);
+               vert.add_atrib(0, 4, GL_FLOAT, 4 * sizeof(float), 0);
+               break;
             }
-            break;
-         case rectangle: 
-            {
-               if (with_texture){
-                  shd->init_shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG);
-                  vert.create_VBO(vertices::rectangle_with_texture,
-                        sizeof(vertices::rectangle_with_texture));
-                  vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
-                  vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float));
-                  //FIXME: add normals?
-                  vert.add_atrib(1, 3, GL_FLOAT, 5 * sizeof(float), (void*) (0*sizeof(float)));
-                  vert.add_atrib(2, 2, GL_FLOAT, 5 * sizeof(float),
-                                          (void*)(3*sizeof(float)));
-                  this->count_vertices = LEN(vertices::rectangle_with_texture);
-               } else {
-                  shd->init_shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
-                  vert.create_VBO(vertices::rectangle, sizeof(vertices::rectangle));
-                  vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
-                  vert.add_atrib(0, 3, GL_FLOAT, 3 * sizeof(float));
-                  this->count_vertices = LEN(vertices::rectangle);
-               }
-            }
-            break;
          default:
             break;
          }
       }
+
       ~Object(){
          cleanup();
       };

@@ -3,7 +3,7 @@
 
 void Object::draw(GLenum mode){
    update();
-   
+  
    shd->use();
    shd->set_mat4fv("_projection", state.camera->get_projection());
    shd->set_mat4fv("_view", state.camera->get_view());

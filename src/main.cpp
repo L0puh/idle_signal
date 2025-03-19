@@ -75,8 +75,12 @@ int main() {
    pickables.push_back(&ball);
 
    Map map;
-   state.mode |= EDIT_MODE;
+   state.mode |= PLAY_MODE;
    state.map = &map;
+   
+   Texture tex_wall("wall_texture.jpg");
+   Shader shd_wall;
+   shd_wall.init_shader(WALL_SHADER_TEXTURE_VERT, WALL_SHADER_TEXTURE_FRAG);
 
    while (!glfwWindowShouldClose(window)){
       imgui::frame();
@@ -90,15 +94,24 @@ int main() {
       }
 
       imgui::main_draw();
+      
       world.update();
       house.draw();
       aircraft.draw();
       plane_model.draw();
       ball.draw();
 
+
       for (const auto& wall: map.walls){
+
+         Object w(object_e::wall, &tex_wall, &shd_wall, 
+               {wall.first.x, -1.0f, wall.first.z}, wall.second);
+
+         w.set_pos(glm::vec3(0.0f));
+         w.set_size(glm::vec3(1.0f));
+         w.draw();
          render.draw_line(wall.first, wall.second, color::red, 3.0f, &shd2, {glm::vec3(0.0f), glm::vec3(1.0f)}); 
-         render.draw_rectangle({wall.first.x, -1.0f, wall.first.z}, wall.second, color::black, &shd2, {glm::vec3(0.0f), glm::vec3(1.0f)});
+            render.draw_rectangle({wall.first.x, -1.0f, wall.first.z}, wall.second, color::black, &shd2, {glm::vec3(0.0f), glm::vec3(1.0f)});
       
       }
       for (auto& p: pickables){

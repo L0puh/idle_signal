@@ -98,8 +98,7 @@ int main() {
 
       for (const auto& wall: map.walls){
          render.draw_line(wall.first, wall.second, color::red, 3.0f, &shd2, {glm::vec3(0.0f), glm::vec3(1.0f)}); 
-         // FIXME:
-         // render.draw_rectangle({wall.first.x, 0.0f, wall.first.z}, wall.second, color::black, &shd2, {glm::vec3(0.0f), glm::vec3(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0)});
+         render.draw_rectangle({wall.first.x, -1.0f, wall.first.z}, wall.second, color::black, &shd2, {glm::vec3(0.0f), glm::vec3(1.0f)});
       
       }
       for (auto& p: pickables){

@@ -16,7 +16,7 @@ namespace imgui_color {
 
 class Map {
    private:
-      float scale = 20.0f;
+      float scale = 10.0f;
       ImVec2 current_start = ImVec2(0.0f, 0.0f);
       bool is_drawing=false;
       std::vector<std::pair<ImVec2, ImVec2>> lines;

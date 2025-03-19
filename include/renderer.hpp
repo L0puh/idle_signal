@@ -13,16 +13,12 @@ class Renderer {
    private:
 
    public:
-      void draw_rectangle(glm::vec3 min, glm::vec3 max, const GLfloat *color, Shader *shd, line_data_t model) {
-         glm::vec3 bl = glm::vec3(min.x, min.y, min.z); 
-         glm::vec3 br = glm::vec3(max.x, min.y, min.z); 
-         glm::vec3 tr = glm::vec3(max.x, min.y, max.z); 
-         glm::vec3 tl = glm::vec3(min.x, min.y, max.z); 
 
-         draw_line(bl, br, color, 3.0f, shd, model); 
-         draw_line(br, tr, color, 3.0f, shd, model); 
-         draw_line(tr, tl, color, 3.0f, shd, model); 
-         draw_line(tl, bl, color, 3.0f, shd, model); 
+      void draw_rectangle(glm::vec3 min, glm::vec3 max, const GLfloat *color, Shader *shd, line_data_t model) {
+         draw_line(min, {min.x, max.y, min.z}, color, 3.0f, shd, model);
+         draw_line({min.x, max.y, min.z}, max, color, 3.0f, shd, model);
+         draw_line(min, {max.x, min.y, max.z}, color, 3.0f, shd, model);
+         draw_line({max.x, min.y, max.z}, max, color, 3.0f, shd, model);
       }
       void draw_line(glm::vec3 from, glm::vec3 to, const GLfloat *color, GLfloat thickness,
                      Shader *shd, line_data_t data){
@@ -36,6 +32,7 @@ class Renderer {
          line.cleanup();
          glLineWidth(1.0f);
       }
+
       void draw_cube(glm::vec3 min, glm::vec3 max, const GLfloat *color,  Shader *shd, line_data_t model){
          draw_line(glm::vec3(min.x, min.y, min.z), glm::vec3(max.x, min.y, min.z), color, 3.0f, shd, model);
          draw_line(glm::vec3(max.x, min.y, min.z), glm::vec3(max.x, max.y, min.z), color, 3.0f, shd, model);
@@ -76,12 +73,10 @@ class Renderer {
       }
       void draw_text(Object *obj, std::string text, glm::vec2 pos, float scale, const GLfloat *color){
          obj->shd->use();
-         //FIXME::: seg fault for some reason
          obj->shd->set_mat4fv("_projection", state.camera->get_projection_ortho());
          obj->shd->set_vec3("_color", {color[0], color[1], color[2]});
          glActiveTexture(GL_TEXTURE0);
          obj->vert.bind();
-
 
          std::string::const_iterator c;
          for (c = text.begin(); c != text.end(); c++){

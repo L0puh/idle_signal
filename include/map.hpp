@@ -32,7 +32,6 @@ class Map {
             walls.push_back({glm::vec3(p.x, 1.0f, p.y), glm::vec3(p2.x, 1.0f, p2.y)});
          }
       }
-
       void update() {
          if (state.mode & EDIT_MODE){
             editor_popup();

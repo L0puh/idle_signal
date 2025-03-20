@@ -23,7 +23,7 @@ class Object {
       object_e type;
       bool with_texture = false;
       int count_vertices;
-      float rotation_angle;
+      float rotation_angle = 0.0f;
       glm::vec3 pos, rotation, size;
       glm::vec4 color;
 
@@ -48,35 +48,7 @@ class Object {
             glm::vec3 min = {}, glm::vec3 max = {}): 
          shd(shd), texture(tex)
       {
-         if (texture != NULL) with_texture = true;
-         switch(type){
-         case wall:
-            {
-               const float vertices[] = {
-                  max.x, max.y, max.z, 1.0f, 1.0f,
-                  max.x, min.y, max.z, 1.0f, 0.0f,
-                  min.x, min.y, max.z, 0.0f, 0.0f,
-                  min.x, max.y, max.z, 0.0f, 1.0f
-               };
-               
-               vert.create_VBO(vertices, sizeof(vertices));
-               vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
-               vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float)); //pos
-               vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3*sizeof(float))); //tex
-               this->count_vertices = LEN(vertices);
-               break;
-            }
-         case text:
-            {
-               texture->load_font();
-               shd->init_shader(TEXT_SHADER_VERT, TEXT_SHADER_FRAG);
-               vert.create_VBO(NULL, sizeof(float) * 4 * 6, GL_DYNAMIC_DRAW);
-               vert.add_atrib(0, 4, GL_FLOAT, 4 * sizeof(float), 0);
-               break;
-            }
-         default:
-            break;
-         }
+         generate_object(type, max, min);
       }
 
       ~Object(){
@@ -88,6 +60,7 @@ class Object {
       }
 
    public:
+      void generate_object(object_e type, glm::vec3 max, glm::vec3 min);
       void draw(GLenum mode = GL_TRIANGLES);
       void update() { 
          model = glm::mat4(1.0f); 

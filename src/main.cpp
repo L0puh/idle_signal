@@ -110,8 +110,7 @@ int main() {
          w.set_pos(glm::vec3(0.0f));
          w.set_size(glm::vec3(1.0f));
          w.draw();
-         render.draw_line(wall.first, wall.second, color::red, 3.0f, &shd2, {glm::vec3(0.0f), glm::vec3(1.0f)}); 
-            render.draw_rectangle({wall.first.x, -1.0f, wall.first.z}, wall.second, color::black, &shd2, {glm::vec3(0.0f), glm::vec3(1.0f)});
+
       
       }
       for (auto& p: pickables){

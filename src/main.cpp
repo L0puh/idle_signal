@@ -1,5 +1,4 @@
 #include <btBulletDynamicsCommon.h>
-#include "BulletCollision/CollisionShapes/btBoxShape.h"
 #include "collision.hpp"
 #include "core.hpp"
 #include "map.hpp"
@@ -103,9 +102,9 @@ int main() {
          w.set_pos(glm::vec3(0.0f));
          w.set_size(glm::vec3(1.0f));
          w.draw();
+
       }
       for (const auto& floor: map.floors_obj){
-         //FIXME:
          render.draw_rectangle(floor.second, floor.first, color::red,
                state.default_shader, {glm::vec3(0.0f),
                glm::vec3(1.0f)});

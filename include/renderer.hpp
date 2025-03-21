@@ -15,10 +15,15 @@ class Renderer {
    public:
 
       void draw_rectangle(glm::vec3 min, glm::vec3 max, const GLfloat *color, Shader *shd, line_data_t model) {
-         draw_line(min, {min.x, max.y, min.z}, color, 3.0f, shd, model);
-         draw_line({min.x, max.y, min.z}, max, color, 3.0f, shd, model);
-         draw_line(min, {max.x, min.y, max.z}, color, 3.0f, shd, model);
-         draw_line({max.x, min.y, max.z}, max, color, 3.0f, shd, model);
+         glm::vec3 v1(min.x, min.y, min.z); // bottom-left
+         glm::vec3 v2(max.x, min.y, min.z); // bottom-right
+         glm::vec3 v3(max.x, min.y, max.z); // top-right
+         glm::vec3 v4(min.x, min.y, max.z); // top-left
+
+         draw_line(v1, v2, color, 3.0f, shd, model); // bottom line
+         draw_line(v2, v3, color, 3.0f, shd, model); // right line
+         draw_line(v3, v4, color, 3.0f, shd, model); // top line
+         draw_line(v4, v1, color, 3.0f, shd, model); // left line
       }
       void draw_line(glm::vec3 from, glm::vec3 to, const GLfloat *color, GLfloat thickness,
                      Shader *shd, line_data_t data){

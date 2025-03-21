@@ -52,7 +52,7 @@ namespace input {
                state.keys_lastpress[GLFW_KEY_M] = glfwGetTime(); 
                if (state.mode & EDIT_MODE){
                   state.mode = PLAY_MODE;
-                  state.map->generate_walls_coord();
+                  state.map->generate_coords();
                }
                else state.mode = EDIT_MODE;
             }

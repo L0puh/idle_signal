@@ -1,7 +1,7 @@
 #include <btBulletDynamicsCommon.h>
+#include "BulletCollision/CollisionShapes/btBoxShape.h"
 #include "collision.hpp"
 #include "core.hpp"
-#include "glm/trigonometric.hpp"
 #include "map.hpp"
 
 void enable_if_debug();
@@ -94,25 +94,27 @@ int main() {
       }
 
       imgui::main_draw();
-      
       world.update();
-      house.draw();
-      aircraft.draw();
-      plane_model.draw();
-      ball.draw();
 
-
-      for (const auto& wall: map.walls){
-
+      for (const auto& wall: map.walls_obj){
          Object w(object_e::wall, &tex_wall, &shd_wall, 
                {wall.first.x, -1.0f, wall.first.z}, wall.second);
 
          w.set_pos(glm::vec3(0.0f));
          w.set_size(glm::vec3(1.0f));
          w.draw();
-
-      
       }
+      for (const auto& floor: map.floors_obj){
+         //FIXME:
+         render.draw_rectangle(floor.second, floor.first, color::red,
+               state.default_shader, {glm::vec3(0.0f),
+               glm::vec3(1.0f)});
+
+      }
+      house.draw();
+      aircraft.draw();
+      plane_model.draw();
+      ball.draw();
       for (auto& p: pickables){
          if (!camera.is_picked_object && camera.is_close_to_object(p->pos) 
                      && camera.is_pointing_to_object(p->pos) && !p->is_picked){

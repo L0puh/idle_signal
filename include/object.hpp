@@ -2,12 +2,14 @@
 #define OBJECT_HPP
 
 #include "core.hpp"
-#include "vertices.hpp"
 
 typedef enum {
    wall,
    text,
-   line
+   line,
+   door,
+   tiles,
+
 } object_e;
 
 
@@ -18,13 +20,13 @@ class Object {
       Shader *shd; 
       Texture *texture;
       Vertex vert;
+      glm::vec3 pos, rotation, size;
    private:
       glm::mat4 model = glm::mat4(1.0f);
       object_e type;
       bool with_texture = false;
       int count_vertices;
       float rotation_angle = 0.0f;
-      glm::vec3 pos, rotation, size;
       glm::vec4 color;
 
    public:
@@ -46,7 +48,7 @@ class Object {
 
       Object(object_e type, Texture *tex, Shader *shd, 
             glm::vec3 min = {}, glm::vec3 max = {}): 
-         shd(shd), texture(tex)
+         shd(shd), texture(tex), rotation_angle(0.0f), rotation(glm::vec3(1.0f))
       {
          generate_object(type, max, min);
       }

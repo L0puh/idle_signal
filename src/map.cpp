@@ -13,16 +13,27 @@ void Map::editor_popup(){
    {
       
       ImDrawList* draw_list = ImGui::GetWindowDrawList();
-
-      ImGui::DragFloat("Scale:", &scale, 1.0f, 0.0f, 100.0f, "%.3f"); ImGui::SameLine(); 
+      if (ImGui::Button("CLEAR")){ 
+         floors.clear();
+         lines.clear();
+      }
+      ImGui::SameLine();
+      ImGui::Checkbox("Show camera", &show_camera);
+      ImGui::SameLine();
+      ImGui::DragFloat("Scale", &scale, 1.0f, 0.0f, 100.0f, "%.3f"); 
       ImGui::Text("Choose object:"); ImGui::SameLine();
       ImGui::RadioButton("Wall", &state_drawing, object_e::wall); ImGui::SameLine();
-      ImGui::RadioButton("Floor", &state_drawing, object_e::tiles);
+      ImGui::RadioButton("Floor", &state_drawing, object_e::tiles); ImGui::SameLine();
       ImGui::RadioButton("Door", &state_drawing, object_e::door);
+
       draw_grid(draw_list, ImGui::GetCursorScreenPos(), 20.f, imgui_color::white);
-      
       ImGui::InvisibleButton("canvas", ImGui::GetContentRegionAvail());
       ImVec2 pos = ImGui::GetMousePos();
+     
+      if (show_camera){
+         //TODO... fix unproject function
+         draw_list->AddCircle(ImVec2(pos.x, pos.y), 10.0f, imgui_color::red, 30, 2.0f);
+      }
       switch(state_drawing){
          case object_e::wall: 
             add_wall(pos, draw_list);
@@ -33,7 +44,7 @@ void Map::editor_popup(){
       }
       
       for (const auto& f: floors){
-         draw_list->AddRectFilled(f.first, f.second, imgui_color::green, 2.0f);
+         draw_list->AddRect(f.first, f.second, imgui_color::green, 2.0f);
       }
       for (const auto& l: lines){
          draw_list->AddLine(l.first, l.second, imgui_color::yellow, 2.0f);
@@ -78,6 +89,26 @@ void Map::add_wall(ImVec2 pos, ImDrawList* draw_list){
          }
      }
 
+}
+
+void Map::draw_objects(){
+   for (const auto& wall: walls_obj){
+      Object w(object_e::wall, tex_wall, shd, 
+            {wall.first.x, state.ground_level, wall.first.z}, wall.second);
+
+      w.set_pos(glm::vec3(0.0f));
+      w.set_size(glm::vec3(1.0f));
+      w.draw();
+   }
+   for (const auto& floor: floors_obj){
+      Object w(object_e::tiles, tex_floor, shd, 
+            floor.first, floor.second);
+
+      w.set_pos(glm::vec3(0.0f));
+      w.set_size(glm::vec3(1.0f));
+      w.draw();
+
+   }
 }
 
 //                                 UTILS:                                 //

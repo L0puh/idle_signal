@@ -1,11 +1,9 @@
-#include <btBulletDynamicsCommon.h>
 #include "collision.hpp"
 #include "core.hpp"
 #include "map.hpp"
 
 void enable_if_debug();
 void shutdown(GLFWwindow*);
-
 
 int main() {
    memcpy(state.bg_color, color::blue, 
@@ -27,7 +25,6 @@ int main() {
    Model house("tower.obj");
    Model aircraft("aircraft.obj");
    Model ball("ball.obj");
-   Model plane_model("plane.obj");
 
    Texture text_tx;
    Shader shd, shd2, text_shader;
@@ -48,10 +45,6 @@ int main() {
    ball.set_shader(&shd);
    ball.set_pos(glm::vec3(-3.0f, -0.20f, 0.0f));
    ball.set_size(glm::vec3(0.05));
-
-   plane_model.set_shader(&shd2);
-   plane_model.set_color(color::green);
-   plane_model.set_pos(glm::vec3(0.0f, -1.0f, 0.0));
 
    camera_model.set_shader(&shd);
    camera_model.set_size(camera.size);
@@ -74,12 +67,17 @@ int main() {
    pickables.push_back(&ball);
 
    Map map;
+
    state.mode |= PLAY_MODE;
    state.map = &map;
    
-   Texture tex_wall("wall_texture.jpg");
    Shader shd_wall;
+   Texture tex_wall("wall_texture.jpg"), tex_floor("floor_texture.jpg");
    shd_wall.init_shader(WALL_SHADER_TEXTURE_VERT, WALL_SHADER_TEXTURE_FRAG);
+
+   map.set_wall_texure(&tex_wall);
+   map.set_floor_texture(&tex_floor);
+   map.set_shader(&shd_wall);
 
    while (!glfwWindowShouldClose(window)){
       imgui::frame();
@@ -87,6 +85,7 @@ int main() {
       if (state.mode & PLAY_MODE){
          camera.update();
          camera.hide_cursor();
+         map.draw_objects();
       } else {
          camera.show_cursor();
          map.editor_popup();
@@ -95,24 +94,8 @@ int main() {
       imgui::main_draw();
       world.update();
 
-      for (const auto& wall: map.walls_obj){
-         Object w(object_e::wall, &tex_wall, &shd_wall, 
-               {wall.first.x, -1.0f, wall.first.z}, wall.second);
-
-         w.set_pos(glm::vec3(0.0f));
-         w.set_size(glm::vec3(1.0f));
-         w.draw();
-
-      }
-      for (const auto& floor: map.floors_obj){
-         render.draw_rectangle(floor.second, floor.first, color::red,
-               state.default_shader, {glm::vec3(0.0f),
-               glm::vec3(1.0f)});
-
-      }
       house.draw();
       aircraft.draw();
-      plane_model.draw();
       ball.draw();
       for (auto& p: pickables){
          if (!camera.is_picked_object && camera.is_close_to_object(p->pos) 
@@ -166,3 +149,4 @@ void enable_if_debug(){
    log_info("debug mode is on");
 #endif
 }
+

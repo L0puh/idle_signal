@@ -19,19 +19,28 @@ namespace imgui_color {
 
 class Map {
    private:
-
+      Shader *shd;
+      Texture *tex_wall, *tex_floor;
+      
       int state_drawing = wall;
-
+      bool is_drawing=false, show_camera=true;
+      
       float scale = 10.0f;
       ImVec2 current_start = ImVec2(0.0f, 0.0f);
-      bool is_drawing=false;
+     
       std::vector<std::pair<ImVec2, ImVec2>> lines;
       std::vector<std::pair<ImVec2, ImVec2>> floors;
-   public: 
       std::vector<std::pair<glm::vec3, glm::vec3>> walls_obj, floors_obj;
+
    public:
       Map() {}
+
    public:
+      void set_wall_texure(Texture *tex) { this->tex_wall = tex; }
+      void set_floor_texture(Texture *tex) { this->tex_floor = tex; }
+      void set_shader(Shader *shd) {this->shd = shd; }
+   public:
+      void draw_objects();
       void add_floor(ImVec2 pos, ImDrawList* draw_list);
       void add_wall(ImVec2 pos, ImDrawList* draw_list);
       void generate_coords(){
@@ -45,7 +54,7 @@ class Map {
          for (int i = 0; i < floors.size(); i++){
             glm::vec2 p = state.camera->project(floors[i].first.x, floors[i].first.y) * scale; 
             glm::vec2 p2 = state.camera->project(floors[i].second.x, floors[i].second.y) * scale;
-            floors_obj.push_back({glm::vec3(p.x, -1.0f, p.y), glm::vec3(p2.x, -1.0f, p2.y)});
+            floors_obj.push_back({glm::vec3(p.x, state.ground_level, p.y), glm::vec3(p2.x, state.ground_level, p2.y)});
          }
       }
       void update() {

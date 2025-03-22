@@ -52,6 +52,22 @@ void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){
             vert.add_atrib(0, 4, GL_FLOAT, 4 * sizeof(float), 0);
             break;
          }
+      case tiles:
+         {
+            const float vertices[] = {
+               min.x, min.y, min.z, 1.0f, 1.0f,
+               max.x, min.y, min.z, 1.0f, 0.0f,
+               max.x, min.y, max.z, 0.0f, 0.0f,
+               min.x, min.y, max.z, 0.0f, 1.0f
+            };
+            
+            vert.create_VBO(vertices, sizeof(vertices));
+            vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
+            vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float)); //pos
+            vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3*sizeof(float))); //tex
+            this->count_vertices = LEN(vertices);
+            break;
+         }
       default:
          break;
    }

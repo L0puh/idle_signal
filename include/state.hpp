@@ -39,6 +39,7 @@ class Collision;
 class Map;
 
 struct STATE {
+
    uint8_t mode;
    Collision *collision;
    Renderer *renderer;
@@ -47,6 +48,7 @@ struct STATE {
    World *world;
    Map *map;
    
+   float ground_level = -1.0f;
    float bg_color[4];
    float mouse_sensitivity = 0.05f;
    float deltatime  = 0.0f;

@@ -1,4 +1,5 @@
 #include "camera.hpp"
+#include "glm/ext/quaternion_common.hpp"
 #include "input.hpp"
 #include "model.hpp"
 #include "collision.hpp"
@@ -61,8 +62,8 @@ void Camera::update_movement(){
    if (!state.collision->AABB_collision_with(&collider))
       this->pos = p;
    
-   if (!is_flying && pos.y != ground_level ) 
-      pos.y = ground_level;
+   if (!is_flying && pos.y != state.ground_level + 1.0f ) 
+      pos.y = state.ground_level + 1.0f;
 }
 
 void Camera::update_movement2D(){
@@ -99,16 +100,11 @@ void Camera::update_mouse_turn(glm::vec2 offset){
    update_vectors();
 }
 
-glm::vec2 Camera::unproject(glm::vec2 pos){
-    glm::vec4 world, screen;
+glm::vec2 Camera::unproject(glm::vec3 pos){
+    float screen_x = (pos.x + 1.0f) * window_width / 2.0f;
+    float screen_y = (1.0f - pos.y) * window_height / 2.0f;
 
-    world = glm::vec4(pos, 1.0f, 1.0f);
-    screen = get_projection() * get_view() * world;
-    screen /= screen.w;
-    screen.x = (screen.x + 1.0f) / 2.0f * window_width;
-    screen.y = (screen.y + 1.0f) / 2.0f * window_height;
-
-    return screen;
+    return glm::vec2(screen_x, screen_y);
 }
 
 

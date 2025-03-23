@@ -104,12 +104,7 @@ void Map::draw_objects(){
       w.set_pos(glm::vec3(0.0f));
       w.set_size(glm::vec3(1.0f));
       w.draw();
-      if (state.collision->line_circle(glm::vec2(min.x, min.z),
-               glm::vec2(max.x, max.z), glm::vec2(state.camera->pos.x,
-                  state.camera->pos.z), 0.4f)){
-         state.camera->is_colliding = true;
-         printf("COLLISION WITH WALL: %.4f\n", state.deltatime);
-      }
+
    }
    for (const auto& floor: floors_obj){
       Object w(object_e::tiles, tex_floor, shd, 

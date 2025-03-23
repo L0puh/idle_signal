@@ -69,6 +69,7 @@ class Camera {
       void set_model(Model* model)  { this->model = model; }
 
    public:
+      bool check_collision_with_walls(glm::vec3 pos);
       bool is_pointing_to_object(glm::vec3& pos, float threshold=0.9f);
       inline bool is_close_to_object(glm::vec3& pos, float threshold=1.5f) {
          float dist = glm::length(this->pos - pos);

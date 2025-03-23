@@ -39,6 +39,7 @@ class Map {
       void set_wall_texure(Texture *tex) { this->tex_wall = tex; }
       void set_floor_texture(Texture *tex) { this->tex_floor = tex; }
       void set_shader(Shader *shd) {this->shd = shd; }
+      std::vector<std::pair<glm::vec3, glm::vec3>> get_walls() { return walls_obj; }
    public:
       void draw_objects();
       void add_floor(ImVec2 pos, ImDrawList* draw_list);

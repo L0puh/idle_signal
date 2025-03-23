@@ -59,15 +59,27 @@ void Camera::update_movement(){
    collider = model->caclulate_boundaries();
    collider.pos = p;
    //TODO:: add sliding 
-   if (!state.collision->AABB_collision_with(&collider) && !is_colliding)
+   if (!state.collision->AABB_collision_with(&collider) && !check_collision_with_walls(p))
       this->pos = p;
-   else if (is_colliding) {
-      is_colliding = false;
-      this->pos = p - glm::vec3(0.0f, 0.0, 0.3f);
-   }
    
    if (!is_flying && pos.y != state.ground_level + 1.0f ) 
       pos.y = state.ground_level + 1.0f;
+}
+
+bool Camera::check_collision_with_walls(glm::vec3 p){
+   for (const auto& wall: state.map->get_walls()){
+      glm::vec3 min, max;
+      min = glm::vec3(wall.first.x, state.ground_level, wall.first.z);
+      max = wall.second;
+      if (state.collision->line_circle(glm::vec2(min.x, min.z),
+               glm::vec2(max.x, max.z), glm::vec2(p.x,
+                  p.z), 0.4f))
+      {
+         return true;
+      }
+   }
+   
+   return false;
 }
 
 void Camera::update_movement2D(){

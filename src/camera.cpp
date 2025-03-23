@@ -59,8 +59,12 @@ void Camera::update_movement(){
    collider = model->caclulate_boundaries();
    collider.pos = p;
    //TODO:: add sliding 
-   if (!state.collision->AABB_collision_with(&collider))
+   if (!state.collision->AABB_collision_with(&collider) && !is_colliding)
       this->pos = p;
+   else if (is_colliding) {
+      is_colliding = false;
+      this->pos = p - glm::vec3(0.0f, 0.0, 0.3f);
+   }
    
    if (!is_flying && pos.y != state.ground_level + 1.0f ) 
       pos.y = state.ground_level + 1.0f;
@@ -100,11 +104,21 @@ void Camera::update_mouse_turn(glm::vec2 offset){
    update_vectors();
 }
 
+// world to screen positiong
 glm::vec2 Camera::unproject(glm::vec3 pos){
-    float screen_x = (pos.x + 1.0f) * window_width / 2.0f;
-    float screen_y = (1.0f - pos.y) * window_height / 2.0f;
+   glm::vec4 position_clip = get_view() * get_projection()  * glm::vec4(pos, 1.0f) , position_screen;
+   position_clip.z /= position_clip.w;
+   position_clip.x /= position_clip.w;
+   position_clip.y /= position_clip.w;
+   
 
-    return glm::vec2(screen_x, screen_y);
+        // convert clip space position to screen space position
+      glm::vec2 viewport = glm::vec2(window_width, window_height); 
+        float viewport_half_width    = viewport.x* 0.5f;
+        float viewport_half_height   = viewport.y * 0.5f;
+        position_screen.x            = (position_clip.x / position_clip.z) *  viewport_half_width  + viewport_half_width;
+        position_screen.y            = (position_clip.y / position_clip.z) * -viewport_half_height + viewport_half_height;
+        return position_screen;
 }
 
 

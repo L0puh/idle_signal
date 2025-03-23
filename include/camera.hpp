@@ -12,7 +12,7 @@ class Camera {
       btCollisionObject* collision_obj;
       bool is_picked_object = false;
       float walk_offset = 0.0f;
-      bool is_walking = false;
+      bool is_walking = false, is_colliding = false;
       Model *model;
       GLFWwindow* window;
       uint8_t flags;

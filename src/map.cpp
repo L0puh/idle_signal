@@ -1,5 +1,6 @@
 #include "map.hpp"
 #include "camera.hpp"
+#include "collision.hpp"
 #include "object.hpp"
 #include <imgui/imgui.h>
 
@@ -31,7 +32,7 @@ void Map::editor_popup(){
       ImVec2 pos = ImGui::GetMousePos();
      
       if (show_camera){
-         //TODO... fix unproject function
+         //FIXME:
          draw_list->AddCircle(ImVec2(pos.x, pos.y), 10.0f, imgui_color::red, 30, 2.0f);
       }
       switch(state_drawing){
@@ -93,12 +94,22 @@ void Map::add_wall(ImVec2 pos, ImDrawList* draw_list){
 
 void Map::draw_objects(){
    for (const auto& wall: walls_obj){
-      Object w(object_e::wall, tex_wall, shd, 
-            {wall.first.x, state.ground_level, wall.first.z}, wall.second);
+      glm::vec3 min, max;
+      min = glm::vec3(wall.first.x, state.ground_level, wall.first.z);
+      max = wall.second;
 
+      Object w(object_e::wall, tex_wall, shd, 
+            min, max);
+      
       w.set_pos(glm::vec3(0.0f));
       w.set_size(glm::vec3(1.0f));
       w.draw();
+      if (state.collision->line_circle(glm::vec2(min.x, min.z),
+               glm::vec2(max.x, max.z), glm::vec2(state.camera->pos.x,
+                  state.camera->pos.z), 0.4f)){
+         state.camera->is_colliding = true;
+         printf("COLLISION WITH WALL: %.4f\n", state.deltatime);
+      }
    }
    for (const auto& floor: floors_obj){
       Object w(object_e::tiles, tex_floor, shd, 

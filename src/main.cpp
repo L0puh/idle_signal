@@ -52,8 +52,8 @@ int main() {
 
    Collision collision;
    // collision.add_collider(&house);
-   collision.add_collider(&aircraft);
-   collision.add_collider(&ball);
+   // collision.add_collider(&aircraft);
+   // collision.add_collider(&ball);
 
    state.default_shader = &shd2;
    state.renderer = &render;

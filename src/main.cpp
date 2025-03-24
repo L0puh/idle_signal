@@ -6,8 +6,9 @@ void enable_if_debug();
 void shutdown(GLFWwindow*);
 
 int main() {
-   memcpy(state.bg_color, color::blue, 
+   memcpy(state.bg_color, color::grey, 
          sizeof(color::blue));
+   state.light_color = {color::blue[0], color::blue[1], color::blue[2], 1.0f};
 
    GLFWwindow *window = init_window(500, 500);
    imgui::init(window);
@@ -79,6 +80,7 @@ int main() {
    map.set_floor_texture(&tex_floor);
    map.set_shader(&shd_wall);
 
+   state.light_pos = {0.1f, 0.1f, 0.1f};
    while (!glfwWindowShouldClose(window)){
       imgui::frame();
       update_deltatime();
@@ -86,14 +88,16 @@ int main() {
          camera.update();
          camera.hide_cursor();
          map.draw_objects();
-      } else {
+      } else if (state.mode & EDIT_MODE)  {
          camera.show_cursor();
          map.editor_popup();
+      } else if (state.mode & PAUSE_MODE) {
+         camera.show_cursor();
       }
 
       imgui::main_draw();
+      render.draw_cube(state.light_pos, state.light_pos + glm::vec3(0.3, 0.3, 0.3), color::red, state.default_shader, {glm::vec3(0.0f), glm::vec3(1.0f)});
       world.update();
-
       house.draw();
       aircraft.draw();
       ball.draw();
@@ -127,6 +131,7 @@ int main() {
       imgui::render();
       glfwSwapBuffers(window);
       glfwPollEvents();
+      glClearColor(state.bg_color[0], state.bg_color[1], state.bg_color[2], state.bg_color[3]);   
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    }
    

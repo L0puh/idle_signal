@@ -81,6 +81,8 @@ class Model {
          shd->set_mat4fv("_model", model);
          if (!with_texture) {
             shd->set_vec3("_color", color);
+         } else {
+            shd->set_light();
          }
 
          for (uint i=0; i < meshes.size(); i++){

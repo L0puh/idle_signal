@@ -53,7 +53,8 @@ namespace color {
    const GLfloat white[]  = {1.0f, 1.0f, 1.0f, 1.0f};
    const GLfloat black[]  = {0.0f, 0.0f, 0.0f, 1.0f};
    const GLfloat red[]    = {0.863, 0.078, 0.235, 1.0f};
-   const GLfloat blue[]   = {0.255, 0.412, 0.882, 1.0f};
+   const GLfloat grey[]   = {0.69, 0.796, 0.871, 0.839};
+   const GLfloat blue[] =  {0.455, 0.612, 0.722, 0.839};
    const GLfloat green[]  = {0.596, 0.984, 0.596, 1.0f};
    const GLfloat yellow[] = {1.000, 0.843, 0.000, 1.0f};
 
@@ -164,12 +165,19 @@ class Shader {
       
       void use()    { glUseProgram(id); }
       void unuse()  { glUseProgram(0);  }
+      void set_light() { 
+         set_vec3("_light_pos", state.light_pos); 
+         set_vec4("_light_color", state.light_color); 
+      }
 
       void set_mat4fv(std::string location, glm::mat4x4 mat) { 
          glUniformMatrix4fv(get_location(location), 1, GL_FALSE, glm::value_ptr(mat));
       }
       void set_vec3(std::string location, glm::vec3 vec){
          glUniform3f(get_location(location), vec.x, vec.y, vec.z);
+      }
+      void set_vec4(std::string location, glm::vec4 vec){
+         glUniform4f(get_location(location), vec.x, vec.y, vec.z, vec.w);
       }
       void set_vec2(std::string location, glm::vec2 vec){
          glUniform2f(get_location(location), vec.x, vec.y);
@@ -178,7 +186,6 @@ class Shader {
          glUniform1f(get_location(location), x);
       }
 };
-
 
 namespace imgui {
 

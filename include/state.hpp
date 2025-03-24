@@ -24,8 +24,9 @@
 #define TEXT_SHADER_FRAG "shaders/text.frag"
 
 #define FONT_PATH "assets/fonts/freeSans.ttf"
-#define EDIT_MODE 0b1000
-#define PLAY_MODE 0b0100
+#define EDIT_MODE  0b1000
+#define PLAY_MODE  0b0100
+#define PAUSE_MODE 0b0010
 
 #define ASSIMP_FLAGS_LOAD  (aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_GenSmoothNormals)
 const std::string TEXTURES_DIR = "assets/textures/";
@@ -48,6 +49,8 @@ struct STATE {
    World *world;
    Map *map;
    
+   glm::vec4 light_color;
+   glm::vec3 light_pos;
    float ground_level = -1.0f;
    float bg_color[4];
    float mouse_sensitivity = 0.05f;

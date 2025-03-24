@@ -36,10 +36,17 @@ namespace input {
             glfwSetWindowShouldClose(window, true);
             return;
          case GLFW_KEY_P:
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            if (!state.keys_lastpress[GLFW_KEY_P] || state.cooldown < glfwGetTime() - state.keys_lastpress[GLFW_KEY_P]){
+               state.keys_lastpress[GLFW_KEY_P] = glfwGetTime(); 
+               if (state.mode & PLAY_MODE){
+                  state.mode = PAUSE_MODE;
+               }
+               else state.mode = PLAY_MODE;
+            }
             break;
          case GLFW_KEY_F:
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             break;
          case GLFW_KEY_G:
             if (!state.keys_lastpress[GLFW_KEY_G] || state.cooldown < glfwGetTime() - state.keys_lastpress[GLFW_KEY_G]){

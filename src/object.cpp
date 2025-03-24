@@ -4,13 +4,14 @@
 
 void Object::draw(GLenum mode){
    update();
-  
+
    shd->use();
    shd->set_mat4fv("_projection", state.camera->get_projection());
    shd->set_mat4fv("_view", state.camera->get_view());
    shd->set_mat4fv("_model", model);
    if (with_texture) {
       texture->use();
+      shd->set_light();
    }
    else shd->set_vec3("_color", {color[0], color[1], color[2]});
    
@@ -31,16 +32,18 @@ void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){
       case wall:
          {
             const float vertices[] = {
-               max.x, max.y, max.z, 1.0f, 1.0f,
-               max.x, min.y, max.z, 1.0f, 0.0f,
-               min.x, min.y, min.z, 0.0f, 0.0f,
-               min.x, max.y, min.z, 0.0f, 1.0f
+               max.x, max.y, max.z, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+               max.x, min.y, max.z, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+               min.x, min.y, min.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+               min.x, max.y, min.z, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
             };
             
             vert.create_VBO(vertices, sizeof(vertices));
             vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
-            vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float)); //pos
-            vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3*sizeof(float))); //tex
+            vert.add_atrib(0, 3, GL_FLOAT, 8 * sizeof(float)); //pos
+                                                               // + additional 3 for normal
+            vert.add_atrib(1, 2, GL_FLOAT, 8 * sizeof(float), (void*)(3*sizeof(float))); //tex
+                                                                                       
             this->count_vertices = LEN(vertices);
             break;
          }
@@ -55,16 +58,16 @@ void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){
       case tiles:
          {
             const float vertices[] = {
-               min.x, min.y, min.z, 1.0f, 1.0f,
-               max.x, min.y, min.z, 1.0f, 0.0f,
-               max.x, min.y, max.z, 0.0f, 0.0f,
-               min.x, min.y, max.z, 0.0f, 1.0f
+               min.x, min.y, min.z, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+               max.x, min.y, min.z, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+               max.x, min.y, max.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+               min.x, min.y, max.z, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
             };
             
             vert.create_VBO(vertices, sizeof(vertices));
             vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
-            vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float)); //pos
-            vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3*sizeof(float))); //tex
+            vert.add_atrib(0, 3, GL_FLOAT, 8 * sizeof(float)); //pos
+            vert.add_atrib(1, 2, GL_FLOAT, 8 * sizeof(float), (void*)(3*sizeof(float))); //tex
             this->count_vertices = LEN(vertices);
             break;
          }

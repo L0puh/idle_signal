@@ -25,6 +25,11 @@ namespace imgui {
       {
          ImGui::SliderFloat("ZOOM OF CAMERA:", &state.camera->zoom, -90.0f, 90.0f, "%.5f", 0);
          ImGui::SliderFloat3("POS OF CAMERA:", &state.camera->pos.x, -10.0f, 10.0f, "%.5f", 0);
+         ImGui::SliderFloat3("POS OF LIGHT:", &state.light_pos.x, -10.0f, 10.0f, "%.5f", 0);
+         float color[4] = {state.light_color.x, state.light_color.y, state.light_color.z, state.light_color.w};
+         ImGui::ColorEdit4("LIGHT:", color);
+         ImGui::ColorEdit4("BG:", state.bg_color);
+         state.light_color = {color[0], color[1], color[2], color[3]};
          if (state.camera->is_flying)
             ImGui::Text("FLYING ON");
          else

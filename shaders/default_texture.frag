@@ -12,11 +12,12 @@ uniform vec3 _light_pos;
 out vec4 color;
 
 void main() {
-   vec4 ambient = 0.9f * _light_color; //FIXME:
+   vec4 ambient = 0.4f * _light_color; //FIXME:
    vec3 norm = normalize(_normal);
    vec3 light_dir = normalize(_light_pos - _pos);
    float diff = max(dot(norm, light_dir), 0.0f);
    vec4 diffuse = diff * _light_color;
    vec4 result = (ambient + diffuse);
    color = result *  texture(_texture, _tex_coord);
+   color.a = 1.0f;
 }

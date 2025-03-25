@@ -57,6 +57,7 @@ namespace color {
    const GLfloat blue[] =  {0.455, 0.612, 0.722, 0.839};
    const GLfloat green[]  = {0.596, 0.984, 0.596, 1.0f};
    const GLfloat yellow[] = {1.000, 0.843, 0.000, 1.0f};
+   const GLfloat dark_grey[] = {0.137, 0.137, 0.141, 1.0f};
 
 }
 
@@ -201,5 +202,5 @@ void debug_message_callback (GLenum, GLenum, GLuint, GLuint,
                             GLsizei, const GLchar*, const GLvoid*);
 void update_deltatime();
 GLFWwindow* init_window(int width, int height);
-
+glm::vec3 get_normals(const float* vertices);
 #endif 

@@ -6,8 +6,8 @@ void enable_if_debug();
 void shutdown(GLFWwindow*);
 
 int main() {
-   memcpy(state.bg_color, color::grey, 
-         sizeof(color::blue));
+   memcpy(state.bg_color, color::dark_grey, 
+         sizeof(color::dark_grey));
    state.light_color = {color::blue[0], color::blue[1], color::blue[2], 1.0f};
 
    GLFWwindow *window = init_window(500, 500);
@@ -73,11 +73,12 @@ int main() {
    state.map = &map;
    
    Shader shd_wall;
-   Texture tex_wall("wall_texture.jpg"), tex_floor("floor_texture.jpg");
+   Texture tex_wall("wall_texture.jpg"), tex_floor("floor_texture.jpg"), tex_roof("roof_texture.jpg");
    shd_wall.init_shader(WALL_SHADER_TEXTURE_VERT, WALL_SHADER_TEXTURE_FRAG);
 
    map.set_wall_texure(&tex_wall);
    map.set_floor_texture(&tex_floor);
+   map.set_roof_texture(&tex_roof);
    map.set_shader(&shd_wall);
 
    state.light_pos = {0.1f, 0.1f, 0.1f};
@@ -93,10 +94,14 @@ int main() {
          map.editor_popup();
       } else if (state.mode & PAUSE_MODE) {
          camera.show_cursor();
+         map.draw_objects();
       }
 
       imgui::main_draw();
-      render.draw_cube(state.light_pos, state.light_pos + glm::vec3(0.3, 0.3, 0.3), color::red, state.default_shader, {glm::vec3(0.0f), glm::vec3(1.0f)});
+      const float c[] = {state.light_color[0], state.light_color[1], state.light_color[2],
+         state.light_color[3]};
+      render.draw_cube(state.light_pos, state.light_pos + glm::vec3(0.3, 0.3, 0.3), 
+            c, state.default_shader, {glm::vec3(0.0f), glm::vec3(1.0f)});
       world.update();
       house.draw();
       aircraft.draw();
@@ -105,7 +110,7 @@ int main() {
          if (!camera.is_picked_object && camera.is_close_to_object(p->pos) 
                      && camera.is_pointing_to_object(p->pos) && !p->is_picked){
             render.draw_text(&text_obj, "PICK UP (E)", {state.camera->window_width/2.0f,
-                        state.camera->window_height/2.0f - 40.0f }, 0.5, color::black);
+                        state.camera->window_height/2.0f - 40.0f }, 0.5, color::white);
             if (state.keys[GLFW_KEY_E]){
                p->is_picked = true;
                camera.is_picked_object = true;

@@ -9,6 +9,7 @@ typedef enum {
    line,
    door,
    tiles,
+   roof
 
 } object_e;
 

@@ -45,8 +45,8 @@ GLFWwindow* init_window(int width, int height){
    log_info("init window");
    
    glfwWindowHint(GLFW_DEPTH_BITS, 24);
-   glEnable(GL_BLEND);
    glEnable(GL_DEPTH_TEST);
+   glEnable(GL_BLEND);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    glClearColor(state.bg_color[0], state.bg_color[1], state.bg_color[2], state.bg_color[3]);   
    

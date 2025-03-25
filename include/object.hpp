@@ -48,8 +48,8 @@ class Object {
 
 
       Object(object_e type, Texture *tex, Shader *shd, 
-            glm::vec3 min = {}, glm::vec3 max = {}): 
-         shd(shd), texture(tex), rotation_angle(0.0f), rotation(glm::vec3(1.0f))
+            glm::vec3 min = {}, glm::vec3 max = {}, bool is_blank = false): 
+         shd(shd), texture(tex), rotation_angle(0.0f), rotation(glm::vec3(1.0f)) 
       {
          generate_object(type, max, min);
       }

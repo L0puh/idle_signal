@@ -20,6 +20,9 @@
 #define WALL_SHADER_TEXTURE_VERT "shaders/wall_texture.vert"
 #define WALL_SHADER_TEXTURE_FRAG "shaders/default_texture.frag"
 
+#define BLANK_SHADER_TEXTURE_VERT "shaders/blank.vert"
+#define BLANK_SHADER_TEXTURE_FRAG "shaders/blank.frag"
+
 #define TEXT_SHADER_VERT "shaders/text.vert"
 #define TEXT_SHADER_FRAG "shaders/text.frag"
 
@@ -49,6 +52,7 @@ struct STATE {
    World *world;
    Map *map;
    
+   float cell_size = 8.0f;
    glm::vec4 light_color;
    glm::vec4 filter_luminance_color = {0.941, 0.561, 0.024, 1.0f};
    glm::vec3 light_pos;

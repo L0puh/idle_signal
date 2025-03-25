@@ -9,6 +9,7 @@ void Object::draw(GLenum mode){
    shd->set_mat4fv("_projection", state.camera->get_projection());
    shd->set_mat4fv("_view", state.camera->get_view());
    shd->set_mat4fv("_model", model);
+   
    if (with_texture) {
       texture->use();
       shd->set_light();

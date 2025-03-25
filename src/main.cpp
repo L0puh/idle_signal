@@ -1,6 +1,7 @@
 #include "collision.hpp"
 #include "core.hpp"
 #include "map.hpp"
+#include "hand.hpp"
 
 void enable_if_debug();
 void shutdown(GLFWwindow*);
@@ -82,7 +83,11 @@ int main() {
    map.set_shader(&shd_wall);
 
    state.light_pos = {0.1f, 0.1f, 0.1f};
+
+   Hand hand;
+
    while (!glfwWindowShouldClose(window)){
+      state.light_pos = ball.pos;
       imgui::frame();
       update_deltatime();
       if (state.mode & PLAY_MODE){
@@ -96,16 +101,17 @@ int main() {
          camera.show_cursor();
          map.draw_objects();
       }
+      
 
       imgui::main_draw();
       const float c[] = {state.light_color[0], state.light_color[1], state.light_color[2],
          state.light_color[3]};
       render.draw_cube(state.light_pos, state.light_pos + glm::vec3(0.3, 0.3, 0.3), 
             c, state.default_shader, {glm::vec3(0.0f), glm::vec3(1.0f)});
-      world.update();
+      // world.update();
       house.draw();
       aircraft.draw();
-      ball.draw();
+      // ball.draw();
       for (auto& p: pickables){
          if (!camera.is_picked_object && camera.is_close_to_object(p->pos) 
                      && camera.is_pointing_to_object(p->pos) && !p->is_picked){
@@ -132,7 +138,8 @@ int main() {
       
       render.draw_text(&text_obj, "+", {state.camera->window_width/2.0f,
                   state.camera->window_height/2.0f}, 0.5, color::white);
-   
+  
+      hand.draw();
       imgui::render();
       glfwSwapBuffers(window);
       glfwPollEvents();

@@ -1,3 +1,4 @@
+#include "camera.hpp"
 #include "core.hpp"
 #include <cstdio>
 #include <fstream>
@@ -124,5 +125,14 @@ const int Shader::get_location(std::string name){
    return location;
 }
 
-
-
+void Shader::set_light(){
+   set_vec3("_light_pos", state.light_pos); 
+   set_vec4("_light_color", state.light_color); 
+   set_float("_time", state.deltatime);
+   set_float("_noise_intensity", state.noise_intensity);
+   set_float("_threshold", state.filter_threshold);
+   set_float("_width", state.camera->window_width);
+   set_float("_height", state.camera->window_height);
+   set_float("_cell_size", state.cell_size);
+   set_vec3("_luminance_color", state.filter_luminance_color);
+}

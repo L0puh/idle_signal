@@ -73,6 +73,7 @@ class Texture {
       std::map<char, character_t> characters;
    
    private:
+      bool is_flip = false;
       uint id;
       std::string type;
       std::string path;
@@ -80,7 +81,7 @@ class Texture {
 
    public: 
       Texture(){}
-      Texture(const std::string src): name(src){ 
+      Texture(const std::string src, bool is_flip = false): name(src), is_flip(is_flip){ 
          char new_src[TEXTURES_DIR.length() + src.length()];
          sprintf(new_src, "%s%s", TEXTURES_DIR.c_str(), src.c_str());
          path = new_src;
@@ -166,14 +167,7 @@ class Shader {
       
       void use()    { glUseProgram(id); }
       void unuse()  { glUseProgram(0);  }
-      void set_light() { 
-         set_vec3("_light_pos", state.light_pos); 
-         set_vec4("_light_color", state.light_color); 
-         set_float("_time", state.deltatime);
-         set_float("_noise_intensity", state.noise_intensity);
-         set_float("_threshold", state.filter_threshold);
-         set_vec3("_luminance_color", state.filter_luminance_color);
-      }
+      void set_light();
 
       void set_mat4fv(std::string location, glm::mat4x4 mat) { 
          glUniformMatrix4fv(get_location(location), 1, GL_FALSE, glm::value_ptr(mat));

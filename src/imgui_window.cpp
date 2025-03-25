@@ -30,9 +30,10 @@ namespace imgui {
          float color2[4] = {state.filter_luminance_color.x, state.filter_luminance_color.y, state.filter_luminance_color.z,
          state.filter_luminance_color.z};
          ImGui::SliderFloat("NOISE INTENSITY:", &state.noise_intensity, 0.0f, 1.0f, "%.8f");
+         ImGui::SliderFloat("CELL SIZE(LOW POLY):", &state.cell_size, 0.0f, 30.0f, "%.8f");
          ImGui::SliderFloat("FILTER THRESHOLD:", &state.filter_threshold, 0.0f, 1.0f, "%.8f");
-         ImGui::ColorEdit4("LIGHT:", color);
          ImGui::ColorEdit4("LUMINANCE:", color2);
+         ImGui::ColorEdit4("LIGHT:", color);
          ImGui::ColorEdit4("BG:", state.bg_color);
          state.light_color = {color[0], color[1], color[2], color[3]};
          state.filter_luminance_color = {color2[0], color2[1], color2[2], color2[3]};

@@ -9,6 +9,7 @@
 
 ### libs:
 - opengl, glad, glfw
+- glm for math
 - imgui for debug windows
 - bullet physics 
 - stb image and assimp 

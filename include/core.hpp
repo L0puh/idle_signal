@@ -169,6 +169,10 @@ class Shader {
       void set_light() { 
          set_vec3("_light_pos", state.light_pos); 
          set_vec4("_light_color", state.light_color); 
+         set_float("_time", state.deltatime);
+         set_float("_noise_intensity", state.noise_intensity);
+         set_float("_threshold", state.filter_threshold);
+         set_vec3("_luminance_color", state.filter_luminance_color);
       }
 
       void set_mat4fv(std::string location, glm::mat4x4 mat) { 

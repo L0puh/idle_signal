@@ -50,9 +50,12 @@ struct STATE {
    Map *map;
    
    glm::vec4 light_color;
+   glm::vec4 filter_luminance_color = {0.941, 0.561, 0.024, 1.0f};
    glm::vec3 light_pos;
    float ground_level = -1.0f;
    float bg_color[4];
+   float noise_intensity = 0.1f;
+   float filter_threshold= 0.5f;
    float mouse_sensitivity = 0.05f;
    float deltatime  = 0.0f;
    float last_frame = 0.0f; // for deltatime

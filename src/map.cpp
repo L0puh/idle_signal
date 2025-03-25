@@ -17,6 +17,7 @@ void Map::editor_popup(){
       if (ImGui::Button("CLEAR")){ 
          floors.clear();
          lines.clear();
+         roof.clear();
       }
       ImGui::SameLine();
       ImGui::Checkbox("Show camera", &show_camera); ImGui::SameLine();
@@ -171,6 +172,7 @@ void Map::generate_coords(){
       floors_obj.push_back({glm::vec3(p.x, state.ground_level, p.y), glm::vec3(p2.x, state.ground_level, p2.y)});
    }
 
+   roof_obj.clear();
    for (int i = 0; i < roof.size(); i++){
       glm::vec2 p = state.camera->project(roof[i].first.x, roof[i].first.y) * scale; 
       glm::vec2 p2 = state.camera->project(roof[i].second.x, roof[i].second.y) * scale;

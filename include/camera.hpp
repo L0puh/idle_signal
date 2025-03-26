@@ -18,6 +18,7 @@ class Camera {
       uint8_t flags;
       glm::mat4 view;
       glm::vec3 pos, size;
+      float default_speed = 1.0f;
       float speed, zoom;
       double window_width, window_height;
 
@@ -32,7 +33,7 @@ class Camera {
       
    public:
       Camera(GLFWwindow* window, uint8_t flags): window(window),
-         speed(1.5f), flags(flags), 
+         speed(default_speed), flags(flags), 
          zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f)
    {
       collision_obj = new btCollisionObject();

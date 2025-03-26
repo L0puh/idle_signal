@@ -15,6 +15,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <vector>
 
 #include "state.hpp"
 
@@ -93,8 +94,10 @@ class Texture {
       };
       ~Texture(){};
    public:
+      void load_cubemap(std::vector<std::string> faces);
       void load_font();
       void use()        { glBindTexture(GL_TEXTURE_2D, id); }
+      void use_cubemap() { glBindTexture(GL_TEXTURE_CUBE_MAP, id); }
       void use(uint id) { glBindTexture(GL_TEXTURE_2D, id); }
       void unuse() { glBindTexture(GL_TEXTURE_2D, 0); }
       void set_type(std::string name){ type = name; }

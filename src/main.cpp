@@ -2,6 +2,9 @@
 #include "core.hpp"
 #include "map.hpp"
 #include "hand.hpp"
+#include "state.hpp"
+#include "vertices.hpp"
+#include <vector>
 
 void enable_if_debug();
 void shutdown(GLFWwindow*);
@@ -85,11 +88,32 @@ int main() {
    state.light_pos = {0.1f, 0.1f, 0.1f};
 
    Hand hand;
+   Texture cubemap;
+   std::vector<std::string> faces = {
+       "right.png",
+       "left.png",
+       "top.png",
+       "bottom.png",
+       "front.png",
+       "back.png"
+   };
+   
+   cubemap.load_cubemap(faces);
+   Shader cubemap_shd;
+   cubemap_shd.init_shader(SKYBOX_SHADER_VERT, SKYBOX_SHADER_FRAG);
+   Vertex vertex;
+   vertex.create_VBO(vertices::skybox, sizeof(vertices::skybox));
+   vertex.add_atrib(0, 3, GL_FLOAT, 3 * sizeof(float)); //pos
 
    while (!glfwWindowShouldClose(window)){
+
+      glClearColor(state.bg_color[0], state.bg_color[1], state.bg_color[2], state.bg_color[3]);   
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       state.light_pos = ball.pos;
       imgui::frame();
       update_deltatime();
+     
+
       if (state.mode & PLAY_MODE){
          camera.update();
          camera.hide_cursor();
@@ -112,6 +136,9 @@ int main() {
       house.draw();
       aircraft.draw();
       // ball.draw();
+      
+
+
       for (auto& p: pickables){
          if (!camera.is_picked_object && camera.is_close_to_object(p->pos) 
                      && camera.is_pointing_to_object(p->pos) && !p->is_picked){
@@ -139,12 +166,20 @@ int main() {
       render.draw_text(&text_obj, "+", {state.camera->window_width/2.0f,
                   state.camera->window_height/2.0f}, 0.5, color::white);
   
+      glDepthFunc(GL_LEQUAL);
+      glm::mat4 model = glm::mat4(1.0f);
+      model = camera.get_projection() * glm::mat4(glm::mat3(camera.get_view()));
+      cubemap_shd.use();
+      cubemap_shd.set_mat4fv("_model", model);
+      vertex.bind();
+      cubemap.use_cubemap();
+      glDrawArrays(GL_TRIANGLES, 0, 36);
+      glDepthFunc(GL_LESS);
+      
       hand.draw();
       imgui::render();
       glfwSwapBuffers(window);
       glfwPollEvents();
-      glClearColor(state.bg_color[0], state.bg_color[1], state.bg_color[2], state.bg_color[3]);   
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    }
    
 

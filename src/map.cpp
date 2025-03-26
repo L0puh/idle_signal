@@ -28,6 +28,7 @@ void Map::editor_popup(){
       ImGui::RadioButton("Floor", &state_drawing, object_e::tiles); ImGui::SameLine();
       ImGui::RadioButton("Door", &state_drawing, object_e::door); ImGui::SameLine();
       ImGui::RadioButton("Roof", &state_drawing, object_e::roof);
+      ImGui::RadioButton("normal", &state_drawing, object_e::normal);
 
 
       draw_grid(draw_list, ImGui::GetCursorScreenPos(), 20.f, imgui_color::white);
@@ -48,6 +49,9 @@ void Map::editor_popup(){
             break;
          case object_e::roof:
             add_roof(pos, draw_list);
+            break;
+         case object_e::normal:
+            //TODO
             break;
 
       }

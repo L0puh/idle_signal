@@ -23,6 +23,9 @@
 #define BLANK_SHADER_TEXTURE_VERT "shaders/blank.vert"
 #define BLANK_SHADER_TEXTURE_FRAG "shaders/blank.frag"
 
+#define SKYBOX_SHADER_VERT "shaders/cubemap.vert"
+#define SKYBOX_SHADER_FRAG "shaders/cubemap.frag"
+
 #define TEXT_SHADER_VERT "shaders/text.vert"
 #define TEXT_SHADER_FRAG "shaders/text.frag"
 

@@ -2,6 +2,7 @@
 #include "input.hpp"
 #include "model.hpp"
 #include "collision.hpp"
+#include <GLFW/glfw3.h>
 
 glm::mat4 Camera::get_projection_ortho() {
    glm::mat4 proj = glm::ortho(0.0f, (float)window_width, 0.0f, (float)window_height);
@@ -54,7 +55,13 @@ void Camera::update_movement(){
    if (is_walking && !is_flying){
       walk_offset = sin(glfwGetTime() * 5.0f) * 0.01f;
    } else walk_offset = 0.0f;
-
+   
+   if (state.keys[GLFW_KEY_LEFT_SHIFT] && glfwGetTime() - state.keys_lastpress[GLFW_KEY_W] >= state.cooldown){
+      if (speed <= 3.0f) 
+         speed += 1.0 * state.deltatime;
+   } else {
+      speed = default_speed;
+   }
    collider = model->caclulate_boundaries();
    collider.pos = p;
    //TODO:: add sliding 

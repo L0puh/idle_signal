@@ -14,10 +14,12 @@ namespace input {
       return glfwGetKey(window, key) == GLFW_RELEASE; 
    }
    inline void mouse_callback(GLFWwindow *window, int key, int action, int mods){
-      if (action == GLFW_PRESS)
+      if (action == GLFW_PRESS){
          state.keys[key]=1;
-      else if (action == GLFW_RELEASE) 
+      }
+      else if (action == GLFW_RELEASE) {
          state.keys[key]=0;
+      }
       if (key == GLFW_MOUSE_BUTTON_LEFT) {
          if (action == GLFW_PRESS){
             if (!(state.global_state & MOUSE_CLICKED)) state.global_state |= MOUSE_CHANGED;

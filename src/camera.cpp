@@ -1,5 +1,4 @@
 #include "camera.hpp"
-#include "glm/ext/quaternion_common.hpp"
 #include "input.hpp"
 #include "model.hpp"
 #include "collision.hpp"

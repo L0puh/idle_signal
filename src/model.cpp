@@ -20,8 +20,10 @@ void Model::load_model(const std::string src){
    trigmesh = new btTriangleMesh();
    scene = importer.ReadFile(src, ASSIMP_FLAGS_LOAD);
    if (scene == NULL || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
-      //FIXME 
-      printf("assimp error: %s\n", importer.GetErrorString());
+      char info[64];
+      sprintf(info, "assimp error: %s", importer.GetErrorString());
+      log_info(info);
+      error_and_exit(info);
       return;
    }
    char info[64];

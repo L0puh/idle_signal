@@ -34,7 +34,13 @@ class Map {
       std::vector<std::pair<glm::vec3, glm::vec3>> walls_obj, floors_obj, roof_obj;
 
    public:
-      Map() {}
+      Map() { init_shaders(); }
+      ~Map() {
+         delete tex_wall;
+         delete tex_roof;
+         delete tex_floor;
+         delete shd;
+      }
 
    public:
       void set_wall_texure(Texture *tex) { this->tex_wall = tex; }
@@ -54,6 +60,14 @@ class Map {
          }
       }
       void editor_popup();
+   private:
+      void init_shaders(){
+         tex_wall = new Texture("wall_texture.jpg");
+         tex_roof = new Texture("roof_texture.jpg");
+         tex_floor = new Texture("floor_texture.jpg");
+         shd = new Shader(MAP_SHADER_TEXTURE_VERT, MAP_SHADER_TEXTURE_FRAG);
+
+      }
 };
 
 void draw_grid(ImDrawList* draw_list, ImVec2 origin, float cell_size, ImU32 color);

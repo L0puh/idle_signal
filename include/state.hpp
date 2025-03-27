@@ -11,14 +11,16 @@
 #define IMGUI_FOCUSED 0b0010
 #define EDITING       0b0001
 
+#define WALKING_OGG "assets/sounds/footsteps.ogg"
+
 #define DEFAULT_SHADER_VERT "shaders/default.vert"
 #define DEFAULT_SHADER_FRAG "shaders/default.frag"
 
 #define DEFAULT_SHADER_TEXTURE_VERT "shaders/default_texture.vert"
 #define DEFAULT_SHADER_TEXTURE_FRAG "shaders/default_texture.frag"
 
-#define WALL_SHADER_TEXTURE_VERT "shaders/wall_texture.vert"
-#define WALL_SHADER_TEXTURE_FRAG "shaders/default_texture.frag"
+#define MAP_SHADER_TEXTURE_VERT "shaders/map_texture.vert"
+#define MAP_SHADER_TEXTURE_FRAG "shaders/default_texture.frag"
 
 #define BLANK_SHADER_TEXTURE_VERT "shaders/blank.vert"
 #define BLANK_SHADER_TEXTURE_FRAG "shaders/blank.frag"
@@ -42,8 +44,10 @@ class World;
 class Camera;
 class Renderer;
 class Shader;
+class Sound;
 class Collision;
 class Map;
+class Object;
 
 struct STATE {
 
@@ -54,6 +58,8 @@ struct STATE {
    Shader *default_shader;
    World *world;
    Map *map;
+   Sound *sound;
+   Object *text_obj;
    
    float cell_size = 8.0f;
    glm::vec4 light_color;

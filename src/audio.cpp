@@ -115,25 +115,21 @@ bool Audio::remove_sound_effect(const ALuint& buffer){
    }
    return -1;
 }
-void Sound::pause_sound(const ALuint& play_buffer){
-   if (buffer != play_buffer){
-      buffer = play_buffer;
-      alSourcei(source, AL_BUFFER, (ALint)buffer);
-   }
-   if (state == PLAY){
-      alSourcePause(source);
-      state = PAUSE;
-   }
+void Sound::pause_sound(sound_type type){
+   buffer = buffers[type];
+   alSourcei(source, AL_BUFFER, (ALint)buffer);
 
+   if (states[type] == PLAY){
+      alSourcePause(source);
+      states[type] = PAUSE;
+   }
 }
 
-void Sound::play_sound(const ALuint& play_buffer){
-   if (buffer != play_buffer){
-      buffer = play_buffer;
-      alSourcei(source, AL_BUFFER, (ALint)buffer);
-   }
-   if (state == PAUSE){
+void Sound::play_sound(sound_type type){
+   buffer = buffers[type];
+   alSourcei(source, AL_BUFFER, (ALint)buffer);
+   if (states[type] == PAUSE){
       alSourcePlay(source);
-      state = PLAY;
+      states[type] = PLAY;
    }
 }

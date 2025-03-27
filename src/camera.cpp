@@ -1,4 +1,5 @@
 #include "camera.hpp"
+#include "audio.hpp"
 #include "input.hpp"
 #include "model.hpp"
 #include "collision.hpp"
@@ -54,7 +55,12 @@ void Camera::update_movement(){
    
    if (is_walking && !is_flying){
       walk_offset = sin(glfwGetTime() * 5.0f) * 0.01f;
-   } else walk_offset = 0.0f;
+      state.sound->play_sound(WALKING);
+      
+   } else { 
+      walk_offset = 0.0f;
+      state.sound->pause_sound(WALKING);
+   }
    
    if (state.keys[GLFW_KEY_LEFT_SHIFT] && glfwGetTime() - state.keys_lastpress[GLFW_KEY_W] >= state.cooldown){
       if (speed <= 3.0f) 
@@ -158,6 +164,8 @@ glm::vec2 Camera::get_mouse_pos() {
       
 void Camera::update(){ 
    update_movement();
+   state.renderer->draw_text("+", {state.camera->window_width/2.0f,
+               state.camera->window_height/2.0f}, 0.5, color::white);
    collision_obj->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), 
                                           btVector3(pos.x, pos.y, pos.z)));
    view = glm::lookAt(pos + glm::vec3(0.0f, walk_offset, 0.0f), pos+front, up);

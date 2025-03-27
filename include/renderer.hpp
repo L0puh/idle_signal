@@ -37,6 +37,21 @@ class Renderer {
          line.cleanup();
          glLineWidth(1.0f);
       }
+      void draw_cube(glm::vec3 min, glm::vec3 max, glm::vec4 color,  Shader *shd, line_data_t model){
+         const float c[] = {color.x, color.y, color.z, color.w};
+         draw_line(glm::vec3(min.x, min.y, min.z), glm::vec3(max.x, min.y, min.z), c, 3.0f, shd, model);
+         draw_line(glm::vec3(max.x, min.y, min.z), glm::vec3(max.x, max.y, min.z), c, 3.0f, shd, model);
+         draw_line(glm::vec3(max.x, max.y, min.z), glm::vec3(min.x, max.y, min.z), c, 3.0f, shd, model);
+         draw_line(glm::vec3(min.x, max.y, min.z), glm::vec3(min.x, min.y, min.z), c, 3.0f, shd, model);
+         draw_line(glm::vec3(min.x, min.y, min.z), glm::vec3(min.x, min.y, max.z), c, 3.0f, shd, model);
+         draw_line(glm::vec3(max.x, min.y, min.z), glm::vec3(max.x, min.y, max.z), c, 3.0f, shd, model);
+         draw_line(glm::vec3(max.x, max.y, min.z), glm::vec3(max.x, max.y, max.z), c, 3.0f, shd, model);
+         draw_line(glm::vec3(min.x, max.y, min.z), glm::vec3(min.x, max.y, max.z), c, 3.0f, shd, model);
+         draw_line(glm::vec3(min.x, min.y, max.z), glm::vec3(max.x, min.y, max.z), c, 3.0f, shd, model);
+         draw_line(glm::vec3(max.x, min.y, max.z), glm::vec3(max.x, max.y, max.z), c, 3.0f, shd, model);
+         draw_line(glm::vec3(max.x, max.y, max.z), glm::vec3(min.x, max.y, max.z), c, 3.0f, shd, model);
+         draw_line(glm::vec3(min.x, max.y, max.z), glm::vec3(min.x, min.y, max.z), c, 3.0f, shd, model);
+      }
 
       void draw_cube(glm::vec3 min, glm::vec3 max, const GLfloat *color,  Shader *shd, line_data_t model){
          draw_line(glm::vec3(min.x, min.y, min.z), glm::vec3(max.x, min.y, min.z), color, 3.0f, shd, model);
@@ -76,7 +91,8 @@ class Renderer {
             draw_line(points[i], points[i + 1], color, 3.0f, shd, data);
          }
       }
-      void draw_text(Object *obj, std::string text, glm::vec2 pos, float scale, const GLfloat *color){
+      void draw_text(std::string text, glm::vec2 pos, float scale, const GLfloat *color){
+         Object *obj = state.text_obj;
          obj->shd->use();
          obj->shd->set_mat4fv("_projection", state.camera->get_projection_ortho());
          obj->shd->set_vec3("_color", {color[0], color[1], color[2]});

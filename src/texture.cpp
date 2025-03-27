@@ -65,7 +65,7 @@ void Texture::load_cubemap(std::vector<std::string> faces){
       char info[64];
       sprintf(info, "loading texture: %s", path.c_str());
       log_info(info);
-         stbi_set_flip_vertically_on_load(false);
+      stbi_set_flip_vertically_on_load(false);
       data = stbi_load(path.c_str(), &width, &height, &channels, 0);
       if (data){
          glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
@@ -100,6 +100,8 @@ void Texture::load_texture(){
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
    if (is_flip)
       stbi_set_flip_vertically_on_load(true);
+   else 
+      stbi_set_flip_vertically_on_load(false);
    data = stbi_load(path.c_str(), &width, &height, &channels, 0);
    
 

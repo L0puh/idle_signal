@@ -36,7 +36,7 @@ void Map::editor_popup(){
       ImVec2 pos = ImGui::GetMousePos();
      
       if (show_camera){
-         //FIXME:
+         //FIXME: add precise world to screen 
          draw_list->AddCircle(ImVec2(pos.x, pos.y), 10.0f, imgui_color::red, 30, 2.0f);
       }
       switch(state_drawing){
@@ -49,9 +49,6 @@ void Map::editor_popup(){
             break;
          case object_e::roof:
             add_roof(pos, draw_list);
-            break;
-         case object_e::normal:
-            //TODO
             break;
 
       }
@@ -135,7 +132,6 @@ void Map::draw_objects(){
 
       Object w(object_e::wall, tex_wall, shd, 
             min, max);
-      
       w.set_pos(glm::vec3(0.0f));
       w.set_size(glm::vec3(1.0f));
       w.draw();
@@ -169,6 +165,7 @@ void Map::generate_coords(){
       glm::vec2 p2 = state.camera->project(lines[i].second.x, lines[i].second.y) * scale;
       walls_obj.push_back({glm::vec3(p.x, 1.0f, p.y), glm::vec3(p2.x, 1.0f, p2.y)});
    }
+   
    floors_obj.clear(); 
    for (int i = 0; i < floors.size(); i++){
       glm::vec2 p = state.camera->project(floors[i].first.x, floors[i].first.y) * scale; 
@@ -182,9 +179,6 @@ void Map::generate_coords(){
       glm::vec2 p2 = state.camera->project(roof[i].second.x, roof[i].second.y) * scale;
       roof_obj.push_back({glm::vec3(p.x, state.ground_level + roof_level, p.y), glm::vec3(p2.x, state.ground_level + roof_level, p2.y)});
    }
-
-
-
 }
 
 //                                 UTILS:                                 //

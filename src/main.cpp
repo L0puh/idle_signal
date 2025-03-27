@@ -1,3 +1,4 @@
+#include "audio.hpp"
 #include "collision.hpp"
 #include "core.hpp"
 #include "map.hpp"
@@ -105,6 +106,11 @@ int main() {
    vertex.create_VBO(vertices::skybox, sizeof(vertices::skybox));
    vertex.add_atrib(0, 3, GL_FLOAT, 3 * sizeof(float)); //pos
 
+   Audio auidio;
+   auidio.init();
+   Sound sound;
+   ALuint buf = auidio.add_sound_effect("assets/sounds/footsteps.ogg");
+
    while (!glfwWindowShouldClose(window)){
 
       glClearColor(state.bg_color[0], state.bg_color[1], state.bg_color[2], state.bg_color[3]);   
@@ -125,6 +131,10 @@ int main() {
          camera.show_cursor();
          map.draw_objects();
       }
+
+      if (camera.is_walking){
+         sound.play_sound(buf);
+      } else sound.pause_sound(buf);
       
 
       imgui::main_draw();

@@ -11,7 +11,6 @@ endif()
 
 find_package(OpenGL REQUIRED)
 find_package(Freetype REQUIRED)
-find_package(Bullet REQUIRED)
 find_package(OpenAL REQUIRED)
 
 include_directories(libs)
@@ -24,4 +23,4 @@ file(GLOB_RECURSE LIBS    ${CMAKE_CURRENT_SOURCE_DIR}/libs/*.c ${CMAKE_CURRENT_S
 
 add_executable(app ${LIBS} ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 target_link_libraries(app glfw OpenGL::GL assimp ${FREETYPE_LIBRARIES}
-   BulletDynamics BulletCollision LinearMath openal sndfile)
+   LinearMath openal sndfile)

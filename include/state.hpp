@@ -40,7 +40,6 @@
 const std::string TEXTURES_DIR = "assets/textures/";
 const std::string MODELS_DIR  =  "assets/models/";
 
-class World;
 class Camera;
 class Renderer;
 class Shader;
@@ -56,11 +55,11 @@ struct STATE {
    Renderer *renderer;
    Camera *camera;
    Shader *default_shader;
-   World *world;
+   Shader *default_texture_shader;
    Map *map;
    Sound *sound;
    Object *text_obj;
-   
+  
    float cell_size = 8.0f;
    glm::vec4 light_color;
    glm::vec4 filter_luminance_color = {0.941, 0.561, 0.024, 1.0f};

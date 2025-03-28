@@ -1,8 +1,10 @@
 #include "map.hpp"
 #include "camera.hpp"
-#include "collision.hpp"
 #include "object.hpp"
 #include <imgui/imgui.h>
+
+
+
 
 void Map::editor_popup(){
    ImGui::SetNextWindowSize(ImVec2(state.camera->window_width, state.camera->window_height), ImGuiCond_Always);
@@ -10,7 +12,7 @@ void Map::editor_popup(){
    ImGui::Begin("map editor", nullptr, 
                   ImGuiWindowFlags_NoTitleBar |
                   ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                  ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
+                  ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
    {
       
       ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -28,15 +30,12 @@ void Map::editor_popup(){
       ImGui::RadioButton("Floor", &state_drawing, object_e::tiles); ImGui::SameLine();
       ImGui::RadioButton("Door", &state_drawing, object_e::door); ImGui::SameLine();
       ImGui::RadioButton("Roof", &state_drawing, object_e::roof);
-      ImGui::RadioButton("normal", &state_drawing, object_e::normal);
 
-
-      draw_grid(draw_list, ImGui::GetCursorScreenPos(), 20.f, imgui_color::white);
+      // draw_grid(draw_list, ImGui::GetCursorScreenPos(), 20.f, imgui_color::white);
       ImGui::InvisibleButton("canvas", ImGui::GetContentRegionAvail());
       ImVec2 pos = ImGui::GetMousePos();
      
       if (show_camera){
-         //FIXME: add precise world to screen 
          draw_list->AddCircle(ImVec2(pos.x, pos.y), 10.0f, imgui_color::red, 30, 2.0f);
       }
       switch(state_drawing){

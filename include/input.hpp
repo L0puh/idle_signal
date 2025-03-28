@@ -62,8 +62,12 @@ namespace input {
                if (state.mode & EDIT_MODE){
                   state.mode = PLAY_MODE;
                   state.map->generate_coords();
+                  state.camera->change_mode(state.mode);
                }
-               else state.mode = EDIT_MODE;
+               else {
+                  state.mode = EDIT_MODE;
+                  state.camera->change_mode(state.mode);
+               }
             }
             break;
             

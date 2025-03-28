@@ -18,13 +18,13 @@ namespace imgui_color {
 
 class Map {
    private:
+      
       Shader *shd;
       Texture *tex_wall, *tex_floor, *tex_roof;
       
       int state_drawing = wall;
       bool is_drawing=false, show_camera=true, show_roof = false;
       
-      float scale = 10.0f;
       float roof_level = 2.0f;
       ImVec2 current_start = ImVec2(0.0f, 0.0f);
      
@@ -32,7 +32,8 @@ class Map {
       std::vector<std::pair<ImVec2, ImVec2>> floors;
       std::vector<std::pair<ImVec2, ImVec2>> roof;
       std::vector<std::pair<glm::vec3, glm::vec3>> walls_obj, floors_obj, roof_obj;
-
+   public:
+      float scale = 10.0f;
    public:
       Map() { init_shaders(); }
       ~Map() {

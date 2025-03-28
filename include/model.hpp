@@ -2,16 +2,13 @@
 #define MODEL_HPP
 
 #include <vector>
-
-#include <btBulletDynamicsCommon.h>
 #include "core.hpp"
-#include "camera.hpp"
-
-struct collider_t;
+#include "state.hpp"
 
 class Mesh;
 class Model;
 
+struct collider_t;
 
 class Mesh {
    public:
@@ -47,11 +44,9 @@ class Model {
       glm::mat4 model;
       glm::vec4 color;
       bool with_texture = true;
-      btTriangleMesh *trigmesh; 
    private:
       Shader *shd;
    public:
-      btBvhTriangleMeshShape* collision_shape;
       bool is_picked = false;
       float rotation_angle;
       glm::vec3 pos, rotation, size;
@@ -73,24 +68,7 @@ class Model {
          model = glm::rotate(model, (float)rotation_angle, rotation);
          model = glm::scale(model, size);
       }
-      void draw(){
-         update();
-         shd->use();
-         shd->set_mat4fv("_projection", state.camera->get_projection());
-         shd->set_mat4fv("_view", state.camera->get_view());
-         shd->set_mat4fv("_model", model);
-         if (!with_texture) {
-            shd->set_vec3("_color", color);
-         } else {
-            shd->set_light();
-         }
-
-         for (uint i=0; i < meshes.size(); i++){
-            meshes.at(i).draw();
-         }
-         shd->unuse();
-      }
-
+      void draw();
       void is_with_texture(bool t) { with_texture = t; }
       void set_shader(Shader *shd) { 
          this->shd = shd;

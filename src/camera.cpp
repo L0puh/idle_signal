@@ -3,7 +3,6 @@
 #include "input.hpp"
 #include "model.hpp"
 #include "collision.hpp"
-#include <GLFW/glfw3.h>
 
 glm::mat4 Camera::get_projection_ortho() {
    glm::mat4 proj = glm::ortho(0.0f, (float)window_width, 0.0f, (float)window_height);
@@ -128,32 +127,32 @@ void Camera::update_mouse_turn(glm::vec2 offset){
    update_vectors();
 }
 
-// world to screen positiong
 glm::vec2 Camera::unproject(glm::vec3 pos){
-   glm::vec4 position_clip = get_view() * get_projection()  * glm::vec4(pos, 1.0f) , position_screen;
-   position_clip.z /= position_clip.w;
-   position_clip.x /= position_clip.w;
-   position_clip.y /= position_clip.w;
-   
+   //FIXME
+    const auto clip = glm::vec4{pos, 1.f};
+    auto screen = glm::vec2(clip.x, clip.y) / clip.w;
 
-        // convert clip space position to screen space position
-      glm::vec2 viewport = glm::vec2(window_width, window_height); 
-        float viewport_half_width    = viewport.x* 0.5f;
-        float viewport_half_height   = viewport.y * 0.5f;
-        position_screen.x            = (position_clip.x / position_clip.z) *  viewport_half_width  + viewport_half_width;
-        position_screen.y            = (position_clip.y / position_clip.z) * -viewport_half_height + viewport_half_height;
-        return position_screen;
+    if (clip.w < 0.0f || screen.x >= 1.0f || screen.y >= 1.0f) {
+        return {-100000, -1000000};
+    }
+
+    screen = (screen + glm::vec2{1.f, 1.f}) / 2.f;
+    screen *= glm::vec2(window_width, window_height);
+    return screen;
 }
 
-
+inline glm::vec3 fromNDCToWorldCoords(const glm::vec2& ndcCoords)
+{
+    const auto r =  glm::vec4{ndcCoords.x, ndcCoords.y, 0.f, 1.f};
+    return glm::vec3(r);
+}
+inline glm::vec2 fromWindowCoordsToNDC(const glm::ivec2& windowCoords, const glm::ivec2& windowSize)
+{
+    return static_cast<glm::vec2>(windowCoords) / static_cast<glm::vec2>(windowSize) * 2.f -
+           glm::vec2{1.f};
+}
 glm::vec2 Camera::project(double x, double y) {
-   double normx, normy;
-   normx = (2.0f * x) / window_width - 1.0f;
-   normy = 1.0f - (2.0f * y) / window_height;
-   glm::vec4 clip = glm::vec4(normx, normy, 1.0f, 1.0f); 
-   glm::mat4 invproj = glm::inverse(get_projection());
-   glm::vec4 world = invproj * clip;
-   return world;
+   return fromNDCToWorldCoords(fromWindowCoordsToNDC({x,y}, {window_width, window_height}));
 }
 
 glm::vec2 Camera::get_mouse_pos() {
@@ -166,8 +165,6 @@ void Camera::update(){
    update_movement();
    state.renderer->draw_text("+", {state.camera->window_width/2.0f,
                state.camera->window_height/2.0f}, 0.5, color::white);
-   collision_obj->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), 
-                                          btVector3(pos.x, pos.y, pos.z)));
    view = glm::lookAt(pos + glm::vec3(0.0f, walk_offset, 0.0f), pos+front, up);
    if (model != NULL) {
       model->set_pos(pos);

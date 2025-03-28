@@ -1,15 +1,12 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP 
 
-#include <btBulletCollisionCommon.h>
 #include <glm/glm.hpp>
-#include "BulletCollision/CollisionShapes/btBoxShape.h"
 #include "core.hpp"
-#include "world.hpp"
+#include "model.hpp"
 
 class Camera {
    public:
-      btCollisionObject* collision_obj;
       bool is_picked_object = false;
       float walk_offset = 0.0f;
       bool is_walking = false, is_colliding = false;
@@ -22,6 +19,8 @@ class Camera {
       float speed, zoom;
       double window_width, window_height;
 
+      
+      glm::mat4 last_view;
       bool is_flying = false;
 
       glm::vec3 front   = {0.0f, 0.0f, -1.0f};
@@ -30,16 +29,19 @@ class Camera {
       glm::vec3 right;
 
       float yaw, pitch;
-      
+
+
+      float last_yaw, last_pitch;
+      glm::vec3 last_pos;
+
    public:
       Camera(GLFWwindow* window, uint8_t flags): window(window),
          speed(default_speed), flags(flags), 
          zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f)
    {
-      collision_obj = new btCollisionObject();
-      btBoxShape* shape = new btBoxShape(btVector3(0.2, 0.4, 0.2));
-      collision_obj->setCollisionShape(shape);
-      state.world->add_collision_object(collision_obj);
+      model = new Model("camera.obj");
+      model->set_shader(state.default_texture_shader);
+      model->set_size(size);
    }
 
    public:
@@ -55,9 +57,13 @@ class Camera {
    public:
       void hide_cursor() { 
          glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+         last_yaw = yaw;
+         last_pitch = pitch;
       }
       void show_cursor() { 
          glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+         pitch = last_pitch;
+         yaw = last_yaw;
       }
       
       void set_pos(glm::vec3 pos)   { this->pos   = pos; }
@@ -69,6 +75,25 @@ class Camera {
       void set_flag(uint8_t flag)   { flags |= flag; }
       void set_model(Model* model)  { this->model = model; }
 
+      void change_mode(uint8_t mode){
+         if (mode & PLAY_MODE){
+            pos = last_pos;
+            pitch = last_pitch;
+            yaw = last_yaw;
+            is_flying = false;
+         } 
+         if (mode & EDIT_MODE){
+            last_pos = pos;
+            last_yaw = yaw;
+            last_pitch = pitch;
+            is_flying = true;
+            yaw = 0.0f;
+            pitch = -90.0f;
+            pos = glm::vec3(0.0, 20.0f, 0.0);
+            update_vectors();
+            update();
+         }
+      }
    public:
       bool check_collision_with_walls(glm::vec3 pos);
       bool is_pointing_to_object(glm::vec3& pos, float threshold=0.9f);

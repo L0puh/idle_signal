@@ -51,7 +51,7 @@ class Sound {
       ALuint walking;
    public:
       Sound():
-      pitch(1.0f), gain(0.03f), pos(glm::vec3(0.0f)), vel(glm::vec3(0.0))
+      pitch(1.0f), gain(0.09f), pos(glm::vec3(0.0f)), vel(glm::vec3(0.0))
       {
          buffers.resize(sound_type::ST_SIZE_ENUM);
          states.resize(sound_state::SS_SIZE_ENUM);

@@ -30,6 +30,18 @@ void Model::draw(){
 
 }
 
+void Model::draw_debug(glm::vec3 pos, glm::vec3 size){
+
+   for (int i = 0; i < meshes.size(); i++){
+      for (int j = 0; j < meshes[i].vertices.size(); j+=2){
+         glm::vec3 s, e;
+         s = meshes[i].vertices[j].position;
+         e = meshes[i].vertices[j+1].position;
+         state.renderer->draw_line(s, e, color::red, 1.0f, state.default_shader, {pos, size});
+      }
+   }
+}
+
 void Model::load_model(const std::string src){
    const aiScene *scene;
    Assimp::Importer importer;
@@ -131,6 +143,7 @@ std::vector<Texture> Model::load_texture(aiMaterial *mat, aiTextureType type, st
 collider_t Model::caclulate_boundaries(){
    float maxlen = 0.0f;
    glm::vec3 min = glm::vec3(10000000000000.f), max = glm::vec3(0.0f);
+
    for (auto m = meshes.begin(); m != meshes.end(); m++){
       for (auto v = m->vertices.begin(); v != m->vertices.end(); v++){
          float len = glm::length(v->position);

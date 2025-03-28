@@ -5,19 +5,17 @@
 #include "hand.hpp"
 #include "state.hpp"
 #include "skybox.hpp"
+#include "physics.hpp"
 
 void enable_if_debug();
 void shutdown(GLFWwindow*);
-
 int main() {
-   memcpy(state.bg_color, color::dark_grey, sizeof(color::dark_grey));
-   state.light_color = {color::blue[0], color::blue[1], color::blue[2], 1.0f};
-
    GLFWwindow *window = init_window(500, 500);
    imgui::init(window);
   
    enable_if_debug();
    
+   Physics physics;
    Camera camera(window, 0);
    Renderer render;
    Collision collision;
@@ -30,9 +28,9 @@ int main() {
    Skybox skybox;
    Object text_obj(object_e::text, &text_tx, &text_shader);
 
-   sound.init_sounds(&audio);
+   state.physics = &physics;
    state.default_shader = new Shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
-   state.default_texture_shader = new Shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_FRAG); 
+   state.default_texture_shader = new Shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG); 
    state.renderer = &render;
    state.camera = &camera;
    state.collision = &collision;
@@ -40,14 +38,24 @@ int main() {
    state.sound = &sound;
    state.map = &map;
    state.mode |= PLAY_MODE;
+   state.light_pos = {0.0f, 2.0f, 0.0};
+   state.light_color = {color::blue[0], color::blue[1], color::blue[2], 1.0f};
    
+   sound.init_sounds(&audio);
+   camera.init();
+   
+   Model can("can.obj");
+   can.set_shader(state.default_texture_shader);
+   can.set_pos(glm::vec3(0.0f, -0.5f, 0.0f));
+   can.set_size(glm::vec3(0.5f));
+   physics.add_model(can);
+
+
    while (!glfwWindowShouldClose(window)){
 
-      glClearColor(state.bg_color[0], state.bg_color[1], state.bg_color[2], state.bg_color[3]);   
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       imgui::frame();
       update_deltatime();
-
       if (state.mode & PLAY_MODE){
          camera.update();
          camera.hide_cursor();
@@ -58,9 +66,12 @@ int main() {
       } else if (state.mode & PAUSE_MODE) {
          camera.show_cursor();
          map.draw_objects();
+         imgui::main_draw();
       }
       
-      imgui::main_draw();
+      physics.update_collisions();
+      // can.draw_debug(can.pos, can.size);
+      can.draw();
      
       skybox.draw();
       hand.draw();
@@ -70,7 +81,6 @@ int main() {
       glfwPollEvents();
    }
    
-
    shutdown(window);
    return 0;
 }

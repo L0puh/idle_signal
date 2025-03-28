@@ -3,6 +3,7 @@
 #include "input.hpp"
 #include "model.hpp"
 #include "collision.hpp"
+#include "physics.hpp"
 
 glm::mat4 Camera::get_projection_ortho() {
    glm::mat4 proj = glm::ortho(0.0f, (float)window_width, 0.0f, (float)window_height);
@@ -67,10 +68,11 @@ void Camera::update_movement(){
    } else {
       speed = default_speed;
    }
-   collider = model->caclulate_boundaries();
+   collider.max = {0.1, 0.2, 0.1};
+   collider.min = {0.0, 0.0, 0.0};
    collider.pos = p;
    //TODO:: add sliding 
-   if (!state.collision->AABB_collision_with(&collider) && !check_collision_with_walls(p))
+   if (!check_collision_with_walls(p))
       this->pos = p;
    
    if (!is_flying && pos.y != state.ground_level + 1.0f ) 
@@ -106,6 +108,10 @@ void Camera::update_movement2D(){
    if (input::is_pressed(window, GLFW_KEY_A)){
       pos.x -= speed * state.deltatime;
    }
+}
+
+void Camera::init(){
+   state.physics->set_camera_object();
 }
 
 void Camera::update_vectors(){
@@ -166,8 +172,6 @@ void Camera::update(){
    state.renderer->draw_text("+", {state.camera->window_width/2.0f,
                state.camera->window_height/2.0f}, 0.5, color::white);
    view = glm::lookAt(pos + glm::vec3(0.0f, walk_offset, 0.0f), pos+front, up);
-   if (model != NULL) {
-      model->set_pos(pos);
-      model->set_size(size);
-   }
+   if (camera_bt != NULL)
+      state.physics->update_camera_position();
 }

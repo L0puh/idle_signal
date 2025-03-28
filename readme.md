@@ -4,11 +4,12 @@
 - basic map editor (walls, ceiling, floor)
 - loading models
 - lighting
-- basic collision handling
 - text rendering 
+- collision detection of meshes
 
 ### libs:
 - opengl, glad, glfw
 - glm for math
 - imgui for debug windows
 - stb image and assimp 
+- bullet3

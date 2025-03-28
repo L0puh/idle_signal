@@ -47,10 +47,12 @@ class Sound;
 class Collision;
 class Map;
 class Object;
+class Physics;
 
 struct STATE {
 
    uint8_t mode;
+   Physics *physics;
    Collision *collision;
    Renderer *renderer;
    Camera *camera;
@@ -61,11 +63,10 @@ struct STATE {
    Object *text_obj;
   
    float cell_size = 8.0f;
-   glm::vec4 light_color;
    glm::vec4 filter_luminance_color = {0.941, 0.561, 0.024, 1.0f};
+   glm::vec4 light_color;
    glm::vec3 light_pos;
    float ground_level = -1.0f;
-   float bg_color[4];
    float noise_intensity = 0.1f;
    float filter_threshold= 0.5f;
    float mouse_sensitivity = 0.05f;

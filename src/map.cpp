@@ -31,7 +31,6 @@ void Map::editor_popup(){
       ImGui::RadioButton("Door", &state_drawing, object_e::door); ImGui::SameLine();
       ImGui::RadioButton("Roof", &state_drawing, object_e::roof);
 
-      // draw_grid(draw_list, ImGui::GetCursorScreenPos(), 20.f, imgui_color::white);
       ImGui::InvisibleButton("canvas", ImGui::GetContentRegionAvail());
       ImVec2 pos = ImGui::GetMousePos();
      

@@ -1,16 +1,18 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP 
 
-#include <glm/glm.hpp>
 #include "core.hpp"
-#include "model.hpp"
+
+#include <glm/glm.hpp>
+#include <BulletCollision/CollisionDispatch/btCollisionObject.h>
 
 class Camera {
    public:
+
+      btCollisionObject* camera_bt;
       bool is_picked_object = false;
       float walk_offset = 0.0f;
       bool is_walking = false, is_colliding = false;
-      Model *model;
       GLFWwindow* window;
       uint8_t flags;
       glm::mat4 view;
@@ -37,14 +39,13 @@ class Camera {
    public:
       Camera(GLFWwindow* window, uint8_t flags): window(window),
          speed(default_speed), flags(flags), 
-         zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f)
+         zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f),
+         pos(glm::vec3(0.0f))
    {
-      model = new Model("camera.obj");
-      model->set_shader(state.default_texture_shader);
-      model->set_size(size);
    }
 
    public:
+      
       glm::vec2 unproject(glm::vec3 pos);
       glm::vec2 project(double x, double y);
       
@@ -73,7 +74,6 @@ class Camera {
       glm::mat4 get_view()          { return view;}
       void clear_flag(uint8_t flag) { flags &= ~flag; }
       void set_flag(uint8_t flag)   { flags |= flag; }
-      void set_model(Model* model)  { this->model = model; }
 
       void change_mode(uint8_t mode){
          if (mode & PLAY_MODE){
@@ -101,6 +101,7 @@ class Camera {
          float dist = glm::length(this->pos - pos);
          return dist < threshold;
       }
+      void init();
    private:
       void update_vectors();
       void update_movement2D();

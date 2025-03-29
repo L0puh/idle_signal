@@ -1,5 +1,6 @@
 #include "physics.hpp"
 #include "camera.hpp"
+#include <vector>
  
 void Physics::init_world(){
    broadphase = new btDbvtBroadphase();
@@ -12,34 +13,74 @@ void Physics::init_world(){
 
 void Physics::update_collisions(){
    world->performDiscreteCollisionDetection();
-
    int num = dispatcher->getNumManifolds();
    for(int i = 0; i < num; i++) {
       btPersistentManifold* contract = dispatcher->getManifoldByIndexInternal(i);
       const btCollisionObject* x = static_cast<const btCollisionObject*>(contract->getBody0());
       const btCollisionObject* y = static_cast<const btCollisionObject*>(contract->getBody1());
       if(contract->getNumContacts() > 0) {
-         //TODO:
+         if (x != state.camera->camera_bt && y != state.camera->camera_bt) continue; //FIXME
+         
+         btVector3 norm = {0, 0, 0};
+         if (x == state.camera->camera_bt)
+            norm = contract->getContactPoint(0).m_normalWorldOnB;
+         else 
+            norm = -contract->getContactPoint(0).m_normalWorldOnB;
+
+         float depth = contract->getContactPoint(0).getDistance();
+         if (depth < 0) { 
+            state.camera->pos += glm::vec3(norm[0], norm[1], norm[2]) * (-depth); 
+         }
+
       }
    }
 }
+
 void Physics::add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size){
    btTransform transform;
-   btCollisionObject* modelObject = new btCollisionObject();
+   btCollisionObject* model = new btCollisionObject();
    
    transform.setIdentity();
    transform.setOrigin({pos.x, pos.y, pos.z});
    shape->setLocalScaling({size.x, size.y, size.z});
   
-   modelObject->setCollisionShape(shape);
-   modelObject->setWorldTransform(transform);
-   world->addCollisionObject(modelObject, 1, 1);
+   model->setCollisionShape(shape);
+   model->setWorldTransform(transform);
+   world->addCollisionObject(model, 1, 1);
 
 }
 
 void Physics::add_model(Model& model) {
    btCompoundShape *shape = create_compound_shape(model);
    add_compound_model(shape, model.pos, model.size);
+}
+
+
+btCollisionObject* Physics::get_object_from_vertices(std::vector<glm::vec3> vertices, const uint* indices, size_t cnt){
+
+   btCollisionObject* model= new btCollisionObject();
+   btTriangleMesh* tri_mesh = new btTriangleMesh();
+
+   for (int i = 0; i < cnt; i+=3){
+      unsigned int i0 = indices[i];
+      unsigned int i1 = indices[i+1];
+      unsigned int i2 = indices[i+2];
+      
+      btVector3 v0(vertices[i0].x, vertices[i0].y, vertices[i0].z);
+      btVector3 v1(vertices[i1].x, vertices[i1].y, vertices[i1].z);
+      btVector3 v2(vertices[i2].x, vertices[i2].y, vertices[i2].z);
+      
+      tri_mesh->addTriangle(v0, v1, v2);
+   }
+   btBvhTriangleMeshShape* shape = new btBvhTriangleMeshShape(tri_mesh, 1);
+   btTransform transform;
+   transform.setIdentity();
+   transform.setOrigin({0.0f, 0.0f, 0.0f});
+
+   model->setCollisionShape(shape);
+   model->setWorldTransform(transform);
+
+   return model;
 }
 
 btCompoundShape* Physics::create_compound_shape(const Model& model){
@@ -61,9 +102,9 @@ btCompoundShape* Physics::create_compound_shape(const Model& model){
      }
      
      btBvhTriangleMeshShape* mesh_shape = new btBvhTriangleMeshShape(tri_mesh, true);
-     btTransform localTransform;
-     localTransform.setIdentity();
-     shape->addChildShape(localTransform, mesh_shape);
+     btTransform local_transform;
+     local_transform.setIdentity();
+     shape->addChildShape(local_transform, mesh_shape);
    }
 
    return shape;

@@ -4,8 +4,6 @@
 #include <imgui/imgui.h>
 
 
-
-
 void Map::editor_popup(){
    ImGui::SetNextWindowSize(ImVec2(state.camera->window_width, state.camera->window_height), ImGuiCond_Always);
    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always); 

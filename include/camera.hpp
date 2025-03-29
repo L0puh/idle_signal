@@ -17,7 +17,7 @@ class Camera {
       uint8_t flags;
       glm::mat4 view;
       glm::vec3 pos, size;
-      float default_speed = 1.0f;
+      float default_speed = 3.4f;
       float speed, zoom;
       double window_width, window_height;
 
@@ -41,8 +41,8 @@ class Camera {
          speed(default_speed), flags(flags), 
          zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f),
          pos(glm::vec3(0.0f))
-   {
-   }
+      {
+      }
 
    public:
       

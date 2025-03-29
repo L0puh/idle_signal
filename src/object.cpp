@@ -1,6 +1,7 @@
 #include "object.hpp"
 #include "camera.hpp"
 #include "glm/ext/quaternion_geometric.hpp"
+#include "physics.hpp"
 #include "vertices.hpp"
 #include <vector>
 
@@ -58,7 +59,8 @@ void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){
                max.x, min.y, max.z, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
                min.x, min.y, max.z, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f
             };
-            
+
+
             vert.create_VBO(vertices, sizeof(vertices));
             vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
             vert.add_atrib(0, 3, GL_FLOAT, 8 * sizeof(float)); //pos
@@ -70,6 +72,7 @@ void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){
          }
       case wall:
          {
+
 
             const float vertices[] = {
                max.x, max.y, max.z, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f, 

@@ -2,7 +2,7 @@
 #include "collision.hpp"
 #include "core.hpp"
 #include "map.hpp"
-#include "hand.hpp"
+#include "animation.hpp"
 #include "state.hpp"
 #include "skybox.hpp"
 #include "physics.hpp"
@@ -18,8 +18,7 @@ int main() {
    Physics physics;
    Camera camera(window, 0);
    Renderer render;
-   Collision collision;
-   Hand hand;
+   Animation animation;
    Audio audio;
    Sound sound;
    Map map;
@@ -33,7 +32,6 @@ int main() {
    state.default_texture_shader = new Shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG); 
    state.renderer = &render;
    state.camera = &camera;
-   state.collision = &collision;
    state.text_obj = &text_obj;
    state.sound = &sound;
    state.map = &map;
@@ -44,11 +42,6 @@ int main() {
    sound.init_sounds(&audio);
    camera.init();
    
-   Model can("can.obj");
-   can.set_shader(state.default_texture_shader);
-   can.set_pos(glm::vec3(0.0f, -0.5f, 0.0f));
-   can.set_size(glm::vec3(0.5f));
-   physics.add_model(can);
 
 
    while (!glfwWindowShouldClose(window)){
@@ -56,6 +49,7 @@ int main() {
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       imgui::frame();
       update_deltatime();
+      skybox.draw();
       if (state.mode & PLAY_MODE){
          camera.update();
          camera.hide_cursor();
@@ -70,11 +64,8 @@ int main() {
       }
       
       physics.update_collisions();
-      // can.draw_debug(can.pos, can.size);
-      can.draw();
-     
-      skybox.draw();
-      hand.draw();
+      animation.draw(HAND_ANIMATION);
+      
       
       imgui::render();
       glfwSwapBuffers(window);

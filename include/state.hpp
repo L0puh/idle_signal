@@ -44,7 +44,6 @@ class Camera;
 class Renderer;
 class Shader;
 class Sound;
-class Collision;
 class Map;
 class Object;
 class Physics;
@@ -53,7 +52,6 @@ struct STATE {
 
    uint8_t mode;
    Physics *physics;
-   Collision *collision;
    Renderer *renderer;
    Camera *camera;
    Shader *default_shader;

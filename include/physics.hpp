@@ -36,6 +36,7 @@ class Physics {
       void init_world();
       void update_collisions();
       void add_model(Model& model);
+      btCollisionObject* get_object_from_vertices(std::vector<glm::vec3> vertices, const uint* indices, size_t cnt);
       void update_camera_position();
       void set_camera_object();
 

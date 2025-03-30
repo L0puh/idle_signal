@@ -26,7 +26,7 @@ class Animation{
    Shader *shd;
    Vertex vert;
   
-   float last_change = 0.0f, framerate = 0.08f;;
+   float last_change = 0.0f, framerate = 20/60.0f;;
    
    std::vector<Texture*> frames_flashlight;
    std::vector<Texture*> frames_hand;

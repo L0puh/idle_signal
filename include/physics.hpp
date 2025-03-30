@@ -5,6 +5,7 @@
 #include "model.hpp"
 #include "state.hpp"
 #include <btBulletDynamicsCommon.h>
+#include <vector>
 
 
 class Physics {
@@ -17,6 +18,7 @@ class Physics {
       btDiscreteDynamicsWorld* world;
 
       btVector3 gravity = btVector3(0, -9.81f, 0);
+      std::vector<btCollisionObject*> objects;
 
    public:
       Physics() {
@@ -34,11 +36,14 @@ class Physics {
 
    public:
       void init_world();
+      void clear_objects();
       void update_collisions();
+      void add_object(btCollisionObject* obj) { world->addCollisionObject(obj); objects.push_back(obj); }
       void add_model(Model& model);
       btCollisionObject* get_object_from_vertices(std::vector<glm::vec3> vertices, const uint* indices, size_t cnt);
       void update_camera_position();
       void set_camera_object();
+      void add_wall_collider(std::vector<glm::vec3> vertices);
 
    private:
       btCompoundShape* create_compound_shape(const Model& model);

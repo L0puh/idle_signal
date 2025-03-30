@@ -1,4 +1,5 @@
 #include "object.hpp"
+#include "BulletCollision/CollisionDispatch/btCollisionObject.h"
 #include "camera.hpp"
 #include "glm/ext/quaternion_geometric.hpp"
 #include "physics.hpp"
@@ -72,8 +73,6 @@ void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){
          }
       case wall:
          {
-
-
             const float vertices[] = {
                max.x, max.y, max.z, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f, 
                max.x, min.y, max.z, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,   

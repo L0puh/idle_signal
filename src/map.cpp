@@ -1,6 +1,8 @@
 #include "map.hpp"
 #include "camera.hpp"
 #include "object.hpp"
+#include "physics.hpp"
+
 #include <imgui/imgui.h>
 
 
@@ -102,6 +104,7 @@ void Map::add_floor(ImVec2 pos, ImDrawList* draw_list){
 }
 
 void Map::add_wall(ImVec2 pos, ImDrawList* draw_list){
+   
    if (is_drawing){
       if (!ImGui::IsMouseDown(0)){
          is_drawing = false;
@@ -126,8 +129,7 @@ void Map::draw_objects(){
       min = glm::vec3(wall.first.x, state.ground_level, wall.first.z);
       max = wall.second;
 
-      Object w(object_e::wall, tex_wall, shd, 
-            min, max);
+      Object w(object_e::wall, tex_wall, shd, min, max);
       w.set_pos(glm::vec3(0.0f));
       w.set_size(glm::vec3(1.0f));
       w.draw();
@@ -156,10 +158,21 @@ void Map::draw_objects(){
 
 void Map::generate_coords(){
    walls_obj.clear();
+   state.physics->clear_objects();
    for (int i = 0; i < lines.size(); i++){
       glm::vec2 p = state.camera->project(lines[i].first.x, lines[i].first.y) * scale; 
       glm::vec2 p2 = state.camera->project(lines[i].second.x, lines[i].second.y) * scale;
-      walls_obj.push_back({glm::vec3(p.x, 1.0f, p.y), glm::vec3(p2.x, 1.0f, p2.y)});
+
+      glm::vec3 max = glm::vec3(p.x, 0.0, p.y);
+      glm::vec3 min = glm::vec3(p2.x, 1.0, p2.y);
+      std::vector<glm::vec3> v = {
+         glm::vec3(max.x, max.y, max.z),
+         glm::vec3(max.x, min.y, max.z),
+         glm::vec3(min.x, min.y, min.z),
+         glm::vec3(min.x, max.y, min.z),
+      };
+      state.physics->add_wall_collider(v);
+      walls_obj.push_back({max, min});
    }
    
    floors_obj.clear(); 

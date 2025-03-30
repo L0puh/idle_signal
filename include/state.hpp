@@ -47,11 +47,13 @@ class Sound;
 class Map;
 class Object;
 class Physics;
+class Resources;
 
 struct STATE {
 
    uint8_t mode;
    Physics *physics;
+   Resources *resources;
    Renderer *renderer;
    Camera *camera;
    Shader *default_shader;

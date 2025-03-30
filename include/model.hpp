@@ -70,6 +70,7 @@ class Model {
       }
       void draw();
       void draw_debug(glm::vec3 pos, glm::vec3 size);
+      void draw_debug();
       void is_with_texture(bool t) { with_texture = t; }
       void set_shader(Shader *shd) { 
          this->shd = shd;

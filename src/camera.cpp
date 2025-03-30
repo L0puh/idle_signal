@@ -62,21 +62,18 @@ void Camera::update_movement(){
       state.sound->pause_sound(WALKING);
    }
    
-   if (state.keys[GLFW_KEY_LEFT_SHIFT] && glfwGetTime() - state.keys_lastpress[GLFW_KEY_W] >= state.cooldown){
+   if (state.keys[GLFW_KEY_LEFT_SHIFT] && glfwGetTime() -
+         state.keys_lastpress[GLFW_KEY_W] >= state.cooldown){
       if (speed <= 3.0f) 
          speed += 1.0 * state.deltatime;
    } else {
       speed = default_speed;
    }
-   collider.max = {0.1, 0.2, 0.1};
-   collider.min = {0.0, 0.0, 0.0};
-   collider.pos = p;
-
-   if (!check_collision_with_walls(p))
-      this->pos = p;
    
+   this->pos = p;
    if (!is_flying && pos.y != state.ground_level + 1.0f ) 
       pos.y = state.ground_level + 1.0f;
+
 }
 
 bool Camera::check_collision_with_walls(glm::vec3 p){

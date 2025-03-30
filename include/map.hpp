@@ -18,7 +18,6 @@ namespace imgui_color {
 
 class Map {
    private:
-      
       Shader *shd;
       Texture *tex_wall, *tex_floor, *tex_roof;
       

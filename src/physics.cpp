@@ -11,29 +11,38 @@ void Physics::init_world(){
    world->setGravity(gravity);
 }
 
+void Physics::clear_objects(){
+   // camera isn't removed, just map objects 
+   for (auto obj: objects)
+      world->removeCollisionObject(obj);
+}
+
 void Physics::update_collisions(){
+   int num;
+   btVector3 norm, norm_y;
+   btManifoldPoint pt;
+   btPersistentManifold* contract;
+   btScalar dist;
+   Camera* camera = state.camera;
+
    world->performDiscreteCollisionDetection();
-   int num = dispatcher->getNumManifolds();
+   num = dispatcher->getNumManifolds();
    for(int i = 0; i < num; i++) {
-      btPersistentManifold* contract = dispatcher->getManifoldByIndexInternal(i);
+      contract = dispatcher->getManifoldByIndexInternal(i);
       const btCollisionObject* x = static_cast<const btCollisionObject*>(contract->getBody0());
       const btCollisionObject* y = static_cast<const btCollisionObject*>(contract->getBody1());
+      if (x != camera->camera_bt && y != camera->camera_bt) continue;
       if(contract->getNumContacts() > 0) {
-         if (x != state.camera->camera_bt && y != state.camera->camera_bt) continue; //FIXME
-         
-         btVector3 norm = {0, 0, 0};
-         if (x == state.camera->camera_bt)
-            norm = contract->getContactPoint(0).m_normalWorldOnB;
-         else 
-            norm = -contract->getContactPoint(0).m_normalWorldOnB;
-
-         float depth = contract->getContactPoint(0).getDistance();
-         if (depth < 0) { 
-            state.camera->pos += glm::vec3(norm[0], norm[1], norm[2]) * (-depth); 
-         }
-
+         pt = contract->getContactPoint(0);
+         dist = pt.getDistance();
+         norm_y = pt.m_normalWorldOnB;
+         norm = (x == camera->camera_bt) ? norm_y: -norm_y;
+         if (dist < 0.0f) { 
+             camera->pos += glm::vec3(norm.x(), norm.y(), norm.z()) * (-dist);
+          }
       }
    }
+   update_camera_position();
 }
 
 void Physics::add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size){
@@ -55,6 +64,18 @@ void Physics::add_model(Model& model) {
    add_compound_model(shape, model.pos, model.size);
 }
 
+
+void Physics::add_wall_collider(std::vector<glm::vec3> vertices){
+     btConvexHullShape* shape = new btConvexHullShape();
+     for (const auto& vertex : vertices) {
+         ((btConvexHullShape*)shape)->addPoint(btVector3(vertex.x, vertex.y, vertex.z));
+     }
+
+     btCollisionObject *wall = new btCollisionObject;
+     wall->setCollisionShape(shape);
+     world->addCollisionObject(wall, 1, 1);
+     objects.push_back(wall);
+}
 
 btCollisionObject* Physics::get_object_from_vertices(std::vector<glm::vec3> vertices, const uint* indices, size_t cnt){
 
@@ -122,4 +143,5 @@ void Physics::set_camera_object(){
    bt->setCollisionShape(shape);
    state.camera->camera_bt= bt;
    world->addCollisionObject(bt, 1, 1);
+
 }

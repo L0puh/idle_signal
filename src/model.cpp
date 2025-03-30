@@ -30,6 +30,9 @@ void Model::draw(){
 
 }
 
+void Model::draw_debug(){
+   draw_debug(pos, size);
+}
 void Model::draw_debug(glm::vec3 pos, glm::vec3 size){
 
    for (int i = 0; i < meshes.size(); i++){

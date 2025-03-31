@@ -25,10 +25,9 @@ void Terrain::generate_heightmap(std::string filename){
        {
            unsigned char* texel = data + (j + width * i) * channels;
            unsigned char y = texel[0];
-           vertices.push_back( -height/2.0f + i );        
-           vertices.push_back( (int)y * yscale - yshift); 
-
-           vertices.push_back( -width/2.0f + j);        
+           vertices.push_back( -height/2.0f + i);
+           vertices.push_back( (int)y * yscale - yshift > 10.f ? 0.0: y*yscale - yshift); 
+           vertices.push_back( -width/2.0f + j);
            MAX_HEIGHT = std::max((int)y * yscale - yshift, MAX_HEIGHT);
        }
    }
@@ -64,9 +63,9 @@ float Terrain::get_height_at(float x, float z) {
         float height_S = height_SW * (1 - x_frac) + height_SE * x_frac;
         float height = height_N * (1 - z_frac) + height_S * z_frac;
 
-        return height + yshift  ;
+        return height;
     } else {
-        return 0.0f; 
+        return 1.0f; 
     }
 }
 

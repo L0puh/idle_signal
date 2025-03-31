@@ -131,7 +131,11 @@ void Map::draw_objects(){
       max = wall.second;
 
       Object w(object_e::wall, tex_wall, shd, min, max);
-      w.set_pos(glm::vec3(0.0f, 0.0f, 0.0f));
+
+      float y = state.terrain->get_height_at(wall.first.x, wall.first.z) + 0.3f;
+     // TODO: state.physics->update_object(wall.ID, ...);
+      
+      w.set_pos(glm::vec3(0.0f, y, 0.0f));
       w.set_size(glm::vec3(1.0f));
       w.draw();
 
@@ -140,7 +144,8 @@ void Map::draw_objects(){
       Object w(object_e::roof, tex_roof, shd, 
             roof.first, roof.second);
 
-      w.set_pos(glm::vec3(0.0f));
+      float y = state.terrain->get_height_at(roof.first.x, roof.first.z) + 2.0f;
+      w.set_pos(glm::vec3(0.0f, y, 0.0f));
       w.set_size(glm::vec3(1.0f));
       w.draw();
 
@@ -149,7 +154,8 @@ void Map::draw_objects(){
       Object w(object_e::tiles, tex_floor, shd, 
             floor.first, floor.second);
 
-      w.set_pos(glm::vec3(0.0f));
+      float y = state.terrain->get_height_at(floor.first.x, floor.first.z) + 0.5f;
+      w.set_pos(glm::vec3(0.0f, y, 0.0f));
       w.set_size(glm::vec3(1.0f));
       w.draw();
 
@@ -166,7 +172,7 @@ void Map::generate_coords(){
 
 
       glm::vec3 max = glm::vec3(p.x, 0.0f, p.y);
-      glm::vec3 min = glm::vec3(p2.x, 1.0f, p2.y);
+      glm::vec3 min = glm::vec3(p2.x, 6.0f, p2.y);
 
       std::vector<glm::vec3> v = {
          glm::vec3(max.x, max.y, max.z),

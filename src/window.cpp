@@ -68,3 +68,12 @@ void update_deltatime(){
    state.deltatime = time - state.last_frame;
    state.last_frame = time;
 }
+
+glm::vec3 from_ndc_to_world(const glm::vec2& ndc){
+    const auto r =  glm::vec4{ndc.x, ndc.y, 0.f, 1.f};
+    return glm::vec3(r);
+}
+glm::vec2 from_screen_to_ndc(const glm::ivec2& pos, const glm::ivec2& window_size){
+    return static_cast<glm::vec2>(pos) / static_cast<glm::vec2>(window_size) * 2.f -
+           glm::vec2{1.f};
+}

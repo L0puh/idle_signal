@@ -1,8 +1,5 @@
 #include "object.hpp"
-#include "BulletCollision/CollisionDispatch/btCollisionObject.h"
 #include "camera.hpp"
-#include "glm/ext/quaternion_geometric.hpp"
-#include "physics.hpp"
 #include "vertices.hpp"
 #include <vector>
 

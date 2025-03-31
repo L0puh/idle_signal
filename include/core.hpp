@@ -204,4 +204,6 @@ void debug_message_callback (GLenum, GLenum, GLuint, GLuint,
 void update_deltatime();
 GLFWwindow* init_window(int width, int height);
 glm::vec3 get_normals(const float* vertices);
+glm::vec2 from_screen_to_ndc(const glm::ivec2& pos, const glm::ivec2& window_size);
+glm::vec3 from_ndc_to_world(const glm::vec2& ndc);
 #endif 

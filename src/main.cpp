@@ -7,6 +7,7 @@
 #include "state.hpp"
 #include "skybox.hpp"
 #include "physics.hpp"
+#include "terrain.hpp"
 
 void enable_if_debug();
 void shutdown(GLFWwindow*);
@@ -28,6 +29,7 @@ int main() {
    Texture text_tx;
    Shader texture_shd, default_shd, text_shader;
    Skybox skybox;
+   Terrain terrain;
    Resources resources;
    Object text_obj(object_e::text, &text_tx, &text_shader);
 
@@ -44,16 +46,20 @@ int main() {
    state.mode |= PLAY_MODE;
    state.light_pos = {0.0f, 2.0f, 0.0};
    state.light_color = {color::blue[0], color::blue[1], color::blue[2], 1.0f};
+   state.terrain = &terrain;
    
    resources.init_models();
    sound.init_sounds(&audio);
    camera.init();
+   terrain.generate_heightmap(TERRAIN_HEIGHTMAP);
 
    while (!glfwWindowShouldClose(window)){
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       imgui::frame();
       update_deltatime();
+      terrain.draw_terrain();
+      skybox.draw();
       if (state.mode & PLAY_MODE){
          camera.update();
          camera.hide_cursor();
@@ -68,7 +74,6 @@ int main() {
       }
       
       physics.update_collisions();
-      skybox.draw();
       animation.draw(HAND_ANIMATION);
       
       imgui::render();

@@ -1,6 +1,8 @@
 #include "physics.hpp"
+#include "BulletCollision/CollisionShapes/btCapsuleShape.h"
 #include "camera.hpp"
 #include <vector>
+#include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
  
 void Physics::init_world(){
    broadphase = new btDbvtBroadphase();
@@ -134,14 +136,48 @@ btCompoundShape* Physics::create_compound_shape(const Model& model){
 void Physics::update_camera_position(){
     btTransform transform;
     transform.setIdentity();
-    transform.setOrigin(btVector3(state.camera->pos.x, state.camera->pos.y, state.camera->pos.z));
+    transform.setOrigin({state.camera->pos.x, state.camera->pos.y - state.camera->height/2.0f,
+         state.camera->pos.z});
     state.camera->camera_bt->setWorldTransform(transform);
 }
 void Physics::set_camera_object(){
-   btSphereShape* shape = new btSphereShape(0.5f); 
+   btCapsuleShape* shape = new btCapsuleShape(0.5f, state.camera->height - 2.0f); 
    btCollisionObject* bt = new btCollisionObject();
    bt->setCollisionShape(shape);
-   state.camera->camera_bt= bt;
+
+   state.camera->camera_bt = bt;
    world->addCollisionObject(bt, 1, 1);
+   update_camera_position();
 
 }
+void Physics::add_heightmap_object(std::vector<float>& data, int width, int height, float min_height,
+                                 float max_height, float y_scale, float y_shift){
+   
+   btScalar* heightfield = new btScalar[width * height];
+    
+    for(int i = 0; i < height; i++) {
+        for(int j = 0; j < width; j++) {
+            int index = j + width * i;
+            heightfield[index] = data[index * 3 + 1] * y_scale - y_shift;
+        }
+    }
+
+    btHeightfieldTerrainShape* shape = new btHeightfieldTerrainShape(
+        width, height, heightfield, 1.0f, min_height,            
+        max_height, 1, PHY_FLOAT, false                  
+    );
+
+
+    btCollisionObject* terrain = new btCollisionObject();
+    shape->setLocalScaling(btVector3(1.0f, 1.0f, 1.0f));
+    terrain->setCollisionShape(shape);
+    terrain->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+    
+    btTransform transform;
+    transform.setIdentity();
+    transform.setOrigin(btVector3(0, -1.0f, 0));
+    terrain->setWorldTransform(transform);
+
+    world->addCollisionObject(terrain);
+}
+

@@ -30,7 +30,7 @@ class Camera {
       glm::vec3 up      = {0.0f, 1.0f, 0.0f};
       glm::vec3 right;
 
-      float yaw, pitch;
+      float yaw, pitch, height;
 
 
       float last_yaw, last_pitch;
@@ -40,7 +40,7 @@ class Camera {
       Camera(GLFWwindow* window, uint8_t flags): window(window),
          speed(default_speed), flags(flags), 
          zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f),
-         pos(glm::vec3(0.0f))
+         pos(glm::vec3(0.0f)), height(1.8f)
       {
       }
 

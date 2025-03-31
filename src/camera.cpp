@@ -71,9 +71,6 @@ void Camera::update_movement(){
    }
    
    this->pos = p;
-   if (!is_flying && pos.y != state.ground_level + 1.0f ) 
-      pos.y = state.ground_level + 1.0f;
-
 }
 
 bool Camera::check_collision_with_walls(glm::vec3 p){
@@ -143,19 +140,8 @@ glm::vec2 Camera::unproject(glm::vec3 pos){
     screen *= glm::vec2(window_width, window_height);
     return screen;
 }
-
-inline glm::vec3 fromNDCToWorldCoords(const glm::vec2& ndcCoords)
-{
-    const auto r =  glm::vec4{ndcCoords.x, ndcCoords.y, 0.f, 1.f};
-    return glm::vec3(r);
-}
-inline glm::vec2 fromWindowCoordsToNDC(const glm::ivec2& windowCoords, const glm::ivec2& windowSize)
-{
-    return static_cast<glm::vec2>(windowCoords) / static_cast<glm::vec2>(windowSize) * 2.f -
-           glm::vec2{1.f};
-}
 glm::vec2 Camera::project(double x, double y) {
-   return fromNDCToWorldCoords(fromWindowCoordsToNDC({x,y}, {window_width, window_height}));
+   return from_ndc_to_world(from_screen_to_ndc({x,y}, {window_width, window_height}));
 }
 
 glm::vec2 Camera::get_mouse_pos() {

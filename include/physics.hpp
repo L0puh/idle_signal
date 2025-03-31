@@ -9,6 +9,7 @@
 
 
 class Physics {
+   
    private:
 
       btBroadphaseInterface* broadphase;
@@ -44,7 +45,11 @@ class Physics {
       void update_camera_position();
       void set_camera_object();
       void add_wall_collider(std::vector<glm::vec3> vertices);
+      void add_heightmap_object(std::vector<float>& data, int width, int height, float min_height,
+                           float max_height, float y_scale, float y_shift);
 
+   public:
+      btDiscreteDynamicsWorld* get_world() { return world; }
    private:
       btCompoundShape* create_compound_shape(const Model& model);
       void add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size);

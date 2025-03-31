@@ -2,6 +2,7 @@
 #include "camera.hpp"
 #include "object.hpp"
 #include "physics.hpp"
+#include "terrain.hpp"
 
 #include <imgui/imgui.h>
 
@@ -126,11 +127,12 @@ void Map::add_wall(ImVec2 pos, ImDrawList* draw_list){
 void Map::draw_objects(){
    for (const auto& wall: walls_obj){
       glm::vec3 min, max;
-      min = glm::vec3(wall.first.x, state.ground_level, wall.first.z);
+      float height = state.terrain->get_height_at(wall.first.x, wall.first.z);
+      min = glm::vec3(wall.first.x, height, wall.first.z);
       max = wall.second;
 
       Object w(object_e::wall, tex_wall, shd, min, max);
-      w.set_pos(glm::vec3(0.0f));
+      w.set_pos(glm::vec3(0.0f, 0.0f, 0.0f));
       w.set_size(glm::vec3(1.0f));
       w.draw();
 
@@ -163,7 +165,8 @@ void Map::generate_coords(){
       glm::vec2 p = state.camera->project(lines[i].first.x, lines[i].first.y) * scale; 
       glm::vec2 p2 = state.camera->project(lines[i].second.x, lines[i].second.y) * scale;
 
-      glm::vec3 max = glm::vec3(p.x, 0.0, p.y);
+
+      glm::vec3 max = glm::vec3(p.x, 0.0f, p.y);
       glm::vec3 min = glm::vec3(p2.x, 1.0, p2.y);
       std::vector<glm::vec3> v = {
          glm::vec3(max.x, max.y, max.z),

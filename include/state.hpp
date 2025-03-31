@@ -31,6 +31,8 @@
 #define TEXT_SHADER_VERT "shaders/text.vert"
 #define TEXT_SHADER_FRAG "shaders/text.frag"
 
+#define TERRAIN_HEIGHTMAP "assets/heightmap/simple.png"
+
 #define FONT_PATH "assets/fonts/freeSans.ttf"
 #define EDIT_MODE  0b1000
 #define PLAY_MODE  0b0100
@@ -48,6 +50,7 @@ class Map;
 class Object;
 class Physics;
 class Resources;
+class Terrain;
 
 struct STATE {
 
@@ -61,6 +64,7 @@ struct STATE {
    Map *map;
    Sound *sound;
    Object *text_obj;
+   Terrain *terrain;
   
    float cell_size = 8.0f;
    glm::vec4 filter_luminance_color = {0.941, 0.561, 0.024, 1.0f};

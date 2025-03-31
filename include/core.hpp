@@ -16,6 +16,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <vector>
+#include <sys/stat.h>
 
 #include "state.hpp"
 
@@ -206,4 +207,36 @@ GLFWwindow* init_window(int width, int height);
 glm::vec3 get_normals(const float* vertices);
 glm::vec2 from_screen_to_ndc(const glm::ivec2& pos, const glm::ivec2& window_size);
 glm::vec3 from_ndc_to_world(const glm::vec2& ndc);
+
+inline char* read_binary(const char* filename, int& size){
+    FILE* f = fopen(filename, "rb");
+
+    if (!f) {
+       error_and_exit("error reading binary file(opening)");
+       return nullptr;
+    }
+
+    struct stat stat_buf;
+    int error = stat(filename, &stat_buf);
+
+    if (error) {
+       error_and_exit("error reading binary file(stat)");
+        return NULL;
+    }
+
+    size = stat_buf.st_size;
+
+    char* p = (char*)malloc(size);
+    assert(p);
+    size_t bytes_read = fread(p, 1, size, f);
+    if (bytes_read != size) {
+       error_and_exit("error reading binary file(reading)");
+        exit(0);
+    }
+
+    fclose(f);
+    return p;
+}
+
+
 #endif 

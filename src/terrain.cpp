@@ -18,7 +18,8 @@ void Terrain::generate_heightmap(std::string filename){
       error_and_exit(info);
       return;
    }
-   
+  
+   MAX_HEIGHT = 0.0f;
    for(uint i = 0; i < height; i++){
        for(uint j = 0; j < width; j++)
        {
@@ -26,7 +27,9 @@ void Terrain::generate_heightmap(std::string filename){
            unsigned char y = texel[0];
            vertices.push_back( -height/2.0f + i );        
            vertices.push_back( (int)y * yscale - yshift); 
+
            vertices.push_back( -width/2.0f + j);        
+           MAX_HEIGHT = std::max((int)y * yscale - yshift, MAX_HEIGHT);
        }
    }
    stbi_image_free(data);
@@ -41,22 +44,34 @@ void Terrain::generate_heightmap(std::string filename){
    generate_vertices();
 
 }
-float Terrain::get_height_at(float x, float z) {
 
-    btVector3 from(x, 1000.0f, z);  
-    btVector3 to(x, -1000.0f, z);   
-    
-    btCollisionWorld::ClosestRayResultCallback callback(from, to);
-    state.physics->get_world()->rayTest(from, to, callback);
-    
-    if(callback.hasHit()) {
-        return callback.m_hitPointWorld.y() + yshift * yscale;
+float Terrain::get_height_at(float x, float z) {
+    float x_index = x + width/2.0f ;
+    float z_index = z + height/2.0f ;
+
+    if (x_index >= 0 && x_index < width - 1 && z_index >= 0 && z_index < height - 1) {
+        int x_int = (int)x_index;
+        int z_int = (int)z_index;
+        float x_frac = x_index - x_int;
+        float z_frac = z_index - z_int;
+
+        float height_NW = vertices[(z_int * width + x_int) * 3 + 1];
+        float height_NE = vertices[(z_int * width + (x_int+1)) * 3 + 1];
+        float height_SW = vertices[((z_int+1) * width + x_int) * 3 + 1];
+        float height_SE = vertices[((z_int+1) * width + (x_int+1)) * 3 + 1];
+
+        float height_N = height_NW * (1 - x_frac) + height_NE * x_frac;
+        float height_S = height_SW * (1 - x_frac) + height_SE * x_frac;
+        float height = height_N * (1 - z_frac) + height_S * z_frac;
+
+        return height + yshift  ;
+    } else {
+        return 0.0f; 
     }
-    return 0.0f; 
 }
 
 void Terrain::add_collision(){
-   state.physics->add_heightmap_object(vertices, width, height, -20.0f, 20.0f, yscale, yshift);
+   state.physics->add_heightmap_object(vertices, width, height, -20.0f, MAX_HEIGHT, yscale, yshift);
 }
 
 void Terrain::generate_vertices(){

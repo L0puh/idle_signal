@@ -127,8 +127,7 @@ void Map::add_wall(ImVec2 pos, ImDrawList* draw_list){
 void Map::draw_objects(){
    for (const auto& wall: walls_obj){
       glm::vec3 min, max;
-      float height = state.terrain->get_height_at(wall.first.x, wall.first.z);
-      min = glm::vec3(wall.first.x, height, wall.first.z);
+      min = glm::vec3(wall.first.x, state.ground_level, wall.first.z);
       max = wall.second;
 
       Object w(object_e::wall, tex_wall, shd, min, max);
@@ -167,7 +166,8 @@ void Map::generate_coords(){
 
 
       glm::vec3 max = glm::vec3(p.x, 0.0f, p.y);
-      glm::vec3 min = glm::vec3(p2.x, 1.0, p2.y);
+      glm::vec3 min = glm::vec3(p2.x, 1.0f, p2.y);
+
       std::vector<glm::vec3> v = {
          glm::vec3(max.x, max.y, max.z),
          glm::vec3(max.x, min.y, max.z),

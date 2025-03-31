@@ -4,6 +4,7 @@
 #include "model.hpp"
 #include "collision.hpp"
 #include "physics.hpp"
+#include "terrain.hpp"
 
 glm::mat4 Camera::get_projection_ortho() {
    glm::mat4 proj = glm::ortho(0.0f, (float)window_width, 0.0f, (float)window_height);
@@ -71,6 +72,7 @@ void Camera::update_movement(){
    }
    
    this->pos = p;
+   pos.y = state.terrain->get_height_at(pos.x, pos.z) + height;
 }
 
 bool Camera::check_collision_with_walls(glm::vec3 p){

@@ -11,6 +11,7 @@ class Terrain {
    std::vector<uint> indices;
    unsigned int NUM_STRIPS;
    unsigned int NUM_VERTS_PER_STRIP;
+   float MAX_HEIGHT; 
    
    float yscale= 64.0f / 256.0f, yshift = 30.0f;  
    int width, height;

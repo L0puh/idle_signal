@@ -25,11 +25,11 @@ int main() {
    Animation animation;
    Audio audio;
    Sound sound;
+   Terrain terrain;
    Map map;
    Texture text_tx;
    Shader texture_shd, default_shd, text_shader;
    Skybox skybox;
-   Terrain terrain;
    Resources resources;
    Object text_obj(object_e::text, &text_tx, &text_shader);
 
@@ -40,26 +40,28 @@ int main() {
 
    state.resources = &resources;
    state.camera = &camera;
+   state.terrain = &terrain;
    state.text_obj = &text_obj;
    state.sound = &sound;
    state.map = &map;
    state.mode |= PLAY_MODE;
    state.light_pos = {0.0f, 2.0f, 0.0};
    state.light_color = {color::blue[0], color::blue[1], color::blue[2], 1.0f};
-   state.terrain = &terrain;
    
    resources.init_models();
    sound.init_sounds(&audio);
    camera.init();
    terrain.generate_heightmap(TERRAIN_HEIGHTMAP);
 
+
+
    while (!glfwWindowShouldClose(window)){
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       imgui::frame();
       update_deltatime();
-      terrain.draw_terrain();
       skybox.draw();
+      terrain.draw_terrain();
       if (state.mode & PLAY_MODE){
          camera.update();
          camera.hide_cursor();
@@ -72,6 +74,7 @@ int main() {
          map.draw_objects();
          imgui::main_draw();
       }
+
       
       physics.update_collisions();
       animation.draw(HAND_ANIMATION);

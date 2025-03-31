@@ -136,7 +136,7 @@ btCompoundShape* Physics::create_compound_shape(const Model& model){
 void Physics::update_camera_position(){
     btTransform transform;
     transform.setIdentity();
-    transform.setOrigin({state.camera->pos.x, state.camera->pos.y - state.camera->height/2.0f,
+    transform.setOrigin({state.camera->pos.x, state.camera->pos.y,
          state.camera->pos.z});
     state.camera->camera_bt->setWorldTransform(transform);
 }
@@ -158,7 +158,7 @@ void Physics::add_heightmap_object(std::vector<float>& data, int width, int heig
     for(int i = 0; i < height; i++) {
         for(int j = 0; j < width; j++) {
             int index = j + width * i;
-            heightfield[index] = data[index * 3 + 1] * y_scale - y_shift;
+            heightfield[index] = data[index * 3 + 1];
         }
     }
 
@@ -175,9 +175,9 @@ void Physics::add_heightmap_object(std::vector<float>& data, int width, int heig
     
     btTransform transform;
     transform.setIdentity();
-    transform.setOrigin(btVector3(0, -1.0f, 0));
+    transform.setOrigin(btVector3(0, 0.0f, 0));
     terrain->setWorldTransform(transform);
 
-    world->addCollisionObject(terrain);
+    world->addCollisionObject(terrain, 1, 1);
 }
 

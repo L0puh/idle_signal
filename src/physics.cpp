@@ -155,12 +155,13 @@ void Physics::add_heightmap_object(std::vector<float>& data, int width, int heig
    
    btScalar* heightfield = new btScalar[width * height];
     
-    for(int i = 0; i < height; i++) {
-        for(int j = 0; j < width; j++) {
-            int index = j + width * i;
-            heightfield[index] = data[index * 3 + 1];
-        }
-    }
+    // FIXME:
+    // for(int i = 0; i < height; i++) {
+    //     for(int j = 0; j < width; j++) {
+    //         int index = j + width * i;
+    //         heightfield[index] = data[index * 3 + 1];
+    //     }
+    // }
 
     btHeightfieldTerrainShape* shape = new btHeightfieldTerrainShape(
         width, height, heightfield, 1.0f, min_height,            

@@ -25,7 +25,7 @@ int main() {
    Animation animation;
    Audio audio;
    Sound sound;
-   Terrain terrain;
+   Terrain terrain(400, 400);
    Map map;
    Texture text_tx;
    Shader texture_shd, default_shd, text_shader;
@@ -51,9 +51,6 @@ int main() {
    resources.init_models();
    sound.init_sounds(&audio);
    camera.init();
-   terrain.generate_heightmap(TERRAIN_HEIGHTMAP);
-
-
 
    while (!glfwWindowShouldClose(window)){
 

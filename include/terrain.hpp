@@ -2,31 +2,49 @@
 #define TERRAIN_H 
 
 #include "core.hpp"
-#include <string>
+#include <vector>
 
 class Terrain {
 
    Vertex vert;
-   std::vector<float> vertices;
+   Texture *texture;
    std::vector<uint> indices;
-   unsigned int NUM_STRIPS;
-   unsigned int NUM_VERTS_PER_STRIP;
+   std::vector<std::vector<glm::vec3>> vertices;
+   std::vector<std::vector<glm::vec2>> tex_coords;
+   std::vector<std::vector<glm::vec3>> normals;
+
+   std::vector<float> vbo_data;
+
    float MAX_HEIGHT; 
-   
-   float yscale= 64.0f / 256.0f, yshift = 30.0f;  
    int width, height;
+
+   int indices_count;
+   std::vector<std::vector<float>> heights;
    public:
-      Terrain(){}
+      Terrain(float width, float height): width(width), height(height){
+         texture = new Texture("terrain.jpg");
+         generate_heights();
+         generate_vertices();
+         generate_indices();
+         generate_normals();
+         generate_tex_coords();
+         prepare_data();
+         create_vertex();
+      }
       ~Terrain(){}
       
    public:
-      void generate_heightmap(std::string filename);
       void draw_terrain();
       float get_height_at(float x, float z);
-      void add_collision();
 
    private:
       void generate_vertices();
+      void generate_indices();
+      void generate_normals();
+      void create_vertex();
+      void prepare_data();
+      void generate_heights();
+      void generate_tex_coords();
       
 };
 

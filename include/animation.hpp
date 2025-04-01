@@ -99,13 +99,13 @@ class Animation{
          count_frames_hand = count_frames(DIR_HAND_FRAMES);
          for (int i = 1; i <= count_frames_hand; i++){
             name = "frames/hand/" + std::to_string(i) + ".png";
-            Texture *tex = new Texture(name, 1);
+            Texture *tex = new Texture(name, 1, 1);
             frames_hand.push_back(tex);
          }
 
          for (int i = 1; i <= count_frames_flashlight; i++){
             name = "frames/flashlight/" + std::to_string(i) + ".png";
-            Texture *tex = new Texture(name, 1);
+            Texture *tex = new Texture(name, 1, 1);
             frames_hand.push_back(tex);
          }
 

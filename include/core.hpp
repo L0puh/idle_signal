@@ -75,6 +75,7 @@ class Texture {
       std::map<char, character_t> characters;
    
    private:
+      bool is_hand = false;
       bool is_flip = false;
       uint id;
       std::string type;
@@ -83,7 +84,7 @@ class Texture {
 
    public: 
       Texture(){}
-      Texture(const std::string src, bool is_flip = false): name(src), is_flip(is_flip){ 
+      Texture(const std::string src, bool is_flip = false, bool is_hand = false): name(src), is_flip(is_flip), is_hand(is_hand){ 
          char new_src[TEXTURES_DIR.length() + src.length()];
          sprintf(new_src, "%s%s", TEXTURES_DIR.c_str(), src.c_str());
          path = new_src;

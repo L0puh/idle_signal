@@ -1,106 +1,179 @@
 #include "terrain.hpp"
 #include "camera.hpp"
 #include "core.hpp"
-#include "physics.hpp"
 
+#include <random>
 #include <vector>
 #include <stb_image.h>
 
-void Terrain::generate_heightmap(std::string filename){
-   int channels;
-   
-   unsigned char *data = stbi_load(filename.c_str(),
-                                   &width, &height, &channels, 0);
 
-   if (!data){
-      char info[64];
-      sprintf(info, "error in loading terrain: %s\n", filename.c_str());
-      error_and_exit(info);
-      return;
-   }
-  
-   MAX_HEIGHT = 0.0f;
-   for(uint i = 0; i < height; i++){
-       for(uint j = 0; j < width; j++)
-       {
-           unsigned char* texel = data + (j + width * i) * channels;
-           unsigned char y = texel[0];
-           vertices.push_back( -height/2.0f + i);
-           vertices.push_back( (int)y * yscale - yshift > 10.f ? 0.0: y*yscale - yshift); 
-           vertices.push_back( -width/2.0f + j);
-           MAX_HEIGHT = std::max((int)y * yscale - yshift, MAX_HEIGHT);
-       }
-   }
-   stbi_image_free(data);
-   for(uint i = 0; i < height-1; i++)
-       for(uint j = 0; j < width; j++)      
-           for(uint k = 0; k < 2; k++)     
-               indices.push_back(j + width * (i + k));
-   
-   NUM_STRIPS = height-1;
-   NUM_VERTS_PER_STRIP = width*2;
-
-   generate_vertices();
-
-}
 
 float Terrain::get_height_at(float x, float z) {
-    float x_index = x + width/2.0f ;
-    float z_index = z + height/2.0f ;
-
-    if (x_index >= 0 && x_index < width - 1 && z_index >= 0 && z_index < height - 1) {
-        int x_int = (int)x_index;
-        int z_int = (int)z_index;
-        float x_frac = x_index - x_int;
-        float z_frac = z_index - z_int;
-
-        float height_NW = vertices[(z_int * width + x_int) * 3 + 1];
-        float height_NE = vertices[(z_int * width + (x_int+1)) * 3 + 1];
-        float height_SW = vertices[((z_int+1) * width + x_int) * 3 + 1];
-        float height_SE = vertices[((z_int+1) * width + (x_int+1)) * 3 + 1];
-
-        float height_N = height_NW * (1 - x_frac) + height_NE * x_frac;
-        float height_S = height_SW * (1 - x_frac) + height_SE * x_frac;
-        float height = height_N * (1 - z_frac) + height_S * z_frac;
-
-        return height;
-    } else {
-        return 1.0f; 
-    }
+   if (x >= 0 && x < height && z >= 0 && z < width)
+      return heights[x][z];
+   return 0.0f;
 }
 
-void Terrain::add_collision(){
-   state.physics->add_heightmap_object(vertices, width, height, -20.0f, MAX_HEIGHT, yscale, yshift);
-}
-
-void Terrain::generate_vertices(){
-   vert.create_VBO(&vertices[0], vertices.size() * sizeof(float));
+void Terrain::create_vertex(){
+   vert.create_VBO(&vbo_data[0], vbo_data.size() * sizeof(float));
    vert.create_EBO(&indices[0], indices.size() * sizeof(uint));
-   vert.add_atrib(0, 3, GL_FLOAT, 3 * sizeof(float));
-   add_collision();
+   vert.add_atrib(0, 3, GL_FLOAT, 8 * sizeof(float)); //pos
+   vert.add_atrib(1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3*sizeof(float))); 
+   vert.add_atrib(2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6*sizeof(float))); 
+}
+void Terrain::generate_indices(){
+   for(uint i = 0; i < height-1; i++)
+          for(uint j = 0; j < width; j++)      
+              for(uint k = 0; k < 2; k++)     
+                  indices.push_back(j + width * (i + k));
 
+   indices_count = (height - 1) * width * 2 + height - 1;
 }
 
+void Terrain::generate_tex_coords(){
+	const auto textureStepU = 0.1f;
+	const auto textureStepV = 0.1f;
+
+   tex_coords.resize(height, std::vector<glm::vec2>(width));
+	for (auto i = 0; i < height; i++){
+		for (auto j = 0; j < width; j++) {
+         tex_coords[i][j] = glm::vec2(textureStepU * j, textureStepV * i);
+		}
+	}
+}
+void Terrain::generate_vertices(){
+
+   vertices.resize(height, std::vector<glm::vec3>(width));
+   for (int i = 0; i < height; i++){
+      for (int j = 0; j < width; j++){
+         vertices[i][j] = glm::vec3{float(i), heights[i][j], float(j)};
+      }
+   }
+}
+void Terrain::generate_normals(){
+	std::vector<std::vector<glm::vec3> > temp[2];
+	for (auto i = 0; i < 2; i++) {
+		temp[i] = std::vector(height-1, std::vector<glm::vec3>(width-1));
+	}
+
+	for (auto i = 0; i < height- 1; i++){
+		for (auto j = 0; j < width- 1; j++){
+			const auto& vertex_a = vertices[i][j];
+			const auto& vertex_b = vertices[i][j+1];
+			const auto& vertex_c = vertices[i+1][j+1];
+			const auto& vertex_d = vertices[i+1][j];
+
+			const auto trig_a = glm::cross(vertex_b - vertex_a, vertex_a - vertex_d);
+			const auto trig_b = glm::cross(vertex_d - vertex_c, vertex_c - vertex_b);
+
+			temp[0][i][j] = glm::normalize(trig_a);
+			temp[1][i][j] = glm::normalize(trig_b);
+		}
+	}
+
+   normals.resize(height, std::vector<glm::vec3>(width));
+
+	for (auto i = 0; i < height; i++){
+		for (auto j = 0; j < width; j++){
+			auto norm = glm::vec3(0.0f, 0.0f, 0.0f);
+			if (i != 0 & j != 0) {
+				norm += temp[0][i-1][j-1];
+			}
+
+			if (i != 0 && j != width-1) {
+				for (auto k = 0; k < 2; k++) {
+					norm += temp[k][i - 1][j];
+				}
+			}
+
+			if (i != height-1 && j != width-1) {
+				norm += temp[0][i][j];
+			}
+
+			if (i != height-1 && j != 0) {
+				for (auto k = 0; k < 2; k++) {
+					norm += temp[k][i][j-1];
+				}
+			}
+
+			normals[i][j] = glm::normalize(norm);
+		}
+	}
+}
+
+void Terrain::prepare_data(){
+   log_info("preparing data for terrain");
+   for (int i = 0; i < height; i++){
+      for (int j = 0; j < width; j++){
+         glm::vec3 pos = vertices[i][j]; 
+         glm::vec2 tex = tex_coords[i][j];
+         glm::vec3 norm = normals[i][j];
+
+         vbo_data.push_back(pos.x);
+         vbo_data.push_back(pos.y);
+         vbo_data.push_back(pos.z);
+         vbo_data.push_back(norm.x);
+         vbo_data.push_back(norm.y);
+         vbo_data.push_back(norm.z);
+         vbo_data.push_back(tex.x);
+         vbo_data.push_back(tex.y);
+
+      }
+   }
+}
 void Terrain::draw_terrain(){
-   state.default_shader->use();
+   state.default_texture_shader->use();
+   texture->use();
    
    glm::mat4 model(1.0f);
    model = glm::translate(model, glm::vec3(0.0, -1.0f, 0.0));
    model = glm::scale(model, glm::vec3(1.0));
 
-   state.default_shader->set_mat4fv("_view", state.camera->get_view());
-   state.default_shader->set_mat4fv("_projection", state.camera->get_projection());
-   state.default_shader->set_mat4fv("_model", model);
-   state.default_shader->set_vec3("_color", glm::vec3(color::blue[0], color::blue[1], color::blue[2]));
-
+   state.default_texture_shader->set_mat4fv("_view", state.camera->get_view());
+   state.default_texture_shader->set_mat4fv("_projection", state.camera->get_projection());
+   state.default_texture_shader->set_mat4fv("_model", model);
+   state.default_texture_shader->set_light();
    vert.bind();
-   for(uint strip = 0; strip < NUM_STRIPS; ++strip) {
-       glDrawElements(GL_TRIANGLE_STRIP,   
-                      NUM_VERTS_PER_STRIP, 
-                      GL_UNSIGNED_INT,     
-                      (void*)(sizeof(unsigned int)
-                                * NUM_VERTS_PER_STRIP
-                                * strip)); 
-   }
+   glDrawElements(GL_TRIANGLE_STRIP, indices_count, GL_UNSIGNED_INT, 0);
+}
 
+void Terrain::generate_heights(){
+   log_info("generating heights for terrain");
+   int MIN_RADIUS = 1.0f, MAX_RADIUS = 5.0f;
+   float MIN_HEIGHT = 0.1f, MAX_HEIGHT = 1.4f;
+
+	std::random_device rd;
+	std::mt19937 generator(rd());
+	std::uniform_int_distribution hill_radius_distr(MIN_RADIUS, MAX_RADIUS);
+	std::uniform_real_distribution hill_height_distr(MIN_HEIGHT, MAX_HEIGHT);
+	std::uniform_int_distribution hill_center_row_distr(0, height-1);
+	std::uniform_int_distribution hill_center_col_distr(0, width-1);
+
+   heights.resize(height+1, std::vector<float>(width+1, 0));
+	for (int i = 0; i < height*2; i++)
+	{
+		const auto center_row = hill_center_row_distr(generator);
+		const auto center_col = hill_center_col_distr(generator);
+		const auto radius = hill_radius_distr(generator);
+		const auto hill_height = hill_height_distr(generator);
+
+		for (auto r = center_row - radius; r < center_row + radius; r++){
+			for (auto c = center_col - radius; c < center_col + radius; c++){
+				if (r < 0 || r >=  height || c < 0 || c >= width) {
+					continue;
+				}
+				const auto r2 = radius * radius; 
+				const auto x2x1 = center_col - c; 
+				const auto y2y1 = center_row - r; 
+				const auto height = float(r2 - x2x1 * x2x1 - y2y1 * y2y1);
+				if (height < 0.0f) continue;
+
+				const auto factor = height / r2;
+				heights[r][c] += hill_height * factor;
+				if (heights[r][c] > 1.0f) {
+					heights[r][c] = 1.0f;
+				}
+			}
+		}
+	}
 }

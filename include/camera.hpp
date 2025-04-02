@@ -1,6 +1,7 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP 
 
+#include "map.hpp"
 #include "core.hpp"
 
 #include <glm/glm.hpp>
@@ -89,7 +90,7 @@ class Camera {
             is_flying = true;
             yaw = 0.0f;
             pitch = -90.0f;
-            pos = glm::vec3(0.0, 20.0f, 0.0);
+            pos = glm::vec3(state.map->offset, 20.0f, state.map->offset);
             update_vectors();
             update();
          }

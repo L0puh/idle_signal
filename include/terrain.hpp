@@ -8,6 +8,7 @@ class Terrain {
 
    Vertex vert;
    Texture *texture;
+   Shader *shd;
    std::vector<uint> indices;
    std::vector<std::vector<glm::vec3>> vertices;
    std::vector<std::vector<glm::vec2>> tex_coords;
@@ -23,6 +24,7 @@ class Terrain {
    public:
       Terrain(float width, float height): width(width), height(height){
          texture = new Texture("terrain.jpg");
+         shd = new Shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG); 
          generate_heights();
          generate_vertices();
          generate_indices();

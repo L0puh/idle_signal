@@ -122,17 +122,17 @@ void Terrain::prepare_data(){
    }
 }
 void Terrain::draw_terrain(){
-   state.default_texture_shader->use();
+   shd->use();
    texture->use();
    
    glm::mat4 model(1.0f);
    model = glm::translate(model, glm::vec3(0.0, -1.0f, 0.0));
    model = glm::scale(model, glm::vec3(1.0));
 
-   state.default_texture_shader->set_mat4fv("_view", state.camera->get_view());
-   state.default_texture_shader->set_mat4fv("_projection", state.camera->get_projection());
-   state.default_texture_shader->set_mat4fv("_model", model);
-   state.default_texture_shader->set_light();
+   shd->set_mat4fv("_view", state.camera->get_view());
+   shd->set_mat4fv("_projection", state.camera->get_projection());
+   shd->set_mat4fv("_model", model);
+   shd->set_light();
    vert.bind();
    glDrawElements(GL_TRIANGLE_STRIP, indices_count, GL_UNSIGNED_INT, 0);
 }

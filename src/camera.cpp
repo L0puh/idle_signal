@@ -76,10 +76,11 @@ void Camera::update_movement(){
 }
 
 bool Camera::check_collision_with_walls(glm::vec3 p){
+   // NO SLIDING
    for (const auto& wall: state.map->get_walls()){
       glm::vec3 min, max;
-      min = glm::vec3(wall.first.x, state.ground_level, wall.first.z);
-      max = wall.second;
+      min = glm::vec3(wall.min.x, state.ground_level, wall.min.z);
+      max = wall.max;
       if (collision::line_circle(glm::vec2(min.x, min.z),
                glm::vec2(max.x, max.z), glm::vec2(p.x,
                   p.z), 0.4f))

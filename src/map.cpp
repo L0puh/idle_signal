@@ -26,12 +26,16 @@ void Map::editor_popup(){
       ImGui::Checkbox("Show camera", &show_camera); ImGui::SameLine();
       ImGui::Checkbox("Show roof", &show_roof); ImGui::SameLine();
       ImGui::DragFloat("Scale", &scale, 1.0f, 0.0f, 100.0f, "%.3f"); 
+      ImGui::DragFloat("Offset", &offset, 1.0f, 0.0f, 100.0f, "%.3f"); 
       ImGui::Text("Choose object:"); ImGui::SameLine();
       ImGui::RadioButton("Wall", &state_drawing, object_e::wall); ImGui::SameLine();
       ImGui::RadioButton("Floor", &state_drawing, object_e::tiles); ImGui::SameLine();
       ImGui::RadioButton("Door", &state_drawing, object_e::door); ImGui::SameLine();
       ImGui::RadioButton("Roof", &state_drawing, object_e::roof);
 
+      if (ImGui::Button("Set offset as camera position")){
+         offset = std::max(state.camera->last_pos.x, state.camera->last_pos.z) - 1.0f;
+      }
       ImGui::InvisibleButton("canvas", ImGui::GetContentRegionAvail());
       ImVec2 pos = ImGui::GetMousePos();
      
@@ -127,35 +131,35 @@ void Map::add_wall(ImVec2 pos, ImDrawList* draw_list){
 void Map::draw_objects(){
    for (const auto& wall: walls_obj){
       glm::vec3 min, max;
-      min = glm::vec3(wall.first.x, state.ground_level, wall.first.z);
-      max = wall.second;
+      min = glm::vec3(wall.min.x, state.ground_level, wall.min.z);
+      max = wall.max;
 
       Object w(object_e::wall, tex_wall, shd, min, max);
+      float y = state.terrain->get_height_at(wall.min.x, wall.min.z);
 
-      float y = state.terrain->get_height_at(wall.first.x, wall.first.z) + 0.3f;
-     // TODO: state.physics->update_object(wall.ID, ...);
-      
-      w.set_pos(glm::vec3(0.0f, y, 0.0f));
+      glm::vec3 pos = glm::vec3(offset, y, offset);
+      w.set_pos(pos);
       w.set_size(glm::vec3(1.0f));
       w.draw();
+      
+      state.physics->update_position(wall.bt_object, pos);
 
    }
    for (const auto& roof: roof_obj){
-      Object w(object_e::roof, tex_roof, shd, 
-            roof.first, roof.second);
+      Object w(object_e::roof, tex_roof, shd, roof.min, roof.max);
 
-      float y = state.terrain->get_height_at(roof.first.x, roof.first.z) + 2.0f;
-      w.set_pos(glm::vec3(0.0f, y, 0.0f));
+      float y = state.terrain->get_height_at(roof.min.x, roof.min.z)+1.0f;
+      w.set_pos(glm::vec3(offset, y, offset));
       w.set_size(glm::vec3(1.0f));
       w.draw();
 
    }
    for (const auto& floor: floors_obj){
       Object w(object_e::tiles, tex_floor, shd, 
-            floor.first, floor.second);
+            floor.min, floor.max);
 
-      float y = state.terrain->get_height_at(floor.first.x, floor.first.z) + 0.5f;
-      w.set_pos(glm::vec3(0.0f, y, 0.0f));
+      float y = state.terrain->get_height_at(floor.min.x, floor.min.z) + 0.02f;
+      w.set_pos(glm::vec3(offset, y, offset));
       w.set_size(glm::vec3(1.0f));
       w.draw();
 
@@ -171,8 +175,8 @@ void Map::generate_coords(){
       glm::vec2 p2 = state.camera->project(lines[i].second.x, lines[i].second.y) * scale;
 
 
-      glm::vec3 max = glm::vec3(p.x, 0.0f, p.y);
-      glm::vec3 min = glm::vec3(p2.x, 6.0f, p2.y);
+      glm::vec3 min= glm::vec3(p.x, 0.0f, p.y);
+      glm::vec3 max= glm::vec3(p2.x, 2.0f, p2.y);
 
       std::vector<glm::vec3> v = {
          glm::vec3(max.x, max.y, max.z),
@@ -180,8 +184,8 @@ void Map::generate_coords(){
          glm::vec3(min.x, min.y, min.z),
          glm::vec3(min.x, max.y, min.z),
       };
-      state.physics->add_wall_collider(v);
-      walls_obj.push_back({max, min});
+      uint obj = state.physics->add_wall_collider(v);
+      walls_obj.push_back({max, min, obj});
    }
    
    floors_obj.clear(); 

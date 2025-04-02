@@ -1,7 +1,8 @@
 #include "physics.hpp"
-#include "BulletCollision/CollisionShapes/btCapsuleShape.h"
 #include "camera.hpp"
 #include <vector>
+
+#include <BulletCollision/CollisionShapes/btCapsuleShape.h>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
  
 void Physics::init_world(){
@@ -67,7 +68,8 @@ void Physics::add_model(Model& model) {
 }
 
 
-void Physics::add_wall_collider(std::vector<glm::vec3> vertices){
+
+uint Physics::add_wall_collider(std::vector<glm::vec3> vertices){
      btConvexHullShape* shape = new btConvexHullShape();
      for (const auto& vertex : vertices) {
          ((btConvexHullShape*)shape)->addPoint(btVector3(vertex.x, vertex.y, vertex.z));
@@ -77,6 +79,7 @@ void Physics::add_wall_collider(std::vector<glm::vec3> vertices){
      wall->setCollisionShape(shape);
      world->addCollisionObject(wall, 1, 1);
      objects.push_back(wall);
+     return objects.size()-1;
 }
 
 btCollisionObject* Physics::get_object_from_vertices(std::vector<glm::vec3> vertices, const uint* indices, size_t cnt){
@@ -133,6 +136,12 @@ btCompoundShape* Physics::create_compound_shape(const Model& model){
    return shape;
 }
 
+void Physics::update_position(uint id, glm::vec3 pos){
+    btTransform transform;
+    transform.setIdentity();
+    transform.setOrigin({pos.x, pos.y, pos.z});
+    objects[id]->setWorldTransform(transform);
+}
 void Physics::update_camera_position(){
     btTransform transform;
     transform.setIdentity();

@@ -3,6 +3,8 @@
 
 #include "core.hpp"
 
+#include <BulletCollision/CollisionDispatch/btCollisionObject.h>
+
 typedef enum {
    wall,
    text,
@@ -15,6 +17,12 @@ typedef enum {
 } object_e;
 
 
+struct object_t {
+   glm::vec3 max;
+   glm::vec3 min;
+   
+   uint bt_object;
+};
 
 /* TODO: needs refactoring... */
 class Object {

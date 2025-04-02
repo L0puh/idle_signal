@@ -39,12 +39,13 @@ class Physics {
       void init_world();
       void clear_objects();
       void update_collisions();
+      void update_position(uint id, glm::vec3 pos);
       void add_object(btCollisionObject* obj) { world->addCollisionObject(obj); objects.push_back(obj); }
       void add_model(Model& model);
       btCollisionObject* get_object_from_vertices(std::vector<glm::vec3> vertices, const uint* indices, size_t cnt);
       void update_camera_position();
       void set_camera_object();
-      void add_wall_collider(std::vector<glm::vec3> vertices);
+      uint add_wall_collider(std::vector<glm::vec3> vertices);
       void add_heightmap_object(std::vector<float>& data, int width, int height, float min_height,
                            float max_height, float y_scale, float y_shift);
 

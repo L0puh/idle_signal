@@ -62,8 +62,8 @@ void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){
             vert.create_VBO(vertices, sizeof(vertices));
             vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
             vert.add_atrib(0, 3, GL_FLOAT, 8 * sizeof(float)); //pos
-            vert.add_atrib(1, 2, GL_FLOAT, 8 * sizeof(float), (void*)(3*sizeof(float))); //tex
-            vert.add_atrib(2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(5*sizeof(float)));
+            vert.add_atrib(1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3*sizeof(float))); //norm
+            vert.add_atrib(2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6*sizeof(float))); //tex
             this->count_vertices = LEN(vertices);
 
             break;
@@ -79,10 +79,10 @@ void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){
 
             vert.create_VBO(vertices, sizeof(vertices));
             vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
-            vert.add_atrib(0, 3, GL_FLOAT, 8 * sizeof(float));
-            vert.add_atrib(1, 2, GL_FLOAT, 8 * sizeof(float), (void*)(3*sizeof(float)));
-            vert.add_atrib(2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(5*sizeof(float)));
                                                                                        
+            vert.add_atrib(0, 3, GL_FLOAT, 8 * sizeof(float)); //pos
+            vert.add_atrib(1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3*sizeof(float))); //norm
+            vert.add_atrib(2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6*sizeof(float))); //tex
             this->count_vertices = LEN(vertices);
             break;
          }
@@ -105,9 +105,11 @@ void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){
             
             vert.create_VBO(vertices, sizeof(vertices));
             vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
+
             vert.add_atrib(0, 3, GL_FLOAT, 8 * sizeof(float)); //pos
-            vert.add_atrib(1, 2, GL_FLOAT, 8 * sizeof(float), (void*)(3*sizeof(float))); //tex
-            vert.add_atrib(2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(5*sizeof(float)));
+            vert.add_atrib(1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3*sizeof(float))); //norm
+            vert.add_atrib(2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6*sizeof(float))); //tex
+
             this->count_vertices = LEN(vertices);
             break;
          }

@@ -10,7 +10,10 @@
 #include "camera.hpp"
 
 class Renderer {
-   private:
+   public:
+      Renderer() {
+         state.renderer = this;
+      } 
 
    public:
 
@@ -92,7 +95,7 @@ class Renderer {
          }
       }
       void draw_text(std::string text, glm::vec2 pos, float scale, const GLfloat *color){
-         Object *obj = state.text_obj;
+         Object *obj = state.resources->text_obj;
          obj->shd->use();
          obj->shd->set_mat4fv("_projection", state.camera->get_projection_ortho());
          obj->shd->set_vec3("_color", {color[0], color[1], color[2]});

@@ -58,7 +58,7 @@ namespace collision {
 
          // draw closest point
          state.renderer->draw_circle(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f,
-                  0.0f), 0.1f, color::red, state.default_shader, {
+                  0.0f), 0.1f, color::red, state.resources->shaders[DEFAULT_SHADER], {
                glm::vec3(closest.x, state.ground_level, closest.y),
                glm::vec3(1.0f)});
          

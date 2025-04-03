@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "object.hpp"
+#include "resources.hpp"
 #include "state.hpp"
 
 namespace imgui_color {
@@ -36,7 +37,10 @@ class Map {
       float scale = 4.0f;
       float offset = 4.0f;
    public:
-      Map() { init_shaders(); }
+      Map() { 
+         state.map = this;
+         init(); 
+      }
       ~Map() {
          delete tex_wall;
          delete tex_roof;
@@ -63,12 +67,11 @@ class Map {
       }
       void editor_popup();
    private:
-      void init_shaders(){
-         tex_wall = new Texture("wall_texture.jpg");
-         tex_roof = new Texture("roof_texture.jpg");
-         tex_floor = new Texture("floor_texture.jpg");
-         shd = new Shader(MAP_SHADER_TEXTURE_VERT, MAP_SHADER_TEXTURE_FRAG);
-
+      void init(){
+         shd = state.resources->shaders[MAP_SHADER];
+         tex_wall = state.resources->textures[WALL_TEXTURE];
+         tex_floor = state.resources->textures[FLOOR_TEXTURE];
+         tex_roof = state.resources->textures[ROOF_TEXTURE];
       }
 };
 

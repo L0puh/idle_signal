@@ -16,7 +16,7 @@ class DebugDraw : public btIDebugDraw {
       virtual void draw_line(const btVector3& from, const btVector3& to, const btVector3& color){
          state.renderer->draw_line(glm::vec3(from.x(), from.y(), from.z()),
                                    glm::vec3(to.x(), to.y(), to.z()),
-                                   color::red, 1.0f, state.default_shader, {});
+                                   color::red, 1.0f, state.resources->shaders[DEFAULT_SHADER], {});
       }
 
 };

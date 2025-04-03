@@ -40,7 +40,7 @@ void Model::draw_debug(glm::vec3 pos, glm::vec3 size){
          glm::vec3 s, e;
          s = meshes[i].vertices[j].position;
          e = meshes[i].vertices[j+1].position;
-         state.renderer->draw_line(s, e, color::red, 1.0f, state.default_shader, {pos, size});
+         state.renderer->draw_line(s, e, color::red, 1.0f, state.resources->shaders[DEFAULT_SHADER], {pos, size});
       }
    }
 }

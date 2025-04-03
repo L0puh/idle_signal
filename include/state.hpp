@@ -59,11 +59,8 @@ struct STATE {
    Resources *resources;
    Renderer *renderer;
    Camera *camera;
-   Shader *default_shader;
-   Shader *default_texture_shader;
    Map *map;
    Sound *sound;
-   Object *text_obj;
    Terrain *terrain;
   
    float cell_size = 8.0f;

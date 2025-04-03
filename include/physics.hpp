@@ -23,6 +23,7 @@ class Physics {
 
    public:
       Physics() {
+         state.physics = this;
          init_world();
       };
 

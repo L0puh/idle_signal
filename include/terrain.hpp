@@ -2,6 +2,7 @@
 #define TERRAIN_H 
 
 #include "core.hpp"
+#include "resources.hpp"
 #include <vector>
 
 class Terrain {
@@ -23,8 +24,8 @@ class Terrain {
    std::vector<std::vector<float>> heights;
    public:
       Terrain(float width, float height): width(width), height(height){
-         texture = new Texture("terrain.jpg");
-         shd = new Shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG); 
+         texture = state.resources->textures[TERRAIN_TEXTURE];
+         shd = state.resources->shaders[TEXTURE_SHADER];
          generate_heights();
          generate_vertices();
          generate_indices();
@@ -32,6 +33,8 @@ class Terrain {
          generate_tex_coords();
          prepare_data();
          create_vertex();
+
+         state.terrain = this;
       }
       ~Terrain(){}
       

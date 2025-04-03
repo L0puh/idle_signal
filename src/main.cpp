@@ -19,38 +19,23 @@ int main() {
   
    enable_if_debug();
    
+   Resources resources;
+   Skybox skybox;
    Physics physics;
    Camera camera(window, 0);
-   Renderer render;
+   Renderer renderer;
    Animation animation;
    Audio audio;
    Sound sound;
    Terrain terrain(400, 400);
    Map map;
-   Texture text_tx;
-   Shader texture_shd, default_shd, text_shader;
-   Skybox skybox;
-   Resources resources;
-   Object text_obj(object_e::text, &text_tx, &text_shader);
 
-   state.physics = &physics;
-   state.default_shader = new Shader(DEFAULT_SHADER_VERT, DEFAULT_SHADER_FRAG);
-   state.default_texture_shader = new Shader(DEFAULT_SHADER_TEXTURE_VERT, DEFAULT_SHADER_TEXTURE_FRAG); 
-   state.renderer = &render;
-
-   state.resources = &resources;
-   state.camera = &camera;
-   state.terrain = &terrain;
-   state.text_obj = &text_obj;
-   state.sound = &sound;
-   state.map = &map;
    state.mode |= PLAY_MODE;
    state.light_pos = {0.0f, 2.0f, 0.0};
    state.light_color = {color::blue[0], color::blue[1], color::blue[2], 1.0f};
-   
-   resources.init_models();
    sound.init_sounds(&audio);
    camera.init();
+
 
    while (!glfwWindowShouldClose(window)){
 

@@ -56,6 +56,8 @@ class Sound {
          buffers.resize(sound_type::ST_SIZE_ENUM);
          states.resize(sound_state::SS_SIZE_ENUM);
          init();
+
+         state.sound = this;
       }
       ~Sound() {};
 

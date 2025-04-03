@@ -94,6 +94,7 @@ class Texture {
          log_info(info);
          load_texture(); 
       };
+      Texture(std::vector<std::string> faces) { load_cubemap(faces); };
       ~Texture(){};
    public:
       void load_cubemap(std::vector<std::string> faces);

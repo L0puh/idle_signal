@@ -112,7 +112,7 @@ class Animation{
       }
 
       void create_sprite_vertex(){
-         shd = new Shader(BLANK_SHADER_TEXTURE_VERT, BLANK_SHADER_TEXTURE_FRAG);
+         shd = state.resources->shaders[BLANK_SHADER]; 
          vert.create_VBO(vertices::rectangle_with_texture, sizeof(vertices::rectangle_with_texture));
          vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
          vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float)); 

@@ -34,7 +34,7 @@ void Map::editor_popup(){
       ImGui::RadioButton("Roof", &state_drawing, object_e::roof);
 
       if (ImGui::Button("Set offset as camera position")){
-         offset = std::max(state.camera->last_pos.x, state.camera->last_pos.z) - 1.0f;
+         offset = std::min(state.camera->last_pos.x, state.camera->last_pos.z) - 1.0f;
       }
       ImGui::InvisibleButton("canvas", ImGui::GetContentRegionAvail());
       ImVec2 pos = ImGui::GetMousePos();

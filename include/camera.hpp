@@ -43,6 +43,7 @@ class Camera {
          zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f),
          pos(glm::vec3(0.0f)), height(1.8f)
       {
+         state.camera = this;
       }
 
    public:

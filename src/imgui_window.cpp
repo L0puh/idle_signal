@@ -24,7 +24,7 @@ namespace imgui {
       ImGui::Begin("main window", 0, ImGuiWindowFlags_AlwaysAutoResize);
       {
          ImGui::SliderFloat("ZOOM OF CAMERA:", &state.camera->zoom, -90.0f, 90.0f, "%.5f", 0);
-         ImGui::SliderFloat3("POS OF CAMERA:", &state.camera->pos.x, -10.0f, 10.0f, "%.5f", 0);
+         ImGui::SliderFloat3("POS OF CAMERA:", &state.camera->pos.x, -100.0f, 100.0f, "%.5f", 0);
          ImGui::SliderFloat3("POS OF LIGHT:", &state.light_pos.x, -10.0f, 10.0f, "%.5f", 0);
          float color[4] = {state.light_color.x, state.light_color.y, state.light_color.z, state.light_color.w};
          float color2[4] = {state.filter_luminance_color.x, state.filter_luminance_color.y, state.filter_luminance_color.z,
@@ -55,5 +55,6 @@ namespace imgui {
          state.global_state ^= IMGUI_FOCUSED;
       }
    }
+
 
 };

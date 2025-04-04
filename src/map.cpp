@@ -21,6 +21,7 @@ void Map::editor_popup(){
          floors.clear();
          lines.clear();
          roof.clear();
+         items.clear();
       }
       ImGui::SameLine();
       ImGui::Checkbox("Show camera", &show_camera); ImGui::SameLine();
@@ -30,12 +31,17 @@ void Map::editor_popup(){
       ImGui::Text("Choose object:"); ImGui::SameLine();
       ImGui::RadioButton("Wall", &state_drawing, object_e::wall); ImGui::SameLine();
       ImGui::RadioButton("Floor", &state_drawing, object_e::tiles); ImGui::SameLine();
-      ImGui::RadioButton("Door", &state_drawing, object_e::door); ImGui::SameLine();
       ImGui::RadioButton("Roof", &state_drawing, object_e::roof);
 
       if (ImGui::Button("Set offset as camera position")){
          offset = std::min(state.camera->last_pos.x, state.camera->last_pos.z) - 1.0f;
       }
+      if (ImGui::IsMouseClicked(1) && !is_drawing ) {
+           ImGui::OpenPopup("items");
+      }
+      state_drawing = popup_objects();
+
+
       ImGui::InvisibleButton("canvas", ImGui::GetContentRegionAvail());
       ImVec2 pos = ImGui::GetMousePos();
      
@@ -53,14 +59,23 @@ void Map::editor_popup(){
          case object_e::roof:
             add_roof(pos, draw_list);
             break;
+         case object_e::tree:
+            add_item(tree, pos, draw_list);
+            break;
 
       }
-      
+      if (!is_drawing && ImGui::IsMouseClicked(1)) {
+         state_drawing = wall;
+      }
       for (const auto& f: floors){
          draw_list->AddRect(f.first, f.second, imgui_color::green, 2.0f);
       }
       for (const auto& l: lines){
          draw_list->AddLine(l.first, l.second, imgui_color::yellow, 2.0f);
+      }
+      for (const auto& i: items){
+
+         draw_list->AddCircle(ImVec2(i.x, i.y), 3.2f, imgui_color::yellow, 30, 2.0f);
       }
       if (show_roof)
          for (const auto& r: roof){
@@ -70,6 +85,12 @@ void Map::editor_popup(){
    }
 }
 
+
+void Map::add_item(object_e type, ImVec2 pos, ImDrawList* draw_list){
+   if (ImGui::IsMouseClicked(0)){
+      items.push_back(pos);
+   }
+}
 void Map::add_roof(ImVec2 pos, ImDrawList* draw_list){
   if (is_drawing) {
       if (!ImGui::IsMouseDown(0)) {
@@ -128,7 +149,29 @@ void Map::add_wall(ImVec2 pos, ImDrawList* draw_list){
 
 }
 
+object_e Map::popup_objects(){
+   object_e object = (object_e)state_drawing;
+   if (ImGui::BeginPopup("items")) {
+        if (ImGui::MenuItem("tree")) {
+           object = tree;
+        }
+        ImGui::EndPopup();
+    }
+   return object;
+}
+
 void Map::draw_objects(){
+   for (const auto& item: items_obj){
+
+      float y = state.terrain->get_height_at(item.max.x, item.max.y);
+      glm::vec3 pos = glm::vec3{item.max.x, y-1.0f, item.max.y};
+      item.model->set_pos(pos);
+      item.model->set_size(glm::vec3(0.5f));
+      item.model->draw();
+      state.physics->update_size(item.bt_object, item.model->size);
+      state.physics->update_position(item.bt_object, pos);
+
+   }
    for (const auto& wall: walls_obj){
       glm::vec3 min, max;
       min = glm::vec3(wall.min.x, state.ground_level, wall.min.z);
@@ -170,6 +213,18 @@ void Map::draw_objects(){
 void Map::generate_coords(){
    walls_obj.clear();
    state.physics->clear_objects();
+   items_obj.clear();
+
+   for (int i = 0; i < items.size(); i++){
+      uint bt_object = state.physics->add_model(*state.resources->models[TREE]);
+      glm::vec2 p = state.camera->project(items[i].x, items[i].y) * scale + offset;
+      object_t obj;
+      obj.max = glm::vec3(p, 0.0f);
+      obj.bt_object = bt_object;
+      obj.model = state.resources->models[TREE];
+      items_obj.push_back(obj);
+
+   }
    for (int i = 0; i < lines.size(); i++){
       glm::vec2 p = state.camera->project(lines[i].first.x, lines[i].first.y) * scale; 
       glm::vec2 p2 = state.camera->project(lines[i].second.x, lines[i].second.y) * scale;

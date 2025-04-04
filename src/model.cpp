@@ -2,6 +2,7 @@
 #include <assimp/material.h>
 #include <glm/geometric.hpp>
 
+#include "physics.hpp"
 #include "core.hpp"
 #include "model.hpp"
 #include "collision.hpp"
@@ -59,9 +60,17 @@ void Model::load_model(const std::string src){
    }
    char info[64];
    sprintf(info, "model is loaded: %s", src.c_str());
-   log_info(info);
 
    process_node(scene->mRootNode, scene);
+   if (with_texture) 
+      shd = state.resources->shaders[TEXTURE_SHADER];
+   else 
+      shd = state.resources->shaders[DEFAULT_SHADER];
+
+   if (shd == NULL) error_and_exit("error in init shader for model");
+
+
+   log_info(info);
 }
 
 void Model::process_node(aiNode* node, const aiScene* scene){

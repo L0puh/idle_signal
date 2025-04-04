@@ -41,8 +41,9 @@ class Physics {
       void clear_objects();
       void update_collisions();
       void update_position(uint id, glm::vec3 pos);
+      void update_size(uint id, glm::vec3 size);
       void add_object(btCollisionObject* obj) { world->addCollisionObject(obj); objects.push_back(obj); }
-      void add_model(Model& model);
+      uint add_model(Model& model);
       btCollisionObject* get_object_from_vertices(std::vector<glm::vec3> vertices, const uint* indices, size_t cnt);
       void update_camera_position();
       void set_camera_object();
@@ -54,7 +55,7 @@ class Physics {
       btDiscreteDynamicsWorld* get_world() { return world; }
    private:
       btCompoundShape* create_compound_shape(const Model& model);
-      void add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size);
+      uint add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size);
 };
 
 

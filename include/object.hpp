@@ -12,6 +12,7 @@ typedef enum {
    door,
    tiles,
    roof,
+   tree,
    normal,
 
 } object_e;
@@ -22,6 +23,7 @@ struct object_t {
    glm::vec3 min;
    
    uint bt_object;
+   Model *model;
 };
 
 /* TODO: needs refactoring... */

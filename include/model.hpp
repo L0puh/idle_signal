@@ -47,6 +47,7 @@ class Model {
    private:
       Shader *shd;
    public:
+      uint bt_object;
       bool is_picked = false;
       float rotation_angle;
       glm::vec3 pos, rotation, size;

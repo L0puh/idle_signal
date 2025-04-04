@@ -26,9 +26,10 @@ enum texture_type {
 
    TEXTURE_TYPE_SIZE,
 };
-enum resource_type{
 
-   SIZE_RESOURCES_TYPE,
+enum models_type {
+   TREE,
+   MODELS_TYPE_SIZE,
 };
 
 class Resources {
@@ -52,10 +53,11 @@ class Resources {
 
    public:
       Resources() {
+         state.resources = this;
          textures.resize(texture_type::TEXTURE_TYPE_SIZE);
          shaders.resize(shader_type::SHADER_TYPE_SIZE);
+         models.resize(models_type::MODELS_TYPE_SIZE);
          init_resources();
-         state.resources = this;
       };
       ~Resources() {
          cleanup();

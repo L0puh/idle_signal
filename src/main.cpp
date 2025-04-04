@@ -19,9 +19,9 @@ int main() {
   
    enable_if_debug();
    
+   Physics physics;
    Resources resources;
    Skybox skybox;
-   Physics physics;
    Camera camera(window, 0);
    Renderer renderer;
    Animation animation;

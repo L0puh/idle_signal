@@ -48,7 +48,7 @@ void Physics::update_collisions(){
    update_camera_position();
 }
 
-void Physics::add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size){
+uint Physics::add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size){
    btTransform transform;
    btCollisionObject* model = new btCollisionObject();
    
@@ -60,11 +60,14 @@ void Physics::add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec
    model->setWorldTransform(transform);
    world->addCollisionObject(model, 1, 1);
 
+   objects.push_back(model);
+   return objects.size()-1;
+
 }
 
-void Physics::add_model(Model& model) {
+uint Physics::add_model(Model& model) {
    btCompoundShape *shape = create_compound_shape(model);
-   add_compound_model(shape, model.pos, model.size);
+   return add_compound_model(shape, model.pos, model.size);
 }
 
 
@@ -136,6 +139,12 @@ btCompoundShape* Physics::create_compound_shape(const Model& model){
    return shape;
 }
 
+void Physics::update_size(uint id, glm::vec3 size){
+    btCollisionShape* shape = objects[id]->getCollisionShape();
+    shape->setLocalScaling({size.x, size.y, size.z});
+    objects[id]->setCollisionShape(shape);
+
+}
 void Physics::update_position(uint id, glm::vec3 pos){
     btTransform transform;
     transform.setIdentity();

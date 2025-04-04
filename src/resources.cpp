@@ -3,6 +3,8 @@
 #include "object.hpp"
 
 void Resources::init_models(){
+   models[TREE] = new Model("tree.obj");
+   
 }
 
 void Resources::init_text(){ 
@@ -34,8 +36,8 @@ void Resources::load_shaders(){
 void Resources::init_resources(){
    load_shaders();
    load_textures();
-   init_models();
    init_text();
+   init_models();
 }
 
 void Resources::cleanup(){

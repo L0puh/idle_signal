@@ -17,7 +17,6 @@ namespace imgui_color {
 }
 
 
-
 class Map {
    private:
       Shader *shd;
@@ -32,9 +31,10 @@ class Map {
       std::vector<std::pair<ImVec2, ImVec2>> lines;
       std::vector<std::pair<ImVec2, ImVec2>> floors;
       std::vector<std::pair<ImVec2, ImVec2>> roof;
-      std::vector<object_t> walls_obj, floors_obj, roof_obj;
+      std::vector<ImVec2> items;
+      std::vector<object_t> walls_obj, floors_obj, roof_obj, items_obj;
    public:
-      float scale = 4.0f;
+      float scale = 15.0f;
       float offset = 4.0f;
    public:
       Map() { 
@@ -56,6 +56,7 @@ class Map {
       std::vector<object_t> get_walls() { return walls_obj; }
    public:
       void draw_objects();
+      void add_item(object_e type, ImVec2 pos, ImDrawList* draw_list);
       void add_floor(ImVec2 pos, ImDrawList* draw_list);
       void add_wall(ImVec2 pos, ImDrawList* draw_list);
       void add_roof(ImVec2 pos, ImDrawList* draw_list);
@@ -67,6 +68,7 @@ class Map {
       }
       void editor_popup();
    private:
+      object_e popup_objects();
       void init(){
          shd = state.resources->shaders[MAP_SHADER];
          tex_wall = state.resources->textures[WALL_TEXTURE];

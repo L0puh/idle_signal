@@ -92,14 +92,13 @@ ALuint Audio::add_sound_effect(const char* filename){
 	err = alGetError();
 	if (err != AL_NO_ERROR)
 	{
-		fprintf(stderr, "OpenAL Error: %s\n", alGetString(err));
 		if (buffer && alIsBuffer(buffer))
 			alDeleteBuffers(1, &buffer);
+      error_and_exit("OpenAL error");
 		return 0;
 	}
 
 	sound_effects.push_back(buffer);  
-
 	return buffer;
 }
 

@@ -1,5 +1,6 @@
 #include "camera.hpp"
 #include "core.hpp"
+#include "glm/trigonometric.hpp"
 #include <cstdio>
 #include <fstream>
 #include <sstream>
@@ -126,8 +127,21 @@ const int Shader::get_location(std::string name){
 }
 
 void Shader::set_light(){
-   set_vec3("_light_pos", state.light_pos); 
-   set_vec4("_light_color", state.light_color); 
+
+   set_vec3("_light.pos", state.camera->pos);
+   set_vec3("_light.view_pos", state.camera->pos);
+   set_vec3("_light.color", state.light_color);
+   set_vec3("_light.direction", state.camera->front);
+   
+   set_float("_light.cut_off", glm::cos(glm::radians(12.5f)));
+   set_float("_light.outer_cut_off", glm::cos(glm::radians(17.5f)));
+   set_vec3("_light.ambient", {0.9f, 0.9f, 0.9f});
+   set_vec3("_light.diffuse", {0.8f, 0.8f, 0.8f});
+   set_vec3("_light.specular", glm::vec3(0.8f));
+   set_float("_light.constant", 1.0f);
+   set_float("_light.linear", 0.0009f);
+   set_float("_light.quadratic", 0.032f);
+
    set_float("_time", state.deltatime);
    set_float("_noise_intensity", state.noise_intensity);
    set_float("_threshold", state.filter_threshold);

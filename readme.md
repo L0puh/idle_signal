@@ -13,4 +13,5 @@
 - glm for math
 - imgui for debug windows
 - stb image and assimp 
-- bullet3
+- bullet3 for physics 
+- openal for audio

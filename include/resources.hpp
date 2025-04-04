@@ -57,7 +57,9 @@ class Resources {
          init_resources();
          state.resources = this;
       };
-      ~Resources() {};
+      ~Resources() {
+         cleanup();
+      };
    
    public:
       void init_resources();

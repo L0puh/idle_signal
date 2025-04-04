@@ -96,7 +96,7 @@ void Terrain::generate_normals(){
 				}
 			}
 
-			normals[i][j] = glm::normalize(norm);
+			normals[i][j] = -glm::normalize(norm);
 		}
 	}
 }

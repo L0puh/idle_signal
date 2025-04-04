@@ -94,6 +94,8 @@ class Model {
          return {pos, size, rotation_angle, rotation};
       }
       collider_t caclulate_boundaries();
+      void cleanup(){
+      }
    private:
       void load_model(const std::string src);
       void process_node(aiNode *node, const aiScene *scene);

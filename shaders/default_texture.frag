@@ -4,11 +4,27 @@ in vec2 _tex_coord;
 in vec3 _normal;
 in vec3 _pos;
 
+struct light_t{
+   vec3 pos;
+   vec3 color;
+   vec3 direction;
+   vec3 view_pos;
+   float cut_off;
+   float outer_cut_off;
+
+   vec3 ambient;
+   vec3 diffuse;
+   vec3 specular;
+
+   float constant;
+   float linear;
+   float quadratic;
+};
+
 uniform sampler2D _texture;
 uniform vec3 _color;
-uniform vec4 _light_color;
-uniform vec3 _light_pos;
 uniform float _time;
+
 uniform float _noise_intensity;
 uniform float _threshold;
 uniform vec3 _luminance_color;
@@ -16,6 +32,8 @@ uniform vec3 _luminance_color;
 uniform float _width;
 uniform float _height;
 uniform float _cell_size;
+
+uniform light_t _light;
 
 out vec4 color;
 
@@ -39,14 +57,31 @@ void main() {
    vec2 cell_center_uv = pixel_to_uv(cell_center);
 
    // light
-   vec4 ambient = 0.4f * _light_color; 
+   vec3 ambient = _light.ambient *  texture(_texture, cell_center_uv).rgb; 
    vec3 norm = normalize(_normal);
-   vec3 light_dir = normalize(_light_pos - _pos);
+   vec3 light_dir = normalize(_light.pos - _pos);
    float diff = max(dot(norm, light_dir), 0.0f);
-   vec4 diffuse = diff * _light_color;
-   vec4 result = (ambient + diffuse);
-   color = result *  texture(_texture, cell_center_uv);
-   color.a = 1.0f;
+   vec3 diffuse = _light.diffuse * diff  * _light.color.rgb;
+
+   vec3 view_dir= normalize(_light.view_pos - _pos);
+   vec3 reflect_dir = reflect(-light_dir, norm);
+   float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 0.4f);
+   vec3 specular = _light.specular * spec * _light.color;
+
+   float theta = dot(light_dir, normalize(-_light.direction));
+   float epsilon = (_light.cut_off - _light.outer_cut_off);
+   float intensity = clamp((theta-_light.outer_cut_off)/epsilon, 0.0, 1.0);
+   diffuse *= intensity;
+   specular *= intensity;
+   
+   float dist = length(_light.pos - _pos);
+   float attenuation = 1.0f / (_light.constant + _light.linear * dist +
+         _light.quadratic * (dist * dist));
+   ambient *= attenuation;
+   diffuse *= attenuation;
+
+   vec3 result = (ambient + diffuse + specular);
+   color = vec4(result, 1.0f);
 
    // grain noise
    float noise = rand(_tex_coord + vec2(_time));

@@ -39,14 +39,14 @@ void Resources::init_resources(){
 }
 
 void Resources::cleanup(){
-   for (auto& i: shaders){
-      delete i;
+   for (auto i: shaders){
+      i->cleanup();
    }
-   for (auto& i: textures){
-      delete i;
+   for (auto i: textures){
+      i->cleanup();
    }
-   for (auto& i: models){
-      delete i;
+   for (auto i: models){
+      i->cleanup();
    }
    
 }

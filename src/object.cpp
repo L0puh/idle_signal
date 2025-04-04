@@ -45,6 +45,7 @@ std::vector<glm::vec3> calc_normals(std::vector<glm::vec3> vertices, const uint 
     return normals;
 }
 
+
 void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){ 
    if (texture != NULL) with_texture = true;
 
@@ -71,10 +72,12 @@ void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){
       case wall:
          {
             const float vertices[] = {
-               max.x, max.y, max.z, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f, 
-               max.x, min.y, max.z, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,   
-               min.x, min.y, min.z, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f,   
-               min.x, max.y, min.z, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f,   
+               // FIXME: add calculated normals!!!
+               max.x, max.y, max.z, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 
+               max.x, min.y, max.z, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f,   
+               min.x, min.y, min.z, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,   
+               min.x, max.y, min.z, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,   
+
             };
 
             vert.create_VBO(vertices, sizeof(vertices));

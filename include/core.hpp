@@ -106,6 +106,7 @@ class Texture {
       void set_type(std::string name){ type = name; }
       std::string& get_src() { return path; }
       std::string& get_name() { return name; }
+      void cleanup() {};
 
    private:
       void load_texture();

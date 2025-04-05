@@ -29,6 +29,8 @@ enum texture_type {
 
 enum models_type {
    TREE,
+   ROCK,
+   BUILDING,
    MODELS_TYPE_SIZE,
 };
 

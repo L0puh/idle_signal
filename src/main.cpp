@@ -36,7 +36,8 @@ int main() {
    sound.init_sounds(&audio);
    camera.init();
 
-
+   
+   
    while (!glfwWindowShouldClose(window)){
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -44,6 +45,7 @@ int main() {
       update_deltatime();
       skybox.draw();
       terrain.draw_terrain();
+
       if (state.mode & PLAY_MODE){
          camera.update();
          camera.hide_cursor();

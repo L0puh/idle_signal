@@ -11,6 +11,7 @@ struct light_t{
    vec3 view_pos;
    float cut_off;
    float outer_cut_off;
+   float dist;
 
    vec3 ambient;
    vec3 diffuse;
@@ -80,8 +81,12 @@ void main() {
    ambient *= attenuation;
    diffuse *= attenuation;
 
-   vec3 result = (ambient + diffuse + specular);
-   color = vec4(result, 1.0f);
+   if (dist >= _light.dist)
+      color = vec4(ambient, 1.0f);
+   else {
+      vec3 result = (ambient + diffuse + specular);
+      color = vec4(result, 1.0f);
+   }
 
    // grain noise
    float noise = rand(_tex_coord + vec2(_time));

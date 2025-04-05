@@ -16,6 +16,11 @@ namespace imgui_color {
    const ImU32 green = IM_COL32(0, 255, 0, 255);
 }
 
+struct item_t {
+   object_e type;
+   ImVec2 pos;
+
+};
 
 class Map {
    private:
@@ -31,7 +36,7 @@ class Map {
       std::vector<std::pair<ImVec2, ImVec2>> lines;
       std::vector<std::pair<ImVec2, ImVec2>> floors;
       std::vector<std::pair<ImVec2, ImVec2>> roof;
-      std::vector<ImVec2> items;
+      std::vector<item_t> items;
       std::vector<object_t> walls_obj, floors_obj, roof_obj, items_obj;
    public:
       float scale = 15.0f;

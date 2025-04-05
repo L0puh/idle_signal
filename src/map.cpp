@@ -33,10 +33,11 @@ void Map::editor_popup(){
       ImGui::RadioButton("Floor", &state_drawing, object_e::tiles); ImGui::SameLine();
       ImGui::RadioButton("Roof", &state_drawing, object_e::roof);
 
-      if (ImGui::Button("Set offset as camera position")){
+      if (ImGui::Button("update offset")){
          offset = std::min(state.camera->last_pos.x, state.camera->last_pos.z) - 1.0f;
       }
-      if (ImGui::IsMouseClicked(1) && !is_drawing ) {
+
+      if (ImGui::IsMouseClicked(1) && !is_drawing) {
            ImGui::OpenPopup("items");
       }
       state_drawing = popup_objects();
@@ -59,8 +60,10 @@ void Map::editor_popup(){
          case object_e::roof:
             add_roof(pos, draw_list);
             break;
+         case object_e::rock:
          case object_e::tree:
-            add_item(tree, pos, draw_list);
+         case object_e::building:
+            add_item((object_e)state_drawing, pos, draw_list);
             break;
 
       }
@@ -75,7 +78,7 @@ void Map::editor_popup(){
       }
       for (const auto& i: items){
 
-         draw_list->AddCircle(ImVec2(i.x, i.y), 3.2f, imgui_color::yellow, 30, 2.0f);
+         draw_list->AddCircle(ImVec2(i.pos.x, i.pos.y), 3.2f, imgui_color::yellow, 30, 2.0f);
       }
       if (show_roof)
          for (const auto& r: roof){
@@ -88,7 +91,7 @@ void Map::editor_popup(){
 
 void Map::add_item(object_e type, ImVec2 pos, ImDrawList* draw_list){
    if (ImGui::IsMouseClicked(0)){
-      items.push_back(pos);
+      items.push_back({type, pos});
    }
 }
 void Map::add_roof(ImVec2 pos, ImDrawList* draw_list){
@@ -155,6 +158,12 @@ object_e Map::popup_objects(){
         if (ImGui::MenuItem("tree")) {
            object = tree;
         }
+        if (ImGui::MenuItem("rock")) {
+           object = rock;
+        }
+        if (ImGui::MenuItem("building")) {
+           object = building;
+        }
         ImGui::EndPopup();
     }
    return object;
@@ -166,7 +175,7 @@ void Map::draw_objects(){
       float y = state.terrain->get_height_at(item.max.x, item.max.y);
       glm::vec3 pos = glm::vec3{item.max.x, y-1.0f, item.max.y};
       item.model->set_pos(pos);
-      item.model->set_size(glm::vec3(0.5f));
+      item.model->set_size(glm::vec3(1.0f));
       item.model->draw();
       state.physics->update_size(item.bt_object, item.model->size);
       state.physics->update_position(item.bt_object, pos);
@@ -216,12 +225,18 @@ void Map::generate_coords(){
    items_obj.clear();
 
    for (int i = 0; i < items.size(); i++){
-      uint bt_object = state.physics->add_model(*state.resources->models[TREE]);
-      glm::vec2 p = state.camera->project(items[i].x, items[i].y) * scale + offset;
+
+      Model* model;
+      if (items[i].type == rock) model = state.resources->models[ROCK];
+      if (items[i].type == tree) model = state.resources->models[TREE];
+      if (items[i].type == building) model = state.resources->models[BUILDING];
+
+      uint bt_object = state.physics->add_model(*model);
+      glm::vec2 p = state.camera->project(items[i].pos.x, items[i].pos.y) * scale + offset;
       object_t obj;
       obj.max = glm::vec3(p, 0.0f);
       obj.bt_object = bt_object;
-      obj.model = state.resources->models[TREE];
+      obj.model = model;
       items_obj.push_back(obj);
 
    }

@@ -135,10 +135,11 @@ void Shader::set_light(){
    
    set_float("_light.cut_off", glm::cos(glm::radians(12.5f)));
    set_float("_light.outer_cut_off", glm::cos(glm::radians(17.5f)));
-   set_vec3("_light.ambient", {0.9f, 0.9f, 0.9f});
-   set_vec3("_light.diffuse", {0.8f, 0.8f, 0.8f});
-   set_vec3("_light.specular", glm::vec3(0.8f));
-   set_float("_light.constant", 1.0f);
+   set_float("_light.dist", 8.0f); //vision distance
+   set_vec3("_light.ambient", {0.4f, 0.4f, 0.4f});
+   set_vec3("_light.diffuse", {0.5f, 0.5f, 0.5f});
+   set_vec3("_light.specular", glm::vec3(0.4f));
+   set_float("_light.constant", 0.4f);
    set_float("_light.linear", 0.0009f);
    set_float("_light.quadratic", 0.032f);
 

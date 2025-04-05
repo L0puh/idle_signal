@@ -154,7 +154,7 @@ void Physics::update_position(uint id, glm::vec3 pos){
 void Physics::update_camera_position(){
     btTransform transform;
     transform.setIdentity();
-    transform.setOrigin({state.camera->pos.x, state.camera->pos.y,
+    transform.setOrigin({state.camera->pos.x, state.camera->pos.y-state.camera->height,
          state.camera->pos.z});
     state.camera->camera_bt->setWorldTransform(transform);
 }

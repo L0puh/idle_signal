@@ -4,6 +4,8 @@
 
 void Resources::init_models(){
    models[TREE] = new Model("tree.obj");
+   models[ROCK] = new Model("rock.obj");
+   models[BUILDING] = new Model("gas_station.obj");
    
 }
 

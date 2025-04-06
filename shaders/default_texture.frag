@@ -85,7 +85,7 @@ void main() {
       color = vec4(ambient, 1.0f);
    else {
       vec3 result = (ambient + diffuse + specular);
-      color = vec4(result, 1.0f);
+      color = vec4(result, texture(_texture, cell_center_uv).a);
    }
 
    // grain noise

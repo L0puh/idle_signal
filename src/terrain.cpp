@@ -137,10 +137,24 @@ void Terrain::draw_terrain(){
    glDrawElements(GL_TRIANGLE_STRIP, indices_count, GL_UNSIGNED_INT, 0);
 }
 
+void Terrain::generate_random_coordinates(int count, std::vector<glm::vec2>* coordinates){
+	std::random_device rd;
+	std::mt19937 generator(rd());
+   std::uniform_int_distribution row(0, height-1);
+   std::uniform_int_distribution column(0, width-1);
+
+   for (int i = 0; i < count; i++){
+      const int x = row(generator);
+      const int y = column(generator);
+      coordinates->push_back({x, y});
+   }
+}
+
+
 void Terrain::generate_heights(){
    log_info("generating heights for terrain");
-   int MIN_RADIUS = 1.0f, MAX_RADIUS = 5.0f;
-   float MIN_HEIGHT = 0.1f, MAX_HEIGHT = 1.4f;
+   int MIN_RADIUS = 6.0f, MAX_RADIUS = 8.0f;
+   float MIN_HEIGHT = 0.1f, MAX_HEIGHT = 1.0f;
 
 	std::random_device rd;
 	std::mt19937 generator(rd());

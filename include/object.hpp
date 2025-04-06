@@ -12,9 +12,7 @@ typedef enum {
    door,
    tiles,
    roof,
-   rock,
-   tree,
-   building, 
+   item,
    normal,
 
 } object_e;

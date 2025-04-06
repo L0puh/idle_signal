@@ -91,6 +91,8 @@ void Object::generate_object(object_e type, glm::vec3 max, glm::vec3 min){
          }
       case text:
          {
+            texture->load_font();
+            shd->init_shader(TEXT_SHADER_VERT, TEXT_SHADER_FRAG);
             vert.create_VBO(NULL, sizeof(float) * 4 * 6, GL_DYNAMIC_DRAW);
             vert.add_atrib(0, 4, GL_FLOAT, 4 * sizeof(float), 0);
             break;

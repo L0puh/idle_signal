@@ -6,6 +6,34 @@
 
 #include <imgui/imgui.h>
 
+void Map::generate_random_items(){
+   std::vector<glm::vec2> trees, rocks, bushes, trunks, wheat;
+   state.terrain->generate_random_coordinates(10, &trees);
+   state.terrain->generate_random_coordinates(20, &rocks);
+   state.terrain->generate_random_coordinates(20, &bushes);
+   state.terrain->generate_random_coordinates(30, &trunks);
+   state.terrain->generate_random_coordinates(10, &wheat);
+   for (auto& item: trunks){
+      item *= glm::vec2(scale);
+      items.push_back({TREE_TRUNK, {item.x, item.y}});
+   }
+   for (auto& item: trees){
+      item *= glm::vec2(scale);
+      items.push_back({TREE, {item.x, item.y}});
+   }
+   for (auto& item: rocks){
+      item *= glm::vec2(scale);
+      items.push_back({ROCK, {item.x, item.y}});
+   }
+   for (auto& item: bushes){
+      item *= glm::vec2(scale);
+      items.push_back({BUSH, {item.x, item.y}});
+   }
+   for (auto& item: wheat){
+      item *= glm::vec2(scale);
+      items.push_back({WHEAT, {item.x, item.y}});
+   }
+}
 
 void Map::editor_popup(){
    ImGui::SetNextWindowSize(ImVec2(state.camera->window_width, state.camera->window_height), ImGuiCond_Always);
@@ -31,17 +59,20 @@ void Map::editor_popup(){
       ImGui::Text("Choose object:"); ImGui::SameLine();
       ImGui::RadioButton("Wall", &state_drawing, object_e::wall); ImGui::SameLine();
       ImGui::RadioButton("Floor", &state_drawing, object_e::tiles); ImGui::SameLine();
-      ImGui::RadioButton("Roof", &state_drawing, object_e::roof);
+      ImGui::RadioButton("Roof", &state_drawing, object_e::roof); ImGui::SameLine();
+
+      if (ImGui::Button("Add item") && !is_drawing){ 
+         state_drawing = item;
+         ImGui::OpenPopup("items");
+      }
+      
+      if (ImGui::Button("generate random items")){
+         generate_random_items();
+      }
 
       if (ImGui::Button("update offset")){
          offset = std::min(state.camera->last_pos.x, state.camera->last_pos.z) - 1.0f;
       }
-
-      if (ImGui::IsMouseClicked(1) && !is_drawing) {
-           ImGui::OpenPopup("items");
-      }
-      state_drawing = popup_objects();
-
 
       ImGui::InvisibleButton("canvas", ImGui::GetContentRegionAvail());
       ImVec2 pos = ImGui::GetMousePos();
@@ -60,10 +91,8 @@ void Map::editor_popup(){
          case object_e::roof:
             add_roof(pos, draw_list);
             break;
-         case object_e::rock:
-         case object_e::tree:
-         case object_e::building:
-            add_item((object_e)state_drawing, pos, draw_list);
+         case object_e::item:
+            add_item(item_type, pos, draw_list);
             break;
 
       }
@@ -84,13 +113,14 @@ void Map::editor_popup(){
          for (const auto& r: roof){
             draw_list->AddRect(r.first, r.second, imgui_color::red, 1.0f);
          }
+      item_type = popup_items();
       ImGui::End();
    }
 }
 
 
-void Map::add_item(object_e type, ImVec2 pos, ImDrawList* draw_list){
-   if (ImGui::IsMouseClicked(0)){
+void Map::add_item(models_type type, ImVec2 pos, ImDrawList* draw_list){
+   if (ImGui::IsMouseClicked(0) && type != NONE){
       items.push_back({type, pos});
    }
 }
@@ -152,17 +182,27 @@ void Map::add_wall(ImVec2 pos, ImDrawList* draw_list){
 
 }
 
-object_e Map::popup_objects(){
-   object_e object = (object_e)state_drawing;
+models_type Map::popup_items(){
+
+   models_type object = item_type;
    if (ImGui::BeginPopup("items")) {
         if (ImGui::MenuItem("tree")) {
-           object = tree;
+           object = TREE;
         }
         if (ImGui::MenuItem("rock")) {
-           object = rock;
+           object = ROCK;
         }
         if (ImGui::MenuItem("building")) {
-           object = building;
+           object = BUILDING;
+        }
+        if (ImGui::MenuItem("bush")) {
+           object = BUSH;
+        }
+        if (ImGui::MenuItem("wheat")) {
+           object = WHEAT;
+        }
+        if (ImGui::MenuItem("trunk")) {
+           object = TREE_TRUNK;
         }
         ImGui::EndPopup();
     }
@@ -223,16 +263,13 @@ void Map::generate_coords(){
    walls_obj.clear();
    state.physics->clear_objects();
    items_obj.clear();
-
    for (int i = 0; i < items.size(); i++){
 
+      glm::vec2 p = state.camera->project(items[i].pos.x, items[i].pos.y) * scale + offset;
       Model* model;
-      if (items[i].type == rock) model = state.resources->models[ROCK];
-      if (items[i].type == tree) model = state.resources->models[TREE];
-      if (items[i].type == building) model = state.resources->models[BUILDING];
+      model = state.resources->models[items[i].type];
 
       uint bt_object = state.physics->add_model(*model);
-      glm::vec2 p = state.camera->project(items[i].pos.x, items[i].pos.y) * scale + offset;
       object_t obj;
       obj.max = glm::vec3(p, 0.0f);
       obj.bt_object = bt_object;

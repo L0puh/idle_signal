@@ -18,10 +18,11 @@ class Terrain {
    std::vector<float> vbo_data;
 
    float MAX_HEIGHT; 
-   int width, height;
 
    int indices_count;
    std::vector<std::vector<float>> heights;
+   public:
+      int width, height;
    public:
       Terrain(float width, float height): width(width), height(height){
          texture = state.resources->textures[TERRAIN_TEXTURE];
@@ -41,6 +42,7 @@ class Terrain {
    public:
       void draw_terrain();
       float get_height_at(float x, float z);
+      void generate_random_coordinates(int count, std::vector<glm::vec2>* coordinates);
 
    private:
       void generate_vertices();

@@ -155,8 +155,6 @@ glm::vec2 Camera::get_mouse_pos() {
       
 void Camera::update(){ 
    update_movement();
-   state.renderer->draw_text("+", {state.camera->window_width/2.0f,
-               state.camera->window_height/2.0f}, 0.5, color::white);
    view = glm::lookAt(pos + glm::vec3(0.0f, walk_offset, 0.0f), pos+front, up);
    if (camera_bt != NULL)
       state.physics->update_camera_position();

@@ -28,9 +28,16 @@ enum texture_type {
 };
 
 enum models_type {
+   NONE,
    TREE,
    ROCK,
    BUILDING,
+   TRUNK,
+   BUSH,
+   TREE_TRUNK,
+   WHEAT,
+
+
    MODELS_TYPE_SIZE,
 };
 

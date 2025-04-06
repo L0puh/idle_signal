@@ -17,7 +17,7 @@ namespace imgui_color {
 }
 
 struct item_t {
-   object_e type;
+   models_type type;
    ImVec2 pos;
 
 };
@@ -28,6 +28,7 @@ class Map {
       Texture *tex_wall, *tex_floor, *tex_roof;
       
       int state_drawing = wall;
+      models_type item_type = NONE;
       bool is_drawing=false, show_camera=true, show_roof = false;
       
       float roof_level = 2.0f;
@@ -61,11 +62,12 @@ class Map {
       std::vector<object_t> get_walls() { return walls_obj; }
    public:
       void draw_objects();
-      void add_item(object_e type, ImVec2 pos, ImDrawList* draw_list);
+      void add_item(models_type type, ImVec2 pos, ImDrawList* draw_list);
       void add_floor(ImVec2 pos, ImDrawList* draw_list);
       void add_wall(ImVec2 pos, ImDrawList* draw_list);
       void add_roof(ImVec2 pos, ImDrawList* draw_list);
       void generate_coords();
+      void generate_random_items();
       void update() {
          if (state.mode & EDIT_MODE){
             editor_popup();
@@ -73,7 +75,7 @@ class Map {
       }
       void editor_popup();
    private:
-      object_e popup_objects();
+      models_type popup_items();
       void init(){
          shd = state.resources->shaders[MAP_SHADER];
          tex_wall = state.resources->textures[WALL_TEXTURE];

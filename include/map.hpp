@@ -3,7 +3,7 @@
 
 #include <imgui/imgui.h>
 #include <vector>
-
+#include "terrain.hpp"
 #include "object.hpp"
 #include "resources.hpp"
 #include "state.hpp"
@@ -19,53 +19,38 @@ namespace imgui_color {
 struct item_t {
    models_type type;
    ImVec2 pos;
+   ImVec2 map_pos = {-1.0f, -1.0f};
 
 };
 
 class Map {
    private:
       Shader *shd;
-      Texture *tex_wall, *tex_floor, *tex_roof;
-      
-      int state_drawing = wall;
-      models_type item_type = NONE;
-      bool is_drawing=false, show_camera=true, show_roof = false;
-      
-      float roof_level = 2.0f;
-      ImVec2 current_start = ImVec2(0.0f, 0.0f);
      
-      std::vector<std::pair<ImVec2, ImVec2>> lines;
-      std::vector<std::pair<ImVec2, ImVec2>> floors;
-      std::vector<std::pair<ImVec2, ImVec2>> roof;
+      int state_drawing = item;
+      models_type item_type = NONE;
+      bool is_drawing=false, show_camera=true;
+      
       std::vector<item_t> items;
-      std::vector<object_t> walls_obj, floors_obj, roof_obj, items_obj;
+      std::vector<object_t> items_obj;
    public:
-      float scale = 15.0f;
-      float offset = 4.0f;
+      float scale = 400.0f;
+      float offset = 0.0f; // DELETEME
    public:
       Map() { 
          state.map = this;
          init(); 
+
       }
       ~Map() {
-         delete tex_wall;
-         delete tex_roof;
-         delete tex_floor;
          delete shd;
       }
 
    public:
-      void set_wall_texure(Texture *tex) { this->tex_wall = tex; }
-      void set_floor_texture(Texture *tex) { this->tex_floor = tex; }
-      void set_roof_texture(Texture *tex) { this->tex_roof = tex; }
       void set_shader(Shader *shd) {this->shd = shd; }
-      std::vector<object_t> get_walls() { return walls_obj; }
    public:
       void draw_objects();
       void add_item(models_type type, ImVec2 pos, ImDrawList* draw_list);
-      void add_floor(ImVec2 pos, ImDrawList* draw_list);
-      void add_wall(ImVec2 pos, ImDrawList* draw_list);
-      void add_roof(ImVec2 pos, ImDrawList* draw_list);
       void generate_coords();
       void generate_random_items();
       void update() {
@@ -77,10 +62,8 @@ class Map {
    private:
       models_type popup_items();
       void init(){
+         scale = state.terrain->width;
          shd = state.resources->shaders[MAP_SHADER];
-         tex_wall = state.resources->textures[WALL_TEXTURE];
-         tex_floor = state.resources->textures[FLOOR_TEXTURE];
-         tex_roof = state.resources->textures[ROOF_TEXTURE];
       }
 };
 

@@ -42,7 +42,6 @@ void Terrain::generate_tex_coords(){
 	}
 }
 void Terrain::generate_vertices(){
-
    vertices.resize(height, std::vector<glm::vec3>(width));
    for (int i = 0; i < height; i++){
       for (int j = 0; j < width; j++){
@@ -121,12 +120,21 @@ void Terrain::prepare_data(){
       }
    }
 }
+
+bool Terrain::is_within(glm::vec2 pos, float offset){
+   return is_within({pos.x, 0.0f, pos.y}, offset);
+
+}
+bool Terrain::is_within(glm::vec3 pos, float offset){
+      return pos.x < height + offset && pos.x > offset && pos.z < width + offset && pos.z > offset;
+}
 void Terrain::draw_terrain(){
    shd->use();
    texture->use();
    
    glm::mat4 model(1.0f);
-   model = glm::translate(model, glm::vec3(0.0, -1.0f, 0.0));
+
+   model = glm::translate(model, center_pos);
    model = glm::scale(model, glm::vec3(1.0));
 
    shd->set_mat4fv("_view", state.camera->get_view());

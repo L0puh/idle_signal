@@ -91,7 +91,7 @@ class Camera {
             is_flying = true;
             yaw = 0.0f;
             pitch = -90.0f;
-            pos = glm::vec3(state.map->offset, 20.0f, state.map->offset);
+            pos = glm::vec3(state.map->scale/2.0, 20.0f, state.map->scale/2.0f);
             update_vectors();
             update();
          }

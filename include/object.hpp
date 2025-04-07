@@ -6,14 +6,15 @@
 #include <BulletCollision/CollisionDispatch/btCollisionObject.h>
 
 typedef enum {
-   wall,
    text,
    line,
-   door,
-   tiles,
-   roof,
    item,
    normal,
+  
+   // LEGACY:
+   tiles,
+   roof,
+   wall,
 
 } object_e;
 

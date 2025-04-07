@@ -23,8 +23,10 @@ class Terrain {
    std::vector<std::vector<float>> heights;
    public:
       int width, height;
+      glm::vec3 center_pos = {0.0, -1.0f, 0.0f};
    public:
       Terrain(float width, float height): width(width), height(height){
+
          texture = state.resources->textures[TERRAIN_TEXTURE];
          shd = state.resources->shaders[TEXTURE_SHADER];
          generate_heights();
@@ -43,6 +45,8 @@ class Terrain {
       void draw_terrain();
       float get_height_at(float x, float z);
       void generate_random_coordinates(int count, std::vector<glm::vec2>* coordinates);
+      bool is_within(glm::vec3 pos, float offset = 0.0f);
+      bool is_within(glm::vec2 pos, float offset = 0.0f);
 
    private:
       void generate_vertices();

@@ -70,24 +70,26 @@ void Camera::update_movement(){
    } else {
       speed = default_speed;
    }
-   
-   this->pos = p;
-   pos.y = state.terrain->get_height_at(pos.x, pos.z) + height/2.0f;
+
+   if (state.terrain->is_within(p, 20.0f)){
+      this->pos = p;
+      pos.y = state.terrain->get_height_at(pos.x, pos.z) + height/2.0f;
+   }
 }
 
 bool Camera::check_collision_with_walls(glm::vec3 p){
    // NO SLIDING
-   for (const auto& wall: state.map->get_walls()){
-      glm::vec3 min, max;
-      min = glm::vec3(wall.min.x, state.ground_level, wall.min.z);
-      max = wall.max;
-      if (collision::line_circle(glm::vec2(min.x, min.z),
-               glm::vec2(max.x, max.z), glm::vec2(p.x,
-                  p.z), 0.4f))
-      {
-         return true;
-      }
-   }
+   // for (const auto& wall: state.map->get_walls()){
+   //    glm::vec3 min, max;
+   //    min = glm::vec3(wall.min.x, state.ground_level, wall.min.z);
+   //    max = wall.max;
+   //    if (collision::line_circle(glm::vec2(min.x, min.z),
+   //             glm::vec2(max.x, max.z), glm::vec2(p.x,
+   //                p.z), 0.4f))
+   //    {
+   //       return true;
+   //    }
+   // }
    
    return false;
 }
@@ -108,6 +110,7 @@ void Camera::update_movement2D(){
 }
 
 void Camera::init(){
+   pos = {state.terrain->height/2.0f, 0.0f, state.terrain->width/2.0f};
    state.physics->set_camera_object();
 }
 
@@ -144,6 +147,12 @@ glm::vec2 Camera::unproject(glm::vec3 pos){
     return screen;
 }
 glm::vec2 Camera::project(double x, double y) {
+   // double normx, normy;
+   // normx = (x / window_width ) *  2.0f - 1.0f;
+   // normy = (y / window_height) * -2.0f + 1.0f;
+   // glm::mat4 proj = inverse(get_projection() * get_view());
+   // glm::vec4 world = glm::vec4(normx, normy, 1.0f, 1.0f) * proj;
+   // return world;
    return from_ndc_to_world(from_screen_to_ndc({x,y}, {window_width, window_height}));
 }
 

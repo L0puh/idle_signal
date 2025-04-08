@@ -48,8 +48,8 @@ class Camera {
 
    public:
       
-      glm::vec2 unproject(glm::vec3 pos);
-      glm::vec2 project(double x, double y);
+      glm::vec2 unproject(glm::vec3 pos, glm::vec2 size);
+      glm::vec2 project(double x, double y, glm::ivec2 size);
       
       glm::vec2 get_mouse_pos();
       glm::mat4 get_projection_ortho();
@@ -91,7 +91,7 @@ class Camera {
             is_flying = true;
             yaw = 0.0f;
             pitch = -90.0f;
-            pos = glm::vec3(state.map->scale/2.0, 20.0f, state.map->scale/2.0f);
+            pos = glm::vec3(window_height/2.0, 00.0f, window_height/2.0f);
             update_vectors();
             update();
          }

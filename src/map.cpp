@@ -8,10 +8,10 @@
 
 void Map::generate_random_items(){
    std::vector<glm::vec2> trees, rocks, bushes, trunks, wheat;
-   state.terrain->generate_random_coordinates(40, &trees);
-   state.terrain->generate_random_coordinates(20, &rocks);
-   state.terrain->generate_random_coordinates(20, &bushes);
-   state.terrain->generate_random_coordinates(30, &trunks);
+   state.terrain->generate_random_coordinates(30, &trees);
+   state.terrain->generate_random_coordinates(10, &rocks);
+   state.terrain->generate_random_coordinates(10, &bushes);
+   state.terrain->generate_random_coordinates(20, &trunks);
    state.terrain->generate_random_coordinates(10, &wheat);
    for (auto& item: trunks){
       items.push_back({TREE_TRUNK, {item.x, item.y}});
@@ -31,22 +31,22 @@ void Map::generate_random_items(){
 }
 
 void Map::editor_popup(){
-   ImGui::SetNextWindowSize(ImVec2(state.camera->window_width, state.camera->window_height), ImGuiCond_Always);
-   ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always); 
+   ImGui::SetNextWindowSize(ImVec2(state.terrain->height * offset, state.terrain->width * offset), ImGuiCond_Always);
+   ImGui::SetNextWindowPos(ImVec2(1, 1), ImGuiCond_Always); 
    ImGui::Begin("map editor", nullptr, 
                   ImGuiWindowFlags_NoTitleBar |
                   ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                  ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
+                  ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse );
    {
       
       ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
       if (ImGui::Button("CLEAR")){ 
          items.clear();
       }
       ImGui::SameLine();
       ImGui::Checkbox("Show camera", &show_camera); ImGui::SameLine();
-      ImGui::DragFloat("Scale", &scale, 1.0f, 0.0f, 100.0f, "%.3f"); 
-      ImGui::DragFloat("Offset", &offset, 1.0f, 0.0f, 100.0f, "%.3f"); 
+      ImGui::DragFloat("Offset", &offset, 0.2f, 0.0f, 5.0f, "%.3f"); 
       ImGui::Text("Choose object:"); ImGui::SameLine();
 
       if (ImGui::Button("Add item") && !is_drawing){ 
@@ -63,19 +63,22 @@ void Map::editor_popup(){
 
       ImGui::InvisibleButton("canvas", ImGui::GetContentRegionAvail());
       ImVec2 pos = ImGui::GetMousePos();
+      glm::vec2 projected_pos = state.camera->project(pos.x, pos.y, {state.terrain->height * offset, state.terrain->width * offset}) * glm::vec2(scale);
+      ImGui::SetCursorPos(ImVec2(pos.x + 10.4f, pos.y + 30.0f));
+      ImGui::Text("%.2f %.2f\n", projected_pos.x, projected_pos.y);
      
       if (show_camera){
-         draw_list->AddCircle(ImVec2(pos.x, pos.y), 10.0f, imgui_color::red, 30, 2.0f);
+         glm::vec3 pp = state.camera->last_pos * offset;
+         draw_list->AddCircle(ImVec2(pp.x, pp.z), 10.0f, imgui_color::red, 30, 2.0f);
       }
       switch(state_drawing){
          case object_e::item:
-            add_item(item_type, pos, draw_list);
+            add_item(item_type, pos, draw_list, projected_pos);
             break;
 
       }
        for (const auto& i: items){
-      // FIXME:  PROJECT TO MAP
-          draw_list->AddCircle(ImVec2(i.map_pos.x, i.map_pos.y), 3.2f, imgui_color::yellow, 30, 2.0f);
+          draw_list->AddCircle(ImVec2(i.pos.x * offset, i.pos.y * offset), 3.2f, imgui_color::yellow, 30, 2.0f);
        }
       item_type = popup_items();
       ImGui::End();
@@ -83,11 +86,9 @@ void Map::editor_popup(){
 }
 
 
-void Map::add_item(models_type type, ImVec2 pos, ImDrawList* draw_list){
+void Map::add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec2 projected_pos){
    if (ImGui::IsMouseClicked(0) && type != NONE){
-      glm::vec2 p = state.camera->project(pos.x, pos.y)*50.0f + glm::vec2(scale)/2.0f;
-      printf("%.3f %.3f\n", p.x, p.y);
-      items.push_back({type, ImVec2(p.x, p.y), pos});
+      items.push_back({type, ImVec2(projected_pos.x, projected_pos.y)});
    }
 }
 

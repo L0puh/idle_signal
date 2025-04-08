@@ -19,7 +19,6 @@ namespace imgui_color {
 struct item_t {
    models_type type;
    ImVec2 pos;
-   ImVec2 map_pos = {-1.0f, -1.0f};
 
 };
 
@@ -30,12 +29,13 @@ class Map {
       int state_drawing = item;
       models_type item_type = NONE;
       bool is_drawing=false, show_camera=true;
+
       
       std::vector<item_t> items;
       std::vector<object_t> items_obj;
    public:
-      float scale = 400.0f;
-      float offset = 0.0f; // DELETEME
+      float scale; // the terrian size!
+      float offset = 2.0f;
    public:
       Map() { 
          state.map = this;
@@ -50,7 +50,7 @@ class Map {
       void set_shader(Shader *shd) {this->shd = shd; }
    public:
       void draw_objects();
-      void add_item(models_type type, ImVec2 pos, ImDrawList* draw_list);
+      void add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec2 projected_pos);
       void generate_coords();
       void generate_random_items();
       void update() {

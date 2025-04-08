@@ -133,33 +133,26 @@ void Camera::update_mouse_turn(glm::vec2 offset){
    update_vectors();
 }
 
-glm::vec2 Camera::unproject(glm::vec3 pos){
-   //FIXME
-    const auto clip = glm::vec4{pos, 1.f};
+glm::vec2 Camera::unproject(glm::vec3 pos, glm::vec2 screen_size){
+    const auto clip = get_view() * get_projection() * glm::vec4{pos, 1.f};
     auto screen = glm::vec2(clip.x, clip.y) / clip.w;
 
     if (clip.w < 0.0f || screen.x >= 1.0f || screen.y >= 1.0f) {
-        return {-100000, -1000000};
+        return {0.0f, 0.0f};
     }
 
     screen = (screen + glm::vec2{1.f, 1.f}) / 2.f;
-    screen *= glm::vec2(window_width, window_height);
+    screen *= screen_size;
     return screen;
 }
-glm::vec2 Camera::project(double x, double y) {
-   // double normx, normy;
-   // normx = (x / window_width ) *  2.0f - 1.0f;
-   // normy = (y / window_height) * -2.0f + 1.0f;
-   // glm::mat4 proj = inverse(get_projection() * get_view());
-   // glm::vec4 world = glm::vec4(normx, normy, 1.0f, 1.0f) * proj;
-   // return world;
-   return from_ndc_to_world(from_screen_to_ndc({x,y}, {window_width, window_height}));
+glm::vec2 Camera::project(double x, double y, glm::ivec2 size) {
+   return from_ndc_to_world(from_screen_to_ndc({x,y}, size));
 }
 
 glm::vec2 Camera::get_mouse_pos() {
    double x, y;
    glfwGetCursorPos(window, &x, &y);
-   return project(x, y);
+   return project(x, y, {window_height, window_width});
 }
       
 void Camera::update(){ 

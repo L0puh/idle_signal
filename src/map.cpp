@@ -45,15 +45,15 @@ void Map::editor_popup(){
          items.clear();
       }
       ImGui::SameLine();
-      ImGui::Checkbox("Show camera", &show_camera); ImGui::SameLine();
-      ImGui::DragFloat("Offset", &offset, 0.2f, 0.0f, 5.0f, "%.3f"); 
-      ImGui::Text("Choose object:"); ImGui::SameLine();
+      ImGui::Checkbox("show camera", &show_camera); ImGui::SameLine();
+      ImGui::DragFloat("offset", &offset, 0.2f, 0.0f, 5.0f, "%.3f"); 
 
-      if (ImGui::Button("Add item") && !is_drawing){ 
+      if (ImGui::Button("add item") && !is_drawing){ 
          state_drawing = item;
          ImGui::OpenPopup("items");
       }
-      
+     
+      ImGui::SameLine();
       if (ImGui::Button("generate random items")){
          generate_random_items();
       }
@@ -69,7 +69,7 @@ void Map::editor_popup(){
      
       if (show_camera){
          glm::vec3 pp = state.camera->last_pos * offset;
-         draw_list->AddCircle(ImVec2(pp.x, pp.z), 10.0f, imgui_color::red, 30, 2.0f);
+         draw_list->AddCircle(ImVec2(pp.x, pp.z), 5.0f, imgui_color::red, 30, 2.0f);
       }
       switch(state_drawing){
          case object_e::item:

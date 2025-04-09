@@ -7,8 +7,10 @@
 #include "terrain.hpp"
 
 glm::mat4 Camera::get_projection_ortho() {
-   glm::mat4 proj = glm::ortho(0.0f, (float)window_width, 0.0f, (float)window_height);
-   return proj;
+   float aspect = (float)window_width / (float)window_height;
+   return glm::ortho(0.0f, (float)window_width, 0.0f, (float)window_height, 0.0f, 1.0f);
+
+
 }
 
 glm::mat4 Camera::get_projection(){

@@ -70,9 +70,11 @@ class Animation{
             break;
          }
          glm::mat4 model(1.0f); 
-         model = glm::translate(model, glm::vec3(0.7, -0.5 + state.camera->walk_offset, 0.0f));
+         glm::vec3 p = (glm::vec3(state.camera->window_width - 190.0f, state.camera->walk_offset*2.0f + 200.0f, 0.0f));
+         model = glm::translate(model, p);
+         model = glm::scale(model, glm::vec3(450.0f));
          shd->use();
-         shd->set_mat4fv("_model", model);
+         shd->set_mat4fv("_model", state.camera->get_projection_ortho() * model);
          shd->set_float("_cell_size", state.cell_size);
          shd->set_float("_width", state.camera->window_width);
          shd->set_float("_height", state.camera->window_height);

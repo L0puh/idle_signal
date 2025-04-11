@@ -58,16 +58,16 @@ namespace input {
             break;
          case GLFW_KEY_M:
             if (!state.keys_lastpress[GLFW_KEY_M] || state.cooldown < glfwGetTime() - state.keys_lastpress[GLFW_KEY_M]){
-               state.keys_lastpress[GLFW_KEY_M] = glfwGetTime(); 
                if (state.mode & EDIT_MODE){
-                  state.mode = PLAY_MODE;
                   state.map->generate_coords();
+                  state.mode = PLAY_MODE;
                   state.camera->change_mode(state.mode);
                }
-               else {
+               else if (state.mode & PLAY_MODE){
                   state.mode = EDIT_MODE;
                   state.camera->change_mode(state.mode);
                }
+               state.keys_lastpress[GLFW_KEY_M] = glfwGetTime(); 
             }
             break;
             

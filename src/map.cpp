@@ -8,11 +8,10 @@
 
 void Map::generate_random_items(){
    std::vector<glm::vec2> trees, rocks, bushes, trunks, wheat;
-   state.terrain->generate_random_coordinates(30, &trees);
-   state.terrain->generate_random_coordinates(10, &rocks);
-   state.terrain->generate_random_coordinates(10, &bushes);
-   state.terrain->generate_random_coordinates(20, &trunks);
-   state.terrain->generate_random_coordinates(10, &wheat);
+   state.terrain->generate_random_coordinates(10, &trees);
+   state.terrain->generate_random_coordinates(20, &rocks);
+   state.terrain->generate_random_coordinates(20, &bushes);
+   state.terrain->generate_random_coordinates(10, &trunks);
    for (auto& item: trunks){
       items.push_back({TREE_TRUNK, {item.x, item.y}});
    }
@@ -25,9 +24,7 @@ void Map::generate_random_items(){
    for (auto& item: bushes){
       items.push_back({BUSH, {item.x, item.y}});
    }
-   for (auto& item: wheat){
-      items.push_back({WHEAT, {item.x, item.y}});
-   }
+   log_info("random generation done");
 }
 
 void Map::editor_popup(){
@@ -108,9 +105,6 @@ models_type Map::popup_items(){
         if (ImGui::MenuItem("bush")) {
            object = BUSH;
         }
-        if (ImGui::MenuItem("wheat")) {
-           object = WHEAT;
-        }
         if (ImGui::MenuItem("trunk")) {
            object = TREE_TRUNK;
         }
@@ -121,35 +115,38 @@ models_type Map::popup_items(){
 
 void Map::draw_objects(){
    for (const auto& item: items_obj){
-
-      float y = state.terrain->get_height_at(item.max.x, item.max.y);
-      glm::vec3 pos = glm::vec3{item.max.x, y-1.0f, item.max.y};
-      item.model->set_pos(pos);
+      item.model->set_pos(item.max);;
       item.model->set_size(glm::vec3(1.0f));
       item.model->draw();
-      state.physics->update_size(item.bt_object, item.model->size);
-      state.physics->update_position(item.bt_object, pos);
-
    }
 }
 
 
 void Map::generate_coords(){
+   float y;
+   Model* model;
+   object_t obj;
    state.physics->clear_objects();
+   // TODO: if (has_changed)
+   
    items_obj.clear();
    for (int i = 0; i < items.size(); i++){
-
       glm::vec2 p = glm::vec2(items[i].pos.x, items[i].pos.y);
-      Model* model;
+      y = state.terrain->get_height_at(p.x, p.y);
       model = state.resources->models[items[i].type];
-      uint bt_object = state.physics->add_model(*model);
-      object_t obj;
-      obj.max = glm::vec3(p, 0.0f);
-      obj.bt_object = bt_object;
+      model->set_pos(obj.max);
+      model->set_size(glm::vec3(1.0f));
+      
+      obj.max = glm::vec3{p.x, y-1.0f, p.y};
+      obj.bt_object = state.physics->add_model(*model);
+
       obj.model = model;
       items_obj.push_back(obj);
 
+      state.physics->update_position(obj.bt_object, obj.max);
+      state.physics->update_size(obj.bt_object, glm::vec3(1.0f));
    }
+   log_info("items are loaded");
 }
 
 //                                 UTILS:                                 //

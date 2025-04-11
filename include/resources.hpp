@@ -35,7 +35,6 @@ enum models_type {
    TRUNK,
    BUSH,
    TREE_TRUNK,
-   WHEAT,
 
 
    MODELS_TYPE_SIZE,

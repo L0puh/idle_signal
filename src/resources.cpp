@@ -8,12 +8,10 @@ void Resources::init_models(){
    models[BUILDING] = new Model("gas_station.obj");
    models[BUSH] = new Model("bush_01.obj");
    models[TREE_TRUNK] = new Model("tree_trunk.obj");
-   models[WHEAT] = new Model("wheat.obj");
    
 }
 
 void Resources::init_text(){ 
-
    text_obj = new Object(object_e::text, textures[TEXT_SHADER], shaders[TEXT_SHADER]);
    log_info("init text done");
 }

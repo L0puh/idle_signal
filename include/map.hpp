@@ -27,8 +27,10 @@ class Map {
       Shader *shd;
      
       int state_drawing = item;
+      int random_item = NONE;
       models_type item_type = NONE;
       bool is_drawing=false, show_camera=true;
+      int amount_random_item = 0;
 
       
       std::vector<item_t> items;

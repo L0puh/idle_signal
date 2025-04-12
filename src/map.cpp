@@ -5,26 +5,31 @@
 #include "terrain.hpp"
 
 #include <imgui/imgui.h>
+#include <vector>
 
 void Map::generate_random_items(){
-   std::vector<glm::vec2> trees, rocks, bushes, trunks, wheat;
-   state.terrain->generate_random_coordinates(10, &trees);
-   state.terrain->generate_random_coordinates(20, &rocks);
-   state.terrain->generate_random_coordinates(20, &bushes);
-   state.terrain->generate_random_coordinates(10, &trunks);
-   for (auto& item: trunks){
-      items.push_back({TREE_TRUNK, {item.x, item.y}});
+   
+   // TODO randomize the models themselves (more types of trees and stuff)
+   int size = amount_random_item;
+   ImGui::SeparatorText("RANDOM GENERATOR");
+   ImGui::RadioButton("TREE", &random_item, models_type::TREE); ImGui::SameLine();
+   ImGui::RadioButton("ROCK", &random_item, models_type::ROCK); ImGui::SameLine();
+   ImGui::RadioButton("TRUNK", &random_item, models_type::TREE_TRUNK); ImGui::SameLine();
+   ImGui::RadioButton("BUSH", &random_item, models_type::BUSH); ImGui::SameLine(); 
+   ImGui::InputInt("AMOUNT:", &size, 1, 10);
+   
+   std::vector<glm::vec2> coords;
+   if (ImGui::Button("generate")){
+      if (size < 10000 && size != 0 && random_item != NONE) {
+         state.terrain->generate_random_coordinates(size, &coords);
+
+         for (const auto& item: coords){
+            items.push_back({(models_type)random_item, {item.x, item.y}});
+         }
+         log_info("random generation done");
+      }
    }
-   for (auto& item: trees){
-      items.push_back({TREE, {item.x, item.y}});
-   }
-   for (auto& item: rocks){
-      items.push_back({ROCK, {item.x, item.y}});
-   }
-   for (auto& item: bushes){
-      items.push_back({BUSH, {item.x, item.y}});
-   }
-   log_info("random generation done");
+   amount_random_item = size;
 }
 
 void Map::editor_popup(){
@@ -50,10 +55,8 @@ void Map::editor_popup(){
          ImGui::OpenPopup("items");
       }
      
-      ImGui::SameLine();
-      if (ImGui::Button("generate random items")){
-         generate_random_items();
-      }
+      generate_random_items();
+      
       if (ImGui::IsMouseClicked(1)){
          item_type = NONE;
       }
@@ -90,7 +93,6 @@ void Map::add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec
 }
 
 models_type Map::popup_items(){
-
    models_type object = item_type;
    if (ImGui::BeginPopup("items")) {
         if (ImGui::MenuItem("tree")) {

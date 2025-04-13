@@ -35,6 +35,9 @@ class Map {
       
       std::vector<item_t> items;
       std::vector<object_t> items_obj;
+
+      glm::vec2 projected_pos; //mouse position in the world
+      ImVec2 pos; //mouse position on canvas
    public:
       float scale; // the terrian size!
       float offset = 2.0f;
@@ -51,6 +54,8 @@ class Map {
    public:
       void set_shader(Shader *shd) {this->shd = shd; }
    public:
+      void show_tabs();
+      void edit_terrain();
       void draw_objects();
       void add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec2 projected_pos);
       void generate_coords();

@@ -161,8 +161,6 @@ void Terrain::generate_random_coordinates(int count, std::vector<glm::vec2>* coo
 
 void Terrain::generate_heights(){
    log_info("generating heights for terrain");
-   int MIN_RADIUS = 6.0f, MAX_RADIUS = 8.0f;
-   float MIN_HEIGHT = 0.1f, MAX_HEIGHT = 0.5f;
 
 	std::random_device rd;
 	std::mt19937 generator(rd());

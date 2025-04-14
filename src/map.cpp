@@ -56,7 +56,6 @@ void Map::generate_random_items(){
    ImGui::PushItemWidth(100.0f);
    ImGui::RadioButton("TREE", &random_item, models_type::TREE); ImGui::SameLine();
    ImGui::RadioButton("ROCK", &random_item, models_type::ROCK); ImGui::SameLine();
-   ImGui::RadioButton("TRUNK", &random_item, models_type::TREE_TRUNK); ImGui::SameLine();
    ImGui::RadioButton("BUSH", &random_item, models_type::BUSH); ImGui::SameLine(); 
    ImGui::InputInt("AMOUNT:", &size, 1, 10); ImGui::SameLine();
    ImGui::PopItemWidth();
@@ -135,9 +134,6 @@ models_type Map::popup_items(){
         if (ImGui::MenuItem("bush")) {
            object = BUSH;
         }
-        if (ImGui::MenuItem("trunk")) {
-           object = TREE_TRUNK;
-        }
         ImGui::EndPopup();
     }
    return object;
@@ -163,7 +159,10 @@ void Map::generate_coords(){
    for (int i = 0; i < items.size(); i++){
       glm::vec2 p = glm::vec2(items[i].pos.x, items[i].pos.y);
       y = state.terrain->get_height_at(p.x, p.y);
-      model = state.resources->models[items[i].type];
+
+
+      size_t sz = state.resources->models[items[i].type].size();
+      model = state.resources->models[items[i].type][get_random_int(0, sz-1)];
       model->set_pos(obj.max);
       model->set_size(glm::vec3(1.0f));
       

@@ -2,7 +2,6 @@
 #include <assimp/material.h>
 #include <glm/geometric.hpp>
 
-#include "physics.hpp"
 #include "core.hpp"
 #include "model.hpp"
 #include "collision.hpp"

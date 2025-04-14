@@ -32,9 +32,7 @@ enum models_type {
    TREE,
    ROCK,
    BUILDING,
-   TRUNK,
    BUSH,
-   TREE_TRUNK,
 
 
    MODELS_TYPE_SIZE,
@@ -54,7 +52,7 @@ class Resources {
 
       Object *text_obj;
 
-      std::vector<Model*> models;
+      std::vector<std::vector<Model*>> models;
       std::vector<Texture*> textures;
       std::vector<Shader*> shaders;
 
@@ -73,6 +71,7 @@ class Resources {
    
    public:
       void init_resources();
+      void init_models_counter(std::string filename, models_type type);
       void init_text();
       void init_models();
       void load_textures();

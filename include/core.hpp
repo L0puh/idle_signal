@@ -2,6 +2,8 @@
 #define COLLCONTROL 
 
 #include <cstdio>
+#include <filesystem>
+#include <random>
 #include <string>
 #include <sys/types.h>
 #include <unordered_map>
@@ -242,4 +244,22 @@ inline char* read_binary(const char* filename, int& size){
 }
 
 
+inline int count_files(std::string dir){
+   struct stat sb;
+   int cnt = 0;
+   std::filesystem::path out;
+
+   for (const auto& entry : std::filesystem::directory_iterator(dir)) {
+      if (stat(entry.path().c_str(), &sb) == 0 && !(sb.st_mode & S_IFDIR)){
+         cnt++;
+      }
+   }
+   return cnt;
+}
+inline int get_random_int(int from, int to){
+   std::random_device device;
+   std::mt19937 generator(device());
+   std::uniform_int_distribution<std::mt19937::result_type> dist(from, to); 
+   return dist(generator);
+}
 #endif 

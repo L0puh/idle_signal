@@ -8,7 +8,6 @@
 #include <string>
 #include <vector>
 
-#include <filesystem>
 #include <string>
 #include <sys/stat.h>
 
@@ -81,24 +80,12 @@ class Animation{
          vert.draw_EBO(GL_TRIANGLES, count_vertices);
       }
    private:
-      int count_frames(std::string dir){
-         struct stat sb;
-         int cnt = 0;
-         std::filesystem::path out;
-
-         for (const auto& entry : std::filesystem::directory_iterator(dir)) {
-            if (stat(entry.path().c_str(), &sb) == 0 && !(sb.st_mode & S_IFDIR)){
-               cnt++;
-            }
-         }
-         return cnt;
-      }
 
       void load_frames(){
          std::string name;
          
-         count_frames_flashlight = count_frames(DIR_FLASHLIGHT_FRAMES);
-         count_frames_hand = count_frames(DIR_HAND_FRAMES);
+         count_frames_flashlight = count_files(DIR_FLASHLIGHT_FRAMES);
+         count_frames_hand = count_files(DIR_HAND_FRAMES);
          for (int i = 1; i <= count_frames_hand; i++){
             name = "frames/hand/" + std::to_string(i) + ".png";
             Texture *tex = new Texture(name, 1, 1);

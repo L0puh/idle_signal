@@ -1,14 +1,22 @@
 #include "resources.hpp"
 #include "state.hpp"
 #include "object.hpp"
+#include <string>
 
+
+void Resources::init_models_counter(std::string filename, models_type type) {
+   std::string path = "assets/models/" + filename;
+   int cnt = count_files(path)/2; // don't count .mtl
+   for (int i = 1; i <= cnt; i++){
+      std::string name = filename + "/" + std::to_string(i) + ".obj";
+      models[type].push_back(new Model(name));
+   }
+}
 void Resources::init_models(){
-   models[TREE] = new Model("tree.obj");
-   models[ROCK] = new Model("rock.obj");
-   models[BUILDING] = new Model("gas_station.obj");
-   models[BUSH] = new Model("bush_01.obj");
-   models[TREE_TRUNK] = new Model("tree_trunk.obj");
-   
+   init_models_counter("trees", TREE);
+   init_models_counter("bushes", BUSH);
+   init_models_counter("rocks", ROCK);
+   init_models_counter("buildings", BUILDING);
 }
 
 void Resources::init_text(){ 
@@ -51,7 +59,9 @@ void Resources::cleanup(){
       i->cleanup();
    }
    for (auto i: models){
-      i->cleanup();
+      for (int j = 0; j < i.size(); j++){
+         i[j]->cleanup();
+      }
    }
    
 }

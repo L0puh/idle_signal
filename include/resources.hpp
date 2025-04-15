@@ -17,11 +17,8 @@ enum shader_type {
    SHADER_TYPE_SIZE,
 };
 enum texture_type {
-   WALL_TEXTURE,
-   CUBEMAP_TEXTURE,
-   ROOF_TEXTURE,
-   FLOOR_TEXTURE,
    TERRAIN_TEXTURE,
+   CUBEMAP_TEXTURE,
    TEXT_TEXTURE,
 
    TEXTURE_TYPE_SIZE,
@@ -33,7 +30,6 @@ enum models_type {
    ROCK,
    BUILDING,
    BUSH,
-
 
    MODELS_TYPE_SIZE,
 };

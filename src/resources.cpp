@@ -1,6 +1,8 @@
 #include "resources.hpp"
+#include "core.hpp"
 #include "state.hpp"
 #include "object.hpp"
+
 #include <string>
 
 
@@ -13,21 +15,21 @@ void Resources::init_models_counter(std::string filename, models_type type) {
    }
 }
 void Resources::init_models(){
-   init_models_counter("trees", TREE);
-   init_models_counter("bushes", BUSH);
    init_models_counter("rocks", ROCK);
    init_models_counter("buildings", BUILDING);
+   init_models_counter("bushes", BUSH);
+   init_models_counter("trees", TREE);
 }
 
 void Resources::init_text(){ 
-   text_obj = new Object(object_e::text, textures[TEXT_SHADER], shaders[TEXT_SHADER]);
+   if (textures[TEXT_TEXTURE] == NULL || shaders[TEXT_SHADER] == NULL){
+      error_and_exit("init text shader and texture first");
+   }
+   text_obj = new Object(object_e::text, textures[TEXT_TEXTURE], shaders[TEXT_SHADER]);
    log_info("init text done");
 }
 
 void Resources::load_textures(){
-   textures[WALL_TEXTURE] = new Texture("wall_texture.jpg");
-   textures[ROOF_TEXTURE] = new Texture("roof_texture.jpg");
-   textures[FLOOR_TEXTURE] = new Texture("floor_texture.jpg");
    textures[TERRAIN_TEXTURE] = new Texture("terrain.jpg");
    textures[CUBEMAP_TEXTURE] = new Texture(cubemap_faces);
    textures[TEXT_TEXTURE] = new Texture;

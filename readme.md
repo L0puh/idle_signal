@@ -12,6 +12,8 @@
 - opengl, glad, glfw
 - glm for math
 - imgui for debug windows
-- stb image and assimp 
+- stb image 
+- assimp 
+- tiny gltf
 - bullet3 for physics 
 - openal for audio

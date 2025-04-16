@@ -1,5 +1,6 @@
 #include "physics.hpp"
 #include "camera.hpp"
+#include <iostream>
 #include <vector>
 
 #include <BulletCollision/CollisionShapes/btCapsuleShape.h>
@@ -18,6 +19,22 @@ void Physics::clear_objects(){
    // camera isn't removed, just map objects 
    for (auto obj: objects)
       world->removeCollisionObject(obj);
+}
+
+bool Physics::perform_raycast_for_camera(){
+   Camera *camera = state.camera;
+   glm::vec3 pos = camera->pos;
+   btVector3 from(pos.x, pos.y, pos.z); 
+   btVector3 to(pos.x, pos.y - 100.0f, pos.z); 
+   btVector3 hit_point;
+   
+   state.physics->update_camera_position();
+   bool hit = raycast(state.physics->get_world(), from, to, camera->camera_bt, hit_point);
+   if (hit) {
+       pos.y = hit_point.y() + camera->height / 2.0f + 0.5f > pos.y ? hit_point.y() + camera->height/2.0f + 0.5f: pos.y;
+       return 1.0f;
+   } 
+   return 0.0f;
 }
 
 void Physics::update_collisions(){
@@ -45,6 +62,7 @@ void Physics::update_collisions(){
           }
       }
    }
+   perform_raycast_for_camera();
    update_camera_position();
 }
 
@@ -198,5 +216,37 @@ void Physics::add_heightmap_object(std::vector<float>& data, int width, int heig
     terrain->setWorldTransform(transform);
 
     world->addCollisionObject(terrain, 1, 1);
+}
+
+bool raycast(btDynamicsWorld* world,
+                     const btVector3& from,
+                     const btVector3& to,
+                     const btCollisionObject* to_ignore,
+                     btVector3& hit)
+{
+    class callback_raycast: public btCollisionWorld::ClosestRayResultCallback
+    {
+    public:
+        callback_raycast(const btVector3& from, const btVector3& to, const btCollisionObject* to_ignore): 
+           btCollisionWorld::ClosestRayResultCallback(from, to), to_ignore_m(to_ignore) {}
+
+        btScalar addSingleResult(btCollisionWorld::LocalRayResult& result, bool normal){
+            if (result.m_collisionObject == to_ignore_m) return 1.0f;
+            return btCollisionWorld::ClosestRayResultCallback::addSingleResult(result, normal);
+        }
+
+    protected:
+        const btCollisionObject* to_ignore_m;
+    };
+
+    callback_raycast callback(from, to, to_ignore);
+    world->rayTest(from, to, callback);
+
+    if (callback.hasHit()) {
+        hit = callback.m_hitPointWorld;
+        return true; 
+    } else {
+        return false; 
+    }
 }
 

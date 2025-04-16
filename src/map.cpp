@@ -153,7 +153,7 @@ void Map::generate_coords(){
    Model* model;
    object_t obj;
    state.physics->clear_objects();
-   // TODO: if (has_changed)
+   // TODO: add separate floor shape for buildings and groups? 
    
    items_obj.clear();
    for (int i = 0; i < items.size(); i++){

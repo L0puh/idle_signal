@@ -40,6 +40,7 @@ class Physics {
       void init_world();
       void clear_objects();
       void update_collisions();
+      bool perform_raycast_for_camera();
       void update_position(uint id, glm::vec3 pos);
       void update_size(uint id, glm::vec3 size);
       void add_object(btCollisionObject* obj) { world->addCollisionObject(obj); objects.push_back(obj); }
@@ -58,5 +59,8 @@ class Physics {
       uint add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size);
 };
 
+
+bool raycast(btDynamicsWorld* world, const btVector3& from, const
+      btVector3& to, const btCollisionObject* to_ignore, btVector3& hit);
 
 #endif 

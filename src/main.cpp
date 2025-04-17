@@ -1,5 +1,6 @@
 #include "audio.hpp"
 #include "core.hpp"
+#include "entity.hpp"
 #include "map.hpp"
 #include "animation.hpp"
 #include "renderer.hpp"
@@ -8,7 +9,6 @@
 #include "skybox.hpp"
 #include "physics.hpp"
 #include "terrain.hpp"
-#include <iostream>
 
 void enable_if_debug();
 void shutdown(GLFWwindow*);
@@ -37,6 +37,8 @@ int main() {
    sound.init_sounds(&audio);
    camera.init();
 
+   Entity entity("assets/entities/house.json");
+
    while (!glfwWindowShouldClose(window)){
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -44,8 +46,8 @@ int main() {
       update_deltatime();
       skybox.draw();
       terrain.draw_terrain();
-      physics.update_collisions();
-
+   
+      entity.draw_entity();
 
       if (state.mode & PLAY_MODE){
          camera.update();
@@ -60,6 +62,7 @@ int main() {
          imgui::main_draw();
       }
 
+      physics.update_collisions();
       animation.draw(HAND_ANIMATION);
       state.renderer->draw_text("+", {state.camera->window_width/2.0f,
                state.camera->window_height/2.0f}, 0.5, color::white);

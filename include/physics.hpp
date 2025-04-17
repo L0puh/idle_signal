@@ -7,6 +7,13 @@
 #include <btBulletDynamicsCommon.h>
 #include <vector>
 
+enum collision_type {
+   DEFAULT  = 1 << 0, 
+   PICKABLE = 1 << 1,
+   DOOR     = 1 << 2 ,
+   FLOOR    = 1 << 3, // use raycasting 
+   STATIC   = 1 << 4, // use collision
+};
 
 class Physics {
    
@@ -45,6 +52,7 @@ class Physics {
       void update_size(uint id, glm::vec3 size);
       void add_object(btCollisionObject* obj) { world->addCollisionObject(obj); objects.push_back(obj); }
       uint add_model(Model& model);
+      uint add_model(Model& model, collision_type type);
       btCollisionObject* get_object_from_vertices(std::vector<glm::vec3> vertices, const uint* indices, size_t cnt);
       void update_camera_position();
       void set_camera_object();
@@ -56,7 +64,7 @@ class Physics {
       btDiscreteDynamicsWorld* get_world() { return world; }
    private:
       btCompoundShape* create_compound_shape(const Model& model);
-      uint add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size);
+      uint add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size, collision_type type);
 };
 
 

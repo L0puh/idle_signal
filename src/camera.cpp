@@ -78,9 +78,6 @@ void Camera::update_movement(){
       this->pos = p;
       pos.y = state.terrain->get_height_at(pos.x, pos.z) + height/2.0f;
    }
-
-   state.physics->perform_raycast_for_camera();
-
 }
 
 bool Camera::check_collision_with_walls(glm::vec3 p){

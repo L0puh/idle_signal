@@ -39,6 +39,7 @@ class Mesh {
 
 };
 
+
 class Model {
    private:
       glm::mat4 model;
@@ -53,7 +54,7 @@ class Model {
       glm::vec3 pos, rotation, size;
       std::vector<Mesh> meshes;
       std::vector<Texture> textures_loaded;
-      
+
       Model(const std::string src):
       size(glm::vec3(1.0f)), rotation(glm::vec3(1.0f)), 
       rotation_angle(0.0f), pos(0.0f){ 
@@ -63,6 +64,8 @@ class Model {
       }
       ~Model(){};
    public:
+
+      void load_json_file(const std::string& filename);
       void update(){
          model = glm::mat4(1.0f); 
          model = glm::translate(model, pos);

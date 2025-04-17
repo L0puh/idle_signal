@@ -1,6 +1,7 @@
 #include <vector>
 #include <assimp/material.h>
 #include <glm/geometric.hpp>
+#include <nlohmann/json.hpp>
 
 #include "core.hpp"
 #include "model.hpp"
@@ -28,6 +29,11 @@ void Model::draw(){
    }
    shd->unuse();
 
+}
+
+void Model::load_json_file(const std::string& filename){
+   
+   
 }
 
 void Model::draw_debug(){

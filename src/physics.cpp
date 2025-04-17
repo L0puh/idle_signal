@@ -1,6 +1,5 @@
 #include "physics.hpp"
 #include "camera.hpp"
-#include <iostream>
 #include <vector>
 
 #include <BulletCollision/CollisionShapes/btCapsuleShape.h>
@@ -32,6 +31,7 @@ bool Physics::perform_raycast_for_camera(){
    bool hit = raycast(state.physics->get_world(), from, to, camera->camera_bt, hit_point);
    if (hit) {
        pos.y = hit_point.y() + camera->height / 2.0f + 0.5f > pos.y ? hit_point.y() + camera->height/2.0f + 0.5f: pos.y;
+      state.camera->pos = pos;
        return 1.0f;
    } 
    return 0.0f;
@@ -51,32 +51,43 @@ void Physics::update_collisions(){
       contract = dispatcher->getManifoldByIndexInternal(i);
       const btCollisionObject* x = static_cast<const btCollisionObject*>(contract->getBody0());
       const btCollisionObject* y = static_cast<const btCollisionObject*>(contract->getBody1());
+      
       if (x != camera->camera_bt && y != camera->camera_bt) continue;
+
+      const btCollisionObject* other;
+
+      if (x == camera->camera_bt) other = y;
+      else other = x;
+      if (other->getBroadphaseHandle()->m_collisionFilterGroup & FLOOR){
+         perform_raycast_for_camera();
+         continue;
+      }
+
       if(contract->getNumContacts() > 0) {
          pt = contract->getContactPoint(0);
          dist = pt.getDistance();
          norm_y = pt.m_normalWorldOnB;
          norm = (x == camera->camera_bt) ? norm_y: -norm_y;
+         
          if (dist < 0.0f) { 
              camera->pos += glm::vec3(norm.x(), norm.y(), norm.z()) * (-dist);
           }
       }
    }
-   perform_raycast_for_camera();
    update_camera_position();
 }
 
-uint Physics::add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size){
+uint Physics::add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size, collision_type type){
    btTransform transform;
    btCollisionObject* model = new btCollisionObject();
    
    transform.setIdentity();
    transform.setOrigin({pos.x, pos.y, pos.z});
    shape->setLocalScaling({size.x, size.y, size.z});
-  
+   model->setCollisionFlags(model->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT); 
    model->setCollisionShape(shape);
    model->setWorldTransform(transform);
-   world->addCollisionObject(model, 1, 1);
+   world->addCollisionObject(model, type, 1);
 
    objects.push_back(model);
    return objects.size()-1;
@@ -85,9 +96,13 @@ uint Physics::add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec
 
 uint Physics::add_model(Model& model) {
    btCompoundShape *shape = create_compound_shape(model);
-   return add_compound_model(shape, model.pos, model.size);
+   return add_compound_model(shape, model.pos, model.size, DEFAULT);
 }
 
+uint Physics::add_model(Model& model, collision_type type){
+   btCompoundShape *shape = create_compound_shape(model);
+   return add_compound_model(shape, model.pos, model.size, type);
+}
 
 
 uint Physics::add_wall_collider(std::vector<glm::vec3> vertices){
@@ -182,7 +197,7 @@ void Physics::set_camera_object(){
    bt->setCollisionShape(shape);
 
    state.camera->camera_bt = bt;
-   world->addCollisionObject(bt, 1, 1);
+   world->addCollisionObject(bt, DEFAULT, 1);
    update_camera_position();
 
 }

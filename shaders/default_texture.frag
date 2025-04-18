@@ -3,7 +3,16 @@
 in vec2 _tex_coord;
 in vec3 _normal;
 in vec3 _pos;
+in vec4 _eyepos;
 
+struct fog_t {
+   vec3 color;
+   float start;
+   float end;
+   float density;
+
+   int equation;
+};
 struct light_t{
    vec3 pos;
    vec3 color;
@@ -35,6 +44,7 @@ uniform float _height;
 uniform float _cell_size;
 
 uniform light_t _light;
+uniform fog_t _fog;
 
 out vec4 color;
 
@@ -48,6 +58,20 @@ vec2 pixel_to_uv(vec2 pixelCoord) {
 
 vec2 uv_to_pixel(vec2 uv) {
     return uv * vec2(_width, _height);
+}
+
+float fog_factor(fog_t fog, float coord){
+   float res = 0.0f;
+   if (fog.equation == 0){
+      float len = fog.end - fog.start;
+      res = (fog.end - coord) / len;
+   } else if (fog.equation == 1){
+      res = exp(-fog.density * coord);
+   } else if (fog.equation == 2) {
+      res = exp(-pow(fog.density * coord, 2.0f));
+   }
+   res = 1.0 - clamp(res, 0.0, 1.0);
+   return res;
 }
 
 void main() {
@@ -104,7 +128,9 @@ void main() {
         res = mix(rgb, vec3(0.0), 0.1);  //blend black
     }
 
-    color = vec4(res, color.a); 
+   float fog_coord = abs(_eyepos.z/_eyepos.w);
+   color = vec4(res, color.a); 
+   color = mix(color, vec4(_fog.color, 1.0f), fog_factor(_fog, fog_coord));
 }
 
 

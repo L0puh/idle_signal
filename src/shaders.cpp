@@ -125,6 +125,13 @@ const int Shader::get_location(std::string name){
    cached_locations[name] = location;
    return location;
 }
+void Shader::set_fog(){
+   set_vec3("_fog.color", state.fog.color);
+   set_float("_fog.start", state.fog.start);
+   set_float("_fog.end", state.fog.end);
+   set_float("_fog.density", state.fog.density);
+   set_int("_fog.equation", state.fog.equation);
+}
 
 void Shader::set_light(){
 
@@ -150,4 +157,7 @@ void Shader::set_light(){
    set_float("_height", state.camera->window_height);
    set_float("_cell_size", state.cell_size);
    set_vec3("_luminance_color", state.filter_luminance_color);
+
+   set_fog();
+
 }

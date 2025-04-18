@@ -10,6 +10,7 @@ uniform mat4 _view;
 out vec2 _tex_coord;
 out vec3 _normal;
 out vec3 _pos;
+out vec4 _eyepos;
 
 void main()
 {
@@ -17,5 +18,6 @@ void main()
    _tex_coord = tex_coord;
    _normal = mat3(transpose(inverse(_model))) * normal;
    _pos = vec3(_model * vec4(pos, 1.0f));
+   _eyepos = _view * _model * vec4(pos, 1.0f);
 }
 

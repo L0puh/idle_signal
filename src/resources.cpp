@@ -47,6 +47,7 @@ void Resources::load_shaders(){
 }
 
 void Resources::init_resources(){
+
    load_shaders();
    load_textures();
    init_text();

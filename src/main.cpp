@@ -1,6 +1,5 @@
 #include "audio.hpp"
 #include "core.hpp"
-#include "entity.hpp"
 #include "map.hpp"
 #include "animation.hpp"
 #include "renderer.hpp"

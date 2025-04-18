@@ -52,6 +52,14 @@ class Physics;
 class Resources;
 class Terrain;
 
+struct fog_t {
+   glm::vec3 color;
+   float start;
+   float end;
+   float density;
+
+   int equation;
+};
 struct STATE {
 
    uint8_t mode;
@@ -78,6 +86,7 @@ struct STATE {
    std::map<int, bool> keys;
    std::map<int, float> keys_lastpress;
    glm::vec2 last_mouse_pos;
+   fog_t fog;
    bool first_mouse;        // just touched the mouse
 };
 

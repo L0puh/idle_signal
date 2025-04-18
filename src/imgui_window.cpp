@@ -34,6 +34,15 @@ namespace imgui {
          ImGui::SliderFloat("FILTER THRESHOLD:", &state.filter_threshold, 0.0f, 1.0f, "%.8f");
          ImGui::ColorEdit4("LUMINANCE:", color2);
          ImGui::ColorEdit4("LIGHT:", color);
+
+         float fog_color[4] = {state.fog.color.x, state.fog.color.y, state.fog.color.z, 1.0f};
+         ImGui::ColorEdit4("FOG COLOR:", fog_color);
+         state.fog.color = glm::vec3(fog_color[0], fog_color[1], fog_color[2]);
+         ImGui::SliderFloat("FOG DENSITY:", &state.fog.density, 0.0f, 1.0f, "%.8f");
+         ImGui::SliderFloat("FOG START", &state.fog.start, 0.0f, 2.0f, "%.8f");
+         ImGui::SliderFloat("FOG END", &state.fog.end, 0.0f, 2.0f, "%.8f");
+         ImGui::SliderInt("FOG EQUATION:", &state.fog.equation, 0, 2);
+
          state.light_color = {color[0], color[1], color[2], color[3]};
          state.filter_luminance_color = {color2[0], color2[1], color2[2], color2[3]};
          if (state.camera->is_flying)

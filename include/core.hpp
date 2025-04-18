@@ -33,6 +33,8 @@
 #define LEN(n) sizeof(n)/sizeof(n[0])
 
 class Vertex;
+
+
 class Shader;
 class Texture;
 class Mesh;
@@ -62,6 +64,7 @@ namespace color {
    const GLfloat green[]  = {0.596, 0.984, 0.596, 1.0f};
    const GLfloat yellow[] = {1.000, 0.843, 0.000, 1.0f};
    const GLfloat dark_grey[] = {0.137, 0.137, 0.141, 1.0f};
+   const GLfloat dark_blue[] = {0.133, 0.125, 0.188, 1.0f};
 
 }
 
@@ -177,6 +180,7 @@ class Shader {
       void use()    { glUseProgram(id); }
       void unuse()  { glUseProgram(0);  }
       void set_light();
+      void set_fog();
 
       void set_mat4fv(std::string location, glm::mat4x4 mat) { 
          glUniformMatrix4fv(get_location(location), 1, GL_FALSE, glm::value_ptr(mat));
@@ -192,6 +196,9 @@ class Shader {
       }
       void set_float(std::string location, float x){
          glUniform1f(get_location(location), x);
+      }
+      void set_int(std::string location, int x){
+         glUniform1i(get_location(location), x);
       }
 };
 

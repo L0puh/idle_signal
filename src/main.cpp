@@ -31,8 +31,6 @@ int main() {
    Map map;
 
    state.mode |= PLAY_MODE;
-   state.light_pos = {0.0f, 2.0f, 0.0};
-   state.light_color = {color::blue[0], color::blue[1], color::blue[2], 1.0f};
    sound.init_sounds(&audio);
    camera.init();
 

@@ -20,6 +20,7 @@ class Skybox {
          cubemap_shd = state.resources->shaders[CUBEMAP_SHADER];
 
          init_fog();
+         init_light();
       };
       ~Skybox() {
          vertex.cleanup();
@@ -38,6 +39,19 @@ class Skybox {
          vertex.draw_VBO(GL_TRIANGLES, count_vertices);
          glDepthFunc(GL_LESS);
       };
+      void init_light(){
+         light_t light;
+         light.color = glm::vec4(color::blue[0], color::blue[1], color::blue[2], 1.0f);
+         light.cut_off = 12.5f;
+         light.outer_cut_off = 17.5f;
+         light.dist = 8.0f;
+         light.ambient = glm::vec3(0.4f);
+         light.diffuse = glm::vec3(0.5f);
+         light.constant = 0.4f;
+         light.linear = 0.0009f;
+         light.quadratic = 0.032f;
+         state.light = light;
+      }
       void init_fog(){
          fog_t fog;
          fog.color = glm::vec3(color::dark_blue[0], color::dark_blue[1], color::dark_blue[2]);

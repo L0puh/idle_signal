@@ -25,26 +25,32 @@ namespace imgui {
       {
          ImGui::SliderFloat("ZOOM OF CAMERA:", &state.camera->zoom, -90.0f, 90.0f, "%.5f", 0);
          ImGui::SliderFloat3("POS OF CAMERA:", &state.camera->pos.x, -100.0f, 100.0f, "%.5f", 0);
-         ImGui::SliderFloat3("POS OF LIGHT:", &state.light_pos.x, -10.0f, 10.0f, "%.5f", 0);
-         float color[4] = {state.light_color.x, state.light_color.y, state.light_color.z, state.light_color.w};
-         float color2[4] = {state.filter_luminance_color.x, state.filter_luminance_color.y, state.filter_luminance_color.z,
-         state.filter_luminance_color.z};
          ImGui::SliderFloat("NOISE INTENSITY:", &state.noise_intensity, 0.0f, 1.0f, "%.8f");
          ImGui::SliderFloat("CELL SIZE(LOW POLY):", &state.cell_size, 0.0f, 30.0f, "%.8f");
          ImGui::SliderFloat("FILTER THRESHOLD:", &state.filter_threshold, 0.0f, 1.0f, "%.8f");
-         ImGui::ColorEdit4("LUMINANCE:", color2);
-         ImGui::ColorEdit4("LIGHT:", color);
+         ImGui::ColorEdit4("LUMINANCE:", &state.filter_luminance_color.x);
 
-         float fog_color[4] = {state.fog.color.x, state.fog.color.y, state.fog.color.z, 1.0f};
-         ImGui::ColorEdit4("FOG COLOR:", fog_color);
-         state.fog.color = glm::vec3(fog_color[0], fog_color[1], fog_color[2]);
+         ImGui::ColorEdit4("FOG COLOR:", &state.fog.color.x);
          ImGui::SliderFloat("FOG DENSITY:", &state.fog.density, 0.0f, 1.0f, "%.8f");
          ImGui::SliderFloat("FOG START", &state.fog.start, 0.0f, 2.0f, "%.8f");
          ImGui::SliderFloat("FOG END", &state.fog.end, 0.0f, 2.0f, "%.8f");
          ImGui::SliderInt("FOG EQUATION:", &state.fog.equation, 0, 2);
 
-         state.light_color = {color[0], color[1], color[2], color[3]};
-         state.filter_luminance_color = {color2[0], color2[1], color2[2], color2[3]};
+         // LIGHT
+         ImGui::SeparatorText("LIGHT");
+         light_t light = state.light;
+         ImGui::ColorEdit3("color", &light.color.x);
+         ImGui::SliderFloat("cut off", &light.cut_off, 0.0f, 180.0f); 
+         ImGui::SliderFloat("outer cut off", &light.outer_cut_off, 0.0f, 180.0f);
+         ImGui::SliderFloat("distance", &light.dist, 0.0f, 100.0f);
+         ImGui::ColorEdit3("ambient", &light.ambient.x);
+         ImGui::ColorEdit3("diffuse", &light.diffuse.x);
+         ImGui::ColorEdit3("specular", &light.specular.x);
+         ImGui::SliderFloat("constant", &light.constant, 0.0f, 10.0f);
+         ImGui::SliderFloat("linear", &light.linear, 0.0f, 1.0f);
+         ImGui::SliderFloat("quadratic", &light.quadratic, 0.0f, 1.0f);
+        
+         state.light = light;
          if (state.camera->is_flying)
             ImGui::Text("FLYING ON");
          else

@@ -135,20 +135,22 @@ void Shader::set_fog(){
 
 void Shader::set_light(){
 
+   light_t light = state.light;
+      
    set_vec3("_light.pos", state.camera->pos);
    set_vec3("_light.view_pos", state.camera->pos);
-   set_vec3("_light.color", state.light_color);
    set_vec3("_light.direction", state.camera->front);
    
-   set_float("_light.cut_off", glm::cos(glm::radians(12.5f)));
-   set_float("_light.outer_cut_off", glm::cos(glm::radians(17.5f)));
-   set_float("_light.dist", 8.0f); //vision distance
-   set_vec3("_light.ambient", {0.4f, 0.4f, 0.4f});
-   set_vec3("_light.diffuse", {0.5f, 0.5f, 0.5f});
+   set_vec3("_light.color", light.color);
+   set_float("_light.cut_off", glm::cos(glm::radians(light.cut_off)));
+   set_float("_light.outer_cut_off", glm::cos(glm::radians(light.outer_cut_off)));
+   set_float("_light.dist", light.dist); //vision distance
+   set_vec3("_light.ambient", light.ambient);
+   set_vec3("_light.diffuse", light.diffuse);
    set_vec3("_light.specular", glm::vec3(0.4f));
-   set_float("_light.constant", 0.4f);
-   set_float("_light.linear", 0.0009f);
-   set_float("_light.quadratic", 0.032f);
+   set_float("_light.constant", light.constant);
+   set_float("_light.linear", light.linear);
+   set_float("_light.quadratic", light.quadratic);
 
    set_float("_time", state.deltatime);
    set_float("_noise_intensity", state.noise_intensity);

@@ -60,6 +60,25 @@ struct fog_t {
 
    int equation;
 };
+
+struct light_t{
+   glm::vec3 pos;
+   glm::vec3 color;
+   glm::vec3 direction;
+   glm::vec3 view_pos;
+   float cut_off;
+   float outer_cut_off;
+   float dist;
+
+   glm::vec3 ambient;
+   glm::vec3 diffuse;
+   glm::vec3 specular;
+
+   float constant;
+   float linear;
+   float quadratic;
+};
+
 struct STATE {
 
    uint8_t mode;
@@ -73,8 +92,6 @@ struct STATE {
   
    float cell_size = 8.0f;
    glm::vec4 filter_luminance_color = {0.941, 0.561, 0.024, 1.0f};
-   glm::vec4 light_color;
-   glm::vec3 light_pos;
    float ground_level = -1.0f;
    float noise_intensity = 0.1f;
    float filter_threshold= 0.5f;
@@ -86,8 +103,10 @@ struct STATE {
    std::map<int, bool> keys;
    std::map<int, float> keys_lastpress;
    glm::vec2 last_mouse_pos;
-   fog_t fog;
    bool first_mouse;        // just touched the mouse
+   
+   fog_t fog;
+   light_t light;
 };
 
 extern STATE state;

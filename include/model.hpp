@@ -42,12 +42,12 @@ class Mesh {
 
 class Model {
    private:
-      glm::mat4 model;
       glm::vec4 color;
       bool with_texture = true;
    private:
       Shader *shd;
    public:
+      glm::mat4 model;
       uint bt_object;
       bool is_picked = false;
       float rotation_angle;

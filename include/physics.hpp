@@ -8,11 +8,12 @@
 #include <vector>
 
 enum collision_type {
-   DEFAULT  = 1 << 0, 
-   PICKABLE = 1 << 1,
-   DOOR     = 1 << 2 ,
-   FLOOR    = 1 << 3, // use raycasting 
-   STATIC   = 1 << 4, // use collision
+   NOTHING  = 0, 
+   DEFAULT  = 1,
+   PICKABLE = 2,
+   DOOR     = 3 ,
+   FLOOR    = 4, // use raycasting 
+   STATIC   = 5, // use collision
 };
 
 class Physics {

@@ -51,16 +51,16 @@ void Physics::update_collisions(){
       contract = dispatcher->getManifoldByIndexInternal(i);
       const btCollisionObject* x = static_cast<const btCollisionObject*>(contract->getBody0());
       const btCollisionObject* y = static_cast<const btCollisionObject*>(contract->getBody1());
-      
+     
       if (x != camera->camera_bt && y != camera->camera_bt) continue;
 
       const btCollisionObject* other;
 
       if (x == camera->camera_bt) other = y;
       else other = x;
-      if (other->getBroadphaseHandle()->m_collisionFilterGroup & FLOOR){
+
+      if (other->getUserIndex() & FLOOR){
          perform_raycast_for_camera();
-         continue;
       }
 
       if(contract->getNumContacts() > 0) {
@@ -87,7 +87,9 @@ uint Physics::add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec
    model->setCollisionFlags(model->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT); 
    model->setCollisionShape(shape);
    model->setWorldTransform(transform);
-   world->addCollisionObject(model, type, 1);
+   
+   model->setUserIndex(type);
+   world->addCollisionObject(model, 1, 1);
 
    objects.push_back(model);
    return objects.size()-1;

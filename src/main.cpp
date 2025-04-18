@@ -37,8 +37,6 @@ int main() {
    sound.init_sounds(&audio);
    camera.init();
 
-   Entity entity("assets/entities/house.json");
-
    while (!glfwWindowShouldClose(window)){
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -46,8 +44,6 @@ int main() {
       update_deltatime();
       skybox.draw();
       terrain.draw_terrain();
-   
-      entity.draw_entity();
 
       if (state.mode & PLAY_MODE){
          camera.update();

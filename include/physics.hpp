@@ -13,7 +13,8 @@ enum collision_type {
    PICKABLE = 2,
    DOOR     = 3 ,
    FLOOR    = 4, // use raycasting 
-   STATIC   = 5, // use collision
+   WALL     = 5,
+   STATIC   = 6, 
 };
 
 class Physics {

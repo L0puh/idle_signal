@@ -3,19 +3,26 @@
 
 #include "core.hpp"
 #include <string>
+#include <vector>
 
 class Model;
 struct component_t {
-   int collision_floor;
-   int collision_main;
-   Model* main;
-   Model* floor;
+
+   std::vector<int> collision;
+
+   Model*  main;
+   Model*  floor;
+   Model*  door;
+   Model*  walls;
 };
 
 class Entity {
    public:
+      std::string name;
       glm::mat4* model;
-      
+
+      bool is_floor, is_pickable, is_door, is_wall;
+
       float rotation_angle = 0.0f;
       glm::vec3 pos, rotation, size;
       component_t component;

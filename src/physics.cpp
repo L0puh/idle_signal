@@ -16,6 +16,7 @@ void Physics::init_world(){
 
 void Physics::clear_objects(){
    // camera isn't removed, just map objects 
+   log_info("clearing objects");
    for (auto obj: objects)
       world->removeCollisionObject(obj);
 }
@@ -30,9 +31,10 @@ bool Physics::perform_raycast_for_camera(){
    state.physics->update_camera_position();
    bool hit = raycast(state.physics->get_world(), from, to, camera->camera_bt, hit_point);
    if (hit) {
-       pos.y = hit_point.y() + camera->height / 2.0f + 0.5f > pos.y ? hit_point.y() + camera->height/2.0f + 0.5f: pos.y;
-      state.camera->pos = pos;
-       return 1.0f;
+      float y = hit_point.y() + camera->height;
+      pos.y = y > pos.y ? y: pos.y;
+      state.camera->set_pos(pos);
+      return 1.0f;
    } 
    return 0.0f;
 }
@@ -59,19 +61,20 @@ void Physics::update_collisions(){
       if (x == camera->camera_bt) other = y;
       else other = x;
 
-      if (other->getUserIndex() & FLOOR){
-         perform_raycast_for_camera();
-      }
 
-      if(contract->getNumContacts() > 0) {
-         pt = contract->getContactPoint(0);
-         dist = pt.getDistance();
-         norm_y = pt.m_normalWorldOnB;
-         norm = (x == camera->camera_bt) ? norm_y: -norm_y;
+      int index = other->getUserIndex();
          
-         if (dist < 0.0f) { 
-             camera->pos += glm::vec3(norm.x(), norm.y(), norm.z()) * (-dist);
-          }
+      if (!(index & FLOOR)) {
+         if(contract->getNumContacts() > 0) {
+            pt = contract->getContactPoint(0);
+            dist = pt.getDistance();
+            norm_y = pt.m_normalWorldOnB;
+            norm = (x == camera->camera_bt) ? norm_y: -norm_y;
+            
+            if (dist < 0.0f) { 
+                camera->pos += glm::vec3(norm.x(), norm.y(), norm.z()) * (-dist);
+             }
+         }
       }
    }
    update_camera_position();
@@ -249,7 +252,9 @@ bool raycast(btDynamicsWorld* world,
 
         btScalar addSingleResult(btCollisionWorld::LocalRayResult& result, bool normal){
             if (result.m_collisionObject == to_ignore_m) return 1.0f;
-            return btCollisionWorld::ClosestRayResultCallback::addSingleResult(result, normal);
+            if (result.m_collisionObject->getUserIndex() & FLOOR)
+               return btCollisionWorld::ClosestRayResultCallback::addSingleResult(result, normal);
+            return 1.0f;
         }
 
     protected:

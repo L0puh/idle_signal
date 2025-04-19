@@ -68,7 +68,7 @@ void Camera::update_movement(){
    
    if (state.keys[GLFW_KEY_LEFT_SHIFT] && glfwGetTime() -
          state.keys_lastpress[GLFW_KEY_W] >= state.cooldown){
-      if (speed <= 3.0f) 
+      if (speed <= 5.0f) 
          speed += 1.0 * state.deltatime;
    } else {
       speed = default_speed;
@@ -76,8 +76,10 @@ void Camera::update_movement(){
 
    if (state.terrain->is_within(p, 20.0f)){
       this->pos = p;
-      pos.y = state.terrain->get_height_at(pos.x, pos.z) + height/2.0f;
+      if (!is_flying)
+         pos.y = state.terrain->get_height_at(pos.x, pos.z) + height/2.0f;
    }
+   state.physics->perform_raycast_for_camera();
 }
 
 bool Camera::check_collision_with_walls(glm::vec3 p){

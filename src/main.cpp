@@ -1,5 +1,6 @@
 #include "audio.hpp"
 #include "core.hpp"
+#include "entity.hpp"
 #include "map.hpp"
 #include "animation.hpp"
 #include "renderer.hpp"
@@ -34,6 +35,12 @@ int main() {
    sound.init_sounds(&audio);
    camera.init();
 
+   //REMOVEME: test entity
+   Entity house_ent("assets/entities/house.json");
+   house_ent.pos = glm::vec3(camera.pos.x+10.0f, -2.0f, camera.pos.z);
+   house_ent.size = glm::vec3(2.4f);
+
+
    while (!glfwWindowShouldClose(window)){
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -41,6 +48,7 @@ int main() {
       update_deltatime();
       skybox.draw();
       terrain.draw_terrain();
+      house_ent.draw_entity();
 
       if (state.mode & PLAY_MODE){
          camera.update();
@@ -55,8 +63,11 @@ int main() {
          imgui::main_draw();
       }
 
-      physics.update_collisions();
-      animation.draw(HAND_ANIMATION);
+      
+      if (!camera.is_flying){
+         physics.update_collisions();
+         animation.draw(HAND_ANIMATION);
+      }
       state.renderer->draw_text("+", {state.camera->window_width/2.0f,
                state.camera->window_height/2.0f}, 0.5, color::white);
       

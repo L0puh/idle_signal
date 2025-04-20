@@ -1,4 +1,5 @@
 #include "physics.hpp"
+#include "BulletCollision/CollisionDispatch/btManifoldResult.h"
 #include "camera.hpp"
 #include <vector>
 
@@ -39,6 +40,7 @@ bool Physics::perform_raycast_for_camera(){
    return 0.0f;
 }
 
+
 void Physics::update_collisions(){
    int num;
    btVector3 norm, norm_y;
@@ -47,8 +49,10 @@ void Physics::update_collisions(){
    btScalar dist;
    Camera* camera = state.camera;
 
+   bool is_detected_door = false;
    world->performDiscreteCollisionDetection();
    num = dispatcher->getNumManifolds();
+   glm::vec3 d(0.0f);
    for(int i = 0; i < num; i++) {
       contract = dispatcher->getManifoldByIndexInternal(i);
       const btCollisionObject* x = static_cast<const btCollisionObject*>(contract->getBody0());
@@ -63,8 +67,17 @@ void Physics::update_collisions(){
 
 
       int index = other->getUserIndex();
-         
-      if (!(index & FLOOR)) {
+      // DEBUG OUTPUT: REMOVEME
+      if (index == FLOOR) {
+         log_info("FLOOR DETECTED");
+      }
+      if (index == DOOR){
+         is_detected_door = true;
+         log_info("DOOR DETECTED");
+         break;
+      }
+
+      if (index != FLOOR && index != DOOR) {
          if(contract->getNumContacts() > 0) {
             pt = contract->getContactPoint(0);
             dist = pt.getDistance();
@@ -72,12 +85,32 @@ void Physics::update_collisions(){
             norm = (x == camera->camera_bt) ? norm_y: -norm_y;
             
             if (dist < 0.0f) { 
-                camera->pos += glm::vec3(norm.x(), norm.y(), norm.z()) * (-dist);
+               d +=  glm::vec3(norm.x(), norm.y(), norm.z()) * (-dist);
              }
          }
       }
    }
+   if (!is_detected_door)
+      camera->pos += d;
    update_camera_position();
+}
+
+uint Physics::add_triangle_mesh(btBvhTriangleMeshShape* shape, glm::vec3 pos, glm::vec3 size, collision_type type){
+   btTransform transform;
+   btCollisionObject* model = new btCollisionObject();
+   
+   transform.setIdentity();
+   transform.setOrigin({pos.x, pos.y, pos.z});
+   shape->setLocalScaling({size.x, size.y, size.z});
+   model->setCollisionFlags(model->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT); 
+   model->setCollisionShape(shape);
+   model->setWorldTransform(transform);
+   
+   model->setUserIndex(type);
+   world->addCollisionObject(model, 1, 1);
+
+   objects.push_back(model);
+   return objects.size()-1;
 }
 
 uint Physics::add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size, collision_type type){
@@ -105,8 +138,8 @@ uint Physics::add_model(Model& model) {
 }
 
 uint Physics::add_model(Model& model, collision_type type){
-   btCompoundShape *shape = create_compound_shape(model);
-   return add_compound_model(shape, model.pos, model.size, type);
+   btBvhTriangleMeshShape *shape = create_triangle_shape(model);
+   return add_triangle_mesh(shape, model.pos, model.size, type);
 }
 
 
@@ -148,6 +181,30 @@ btCollisionObject* Physics::get_object_from_vertices(std::vector<glm::vec3> vert
    model->setWorldTransform(transform);
 
    return model;
+}
+btBvhTriangleMeshShape* Physics::create_triangle_shape(const Model& model){
+
+   btTriangleMesh* tri_mesh = new btTriangleMesh();
+   for(const Mesh& mesh : model.meshes) {
+     
+     for(size_t i = 0; i < mesh.indices.size(); i += 3) {
+         unsigned int i0 = mesh.indices[i];
+         unsigned int i1 = mesh.indices[i+1];
+         unsigned int i2 = mesh.indices[i+2];
+         
+         btVector3 v0(mesh.vertices[i0].position.x, mesh.vertices[i0].position.y, mesh.vertices[i0].position.z);
+         btVector3 v1(mesh.vertices[i1].position.x, mesh.vertices[i1].position.y, mesh.vertices[i1].position.z);
+         btVector3 v2(mesh.vertices[i2].position.x, mesh.vertices[i2].position.y, mesh.vertices[i2].position.z);
+         
+         tri_mesh->addTriangle(v0, v1, v2);
+     }
+   }
+
+  btBvhTriangleMeshShape* mesh_shape = new btBvhTriangleMeshShape(tri_mesh, true);
+  btTransform local_transform;
+  local_transform.setIdentity();
+
+   return mesh_shape;
 }
 
 btCompoundShape* Physics::create_compound_shape(const Model& model){
@@ -197,7 +254,7 @@ void Physics::update_camera_position(){
     state.camera->camera_bt->setWorldTransform(transform);
 }
 void Physics::set_camera_object(){
-   btCapsuleShape* shape = new btCapsuleShape(0.5f, state.camera->height - 2.0f); 
+   btCapsuleShape* shape = new btCapsuleShape(0.2f, state.camera->height - 2.0f); 
    btCollisionObject* bt = new btCollisionObject();
    bt->setCollisionShape(shape);
 
@@ -252,7 +309,7 @@ bool raycast(btDynamicsWorld* world,
 
         btScalar addSingleResult(btCollisionWorld::LocalRayResult& result, bool normal){
             if (result.m_collisionObject == to_ignore_m) return 1.0f;
-            if (result.m_collisionObject->getUserIndex() & FLOOR)
+            if (result.m_collisionObject->getUserIndex() == FLOOR)
                return btCollisionWorld::ClosestRayResultCallback::addSingleResult(result, normal);
             return 1.0f;
         }

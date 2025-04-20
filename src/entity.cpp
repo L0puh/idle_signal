@@ -14,20 +14,22 @@ void Entity::update() {
    }
 
    if (is_floor) {
-      component.floor->pos = pos;
-      component.floor->size = size;
-      component.floor->rotation = rotation;
+      component.floor->set_pos(pos);
+      component.floor->set_size(size);
    }
    
    if (is_wall) {
-      component.walls->pos = pos;
-      component.walls->size = size;
-      component.walls->rotation = rotation;
+      component.walls->set_pos(pos);
+      component.walls->set_size(size);
    }
-   
-   component.main->pos = pos;
-   component.main->size = size;
-   component.main->rotation = rotation;
+
+   if (is_door){
+      component.door->set_pos(pos);
+      component.door->set_size(size);
+   }
+  
+   component.main->set_pos(pos);
+   component.main->set_size(size);
 }
 
 void Entity::load_entity(const std::string& filename){
@@ -53,10 +55,10 @@ void Entity::load_entity(const std::string& filename){
    if (is_wall) {
       component.walls = new Model(doc["wall_path"]);
    }
-
+   
    component.main = new Model(doc["main_path"]);
-
 }
+
 void Entity::draw_entity(){
    update();
 
@@ -65,11 +67,11 @@ void Entity::draw_entity(){
    
    if (is_wall){
       component.walls->draw();
-      component.walls->draw_debug();
    }
+   if (is_door)
+      component.door->draw_debug();
    
    component.main->draw();
-   component.main->draw_debug();
 }
 
 void Entity::init_physics(){
@@ -79,6 +81,8 @@ void Entity::init_physics(){
       component.collision.push_back(physics->add_model(*component.floor, FLOOR));
    if (is_wall)
       component.collision.push_back(physics->add_model(*component.walls, DEFAULT)); 
+   if (is_door)
+      component.collision.push_back(physics->add_model(*component.door, DOOR)); 
   
    // component.collision.push_back(physics->add_model(*component.main, NOTHING));
 }

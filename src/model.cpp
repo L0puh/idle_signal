@@ -31,10 +31,6 @@ void Model::draw(){
 
 }
 
-void Model::load_json_file(const std::string& filename){
-   
-   
-}
 
 void Model::draw_debug(){
    draw_debug(pos, size);

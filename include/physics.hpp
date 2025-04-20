@@ -66,7 +66,9 @@ class Physics {
       btDiscreteDynamicsWorld* get_world() { return world; }
    private:
       btCompoundShape* create_compound_shape(const Model& model);
+      btBvhTriangleMeshShape* create_triangle_shape(const Model& model);
       uint add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size, collision_type type);
+      uint add_triangle_mesh(btBvhTriangleMeshShape* shape, glm::vec3 pos, glm::vec3 size, collision_type type);
 };
 
 

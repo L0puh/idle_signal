@@ -37,8 +37,8 @@ int main() {
 
    //REMOVEME: test entity
    Entity house_ent("assets/entities/house.json");
-   house_ent.pos = glm::vec3(camera.pos.x+10.0f, -2.3f, camera.pos.z);
-   house_ent.size = glm::vec3(2.4f);
+   house_ent.pos = glm::vec3(camera.pos.x+10.0f, -1.0f, camera.pos.z);
+   house_ent.size = glm::vec3(1.2f);
 
 
    while (!glfwWindowShouldClose(window)){

@@ -17,6 +17,13 @@ enum collision_type {
    STATIC   = 6, 
 };
 
+struct col_output_t {
+   bool door_detected;
+   bool floor_detected;
+
+   glm::vec3 displace;
+};
+
 class Physics {
    
    private:
@@ -65,6 +72,7 @@ class Physics {
    public:
       btDiscreteDynamicsWorld* get_world() { return world; }
    private:
+      void move_objects(col_output_t output);
       btCompoundShape* create_compound_shape(const Model& model);
       btBvhTriangleMeshShape* create_triangle_shape(const Model& model);
       uint add_compound_model(btCompoundShape* shape, glm::vec3 pos, glm::vec3 size, collision_type type);
@@ -73,6 +81,6 @@ class Physics {
 
 
 bool raycast(btDynamicsWorld* world, const btVector3& from, const
-      btVector3& to, const btCollisionObject* to_ignore, btVector3& hit);
+      btVector3& to, const btCollisionObject* to_ignore, int index, btVector3& hit);
 
 #endif 

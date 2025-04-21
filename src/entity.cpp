@@ -71,7 +71,7 @@ void Entity::draw_entity(){
    if (is_door)
       component.door->draw_debug();
    
-   component.main->draw();
+   // component.main->draw();
 }
 
 void Entity::init_physics(){

@@ -30,7 +30,7 @@ bool Physics::perform_raycast_for_camera(){
    btVector3 hit_point;
    
    state.physics->update_camera_position();
-   bool hit = raycast(state.physics->get_world(), from, to, camera->camera_bt, hit_point);
+   bool hit = raycast(state.physics->get_world(), from, to, camera->camera_bt, FLOOR, hit_point);
    if (hit) {
       float y = hit_point.y() + camera->height;
       pos.y = y > pos.y ? y: pos.y;
@@ -41,18 +41,38 @@ bool Physics::perform_raycast_for_camera(){
 }
 
 
+void Physics::move_objects(col_output_t output){
+
+   // if (output.floor_detected){
+   //    perform_raycast_for_camera();
+   // }
+   if (output.door_detected) {
+      // ... 
+   } else {
+      state.camera->pos += output.displace;
+   }
+
+   update_camera_position();
+}
+
 void Physics::update_collisions(){
    int num;
    btVector3 norm, norm_y;
+   col_output_t output;
    btManifoldPoint pt;
    btPersistentManifold* contract;
    btScalar dist;
    Camera* camera = state.camera;
 
    bool is_detected_door = false;
+   
    world->performDiscreteCollisionDetection();
    num = dispatcher->getNumManifolds();
-   glm::vec3 d(0.0f);
+
+   output.displace = glm::vec3(0.0f);
+   output.door_detected = false;
+   output.floor_detected = false;
+
    for(int i = 0; i < num; i++) {
       contract = dispatcher->getManifoldByIndexInternal(i);
       const btCollisionObject* x = static_cast<const btCollisionObject*>(contract->getBody0());
@@ -67,32 +87,27 @@ void Physics::update_collisions(){
 
 
       int index = other->getUserIndex();
-      // DEBUG OUTPUT: REMOVEME
-      if (index == FLOOR) {
-         log_info("FLOOR DETECTED");
-      }
-      if (index == DOOR){
-         is_detected_door = true;
-         log_info("DOOR DETECTED");
-         break;
-      }
-
-      if (index != FLOOR && index != DOOR) {
-         if(contract->getNumContacts() > 0) {
-            pt = contract->getContactPoint(0);
-            dist = pt.getDistance();
-            norm_y = pt.m_normalWorldOnB;
-            norm = (x == camera->camera_bt) ? norm_y: -norm_y;
-            
-            if (dist < 0.0f) { 
-               d +=  glm::vec3(norm.x(), norm.y(), norm.z()) * (-dist);
-             }
-         }
+      switch(index){
+         case FLOOR:
+            output.floor_detected = true;
+            break;
+         case DOOR:
+            output.door_detected = true;
+            break;
+         default:
+            if(contract->getNumContacts() > 0) {
+               pt = contract->getContactPoint(0);
+               dist = pt.getDistance();
+               norm_y = pt.m_normalWorldOnB;
+               norm = (x == camera->camera_bt) ? norm_y: -norm_y;
+               
+               if (dist < 0.0f) { 
+                  output.displace += glm::vec3(norm.x(), norm.y(), norm.z()) * (-dist);
+                }
+            }
       }
    }
-   if (!is_detected_door)
-      camera->pos += d;
-   update_camera_position();
+   move_objects(output);
 }
 
 uint Physics::add_triangle_mesh(btBvhTriangleMeshShape* shape, glm::vec3 pos, glm::vec3 size, collision_type type){
@@ -254,7 +269,7 @@ void Physics::update_camera_position(){
     state.camera->camera_bt->setWorldTransform(transform);
 }
 void Physics::set_camera_object(){
-   btCapsuleShape* shape = new btCapsuleShape(0.2f, state.camera->height - 2.0f); 
+   btCapsuleShape* shape = new btCapsuleShape(0.4f, state.camera->height - 2.0f); 
    btCollisionObject* bt = new btCollisionObject();
    bt->setCollisionShape(shape);
 
@@ -299,26 +314,28 @@ bool raycast(btDynamicsWorld* world,
                      const btVector3& from,
                      const btVector3& to,
                      const btCollisionObject* to_ignore,
+                     int index,
                      btVector3& hit)
 {
     class callback_raycast: public btCollisionWorld::ClosestRayResultCallback
     {
     public:
-        callback_raycast(const btVector3& from, const btVector3& to, const btCollisionObject* to_ignore): 
-           btCollisionWorld::ClosestRayResultCallback(from, to), to_ignore_m(to_ignore) {}
+        callback_raycast(const btVector3& from, const btVector3& to, const btCollisionObject* to_ignore, int index): 
+           btCollisionWorld::ClosestRayResultCallback(from, to), to_ignore_m(to_ignore), index_m(index) {}
 
         btScalar addSingleResult(btCollisionWorld::LocalRayResult& result, bool normal){
             if (result.m_collisionObject == to_ignore_m) return 1.0f;
-            if (result.m_collisionObject->getUserIndex() == FLOOR)
+            if (result.m_collisionObject->getUserIndex() == index_m)
                return btCollisionWorld::ClosestRayResultCallback::addSingleResult(result, normal);
             return 1.0f;
         }
 
     protected:
         const btCollisionObject* to_ignore_m;
+        int index_m;
     };
 
-    callback_raycast callback(from, to, to_ignore);
+    callback_raycast callback(from, to, to_ignore, index);
     world->rayTest(from, to, callback);
 
     if (callback.hasHit()) {

@@ -62,16 +62,16 @@ void Entity::load_entity(const std::string& filename){
 void Entity::draw_entity(){
    update();
 
-   if (is_floor) 
-      component.floor->draw();
+   // if (is_floor) 
+   //    component.floor->draw();
    
-   if (is_wall){
-      component.walls->draw();
-   }
-   if (is_door)
-      component.door->draw_debug();
+   // if (is_wall){
+   //    component.walls->draw();
+   // }
+   // if (is_door)
+   //    component.door->draw_debug();
    
-   // component.main->draw();
+   component.main->draw();
 }
 
 void Entity::init_physics(){

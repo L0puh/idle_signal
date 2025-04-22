@@ -35,6 +35,7 @@ class Map {
       
       std::vector<item_t> items;
       std::vector<object_t> items_obj;
+      std::vector<std::string> entities;
 
       glm::vec2 projected_pos; //mouse position in the world
       ImVec2 pos; //mouse position on canvas
@@ -59,6 +60,7 @@ class Map {
       void draw_objects();
       void add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec2 projected_pos);
       void generate_coords();
+      void list_entities();
       void generate_random_items();
       void update() {
          if (state.mode & EDIT_MODE){

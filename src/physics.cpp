@@ -25,7 +25,7 @@ void Physics::clear_objects(){
 bool Physics::perform_raycast_for_camera(){
    Camera *camera = state.camera;
    glm::vec3 pos = camera->pos;
-   btVector3 from(pos.x, pos.y, pos.z); 
+   btVector3 from(pos.x, pos.y + 100.0f, pos.z); 
    btVector3 to(pos.x, pos.y - 100.0f, pos.z); 
    btVector3 hit_point;
    

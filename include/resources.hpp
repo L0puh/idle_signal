@@ -1,6 +1,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H 
 
+#include "entity.hpp"
 #include "model.hpp"
 #include "state.hpp"
 #include <vector>
@@ -49,6 +50,7 @@ class Resources {
       Object *text_obj;
 
       std::vector<std::vector<Model*>> models;
+      std::map<std::string, Entity*> entities;
       std::vector<Texture*> textures;
       std::vector<Shader*> shaders;
 
@@ -67,9 +69,11 @@ class Resources {
    
    public:
       void init_resources();
+      int  init_entity(std::string filename);
       void init_models_counter(std::string filename, models_type type);
       void init_text();
       void init_models();
+      void load_entities();
       void load_textures();
       void load_shaders();
       void cleanup();

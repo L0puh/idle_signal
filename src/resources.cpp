@@ -14,7 +14,24 @@ void Resources::init_models_counter(std::string filename, models_type type) {
       models[type].push_back(new Model(name));
    }
 }
+
+
+void Resources::load_entities(){
+
+   std::string path = "assets/entities";
+   for (const auto & file: std::filesystem::directory_iterator(path)){
+      init_entity(file.path());
+   }
+}
+
+int Resources::init_entity(std::string filename){
+   Entity* entity = new Entity(filename);
+   entities[entity->name] = entity;
+   return 0;
+}
+
 void Resources::init_models(){
+   // static objects
    init_models_counter("rocks", ROCK);
    init_models_counter("buildings", BUILDING);
    init_models_counter("bushes", BUSH);
@@ -52,6 +69,7 @@ void Resources::init_resources(){
    load_textures();
    init_text();
    init_models();
+   load_entities();
 }
 
 void Resources::cleanup(){

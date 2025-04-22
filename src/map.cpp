@@ -21,6 +21,18 @@ void Map::edit_terrain(){
 
 }
 
+void Map::list_entities(){
+    std::string path = "assets/entities";
+    bool is_selected = false; 
+
+    for (const auto & file: std::filesystem::directory_iterator(path)){
+       if (ImGui::RadioButton(file.path().filename().c_str(), is_selected)){
+          //TODO:
+       }
+    }
+
+}
+
 void Map::show_tabs(){
    if (ImGui::BeginTabBar("sections", 0)) {
       if (ImGui::BeginTabItem("default")){
@@ -41,6 +53,10 @@ void Map::show_tabs(){
       if (ImGui::BeginTabItem("terrain")){
          generate_random_items();
          edit_terrain();
+         ImGui::EndTabItem();
+      }
+      if (ImGui::BeginTabItem("entity")){
+         list_entities();
          ImGui::EndTabItem();
       }
    }

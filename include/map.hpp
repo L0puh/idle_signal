@@ -21,6 +21,11 @@ struct item_t {
    ImVec2 pos;
 
 };
+struct entity_t {
+   bool is_selected;
+   std::vector<ImVec2> pos;
+
+};
 
 class Map {
    private:
@@ -34,8 +39,9 @@ class Map {
 
       
       std::vector<item_t> items;
+      std::map<std::string, entity_t> entities;
       std::vector<object_t> items_obj;
-      std::vector<std::string> entities;
+      std::vector<object_t> entities_obj;
 
       glm::vec2 projected_pos; //mouse position in the world
       ImVec2 pos; //mouse position on canvas
@@ -58,9 +64,12 @@ class Map {
       void show_tabs();
       void edit_terrain();
       void draw_objects();
-      void add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec2 projected_pos);
       void generate_coords();
-      void list_entities();
+      std::string list_entities();
+      
+      void add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec2 projected_pos);
+      void add_entity(std::string &entity, glm::vec2 proj_pos);
+     
       void generate_random_items();
       void update() {
          if (state.mode & EDIT_MODE){

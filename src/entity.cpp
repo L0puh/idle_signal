@@ -7,7 +7,6 @@
 using json = nlohmann::json;
 
 void Entity::update() {
-
    for (int i = 0; i < component.collision.size(); i++){
       state.physics->update_position(component.collision[i], pos);
       state.physics->update_size(component.collision[i], size);
@@ -68,8 +67,8 @@ void Entity::draw_entity(){
    // if (is_wall){
    //    component.walls->draw();
    // }
-   // if (is_door)
-   //    component.door->draw_debug();
+   if (is_door)
+      component.door->draw_debug();
    
    component.main->draw();
 }

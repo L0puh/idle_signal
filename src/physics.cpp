@@ -153,8 +153,8 @@ uint Physics::add_model(Model& model) {
 }
 
 uint Physics::add_model(Model& model, collision_type type){
-   btBvhTriangleMeshShape *shape = create_triangle_shape(model);
-   return add_triangle_mesh(shape, model.pos, model.size, type);
+   btCompoundShape *shape = create_compound_shape(model);
+   return add_compound_model(shape, model.pos, model.size, type);
 }
 
 

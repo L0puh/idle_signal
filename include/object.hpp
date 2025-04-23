@@ -20,6 +20,7 @@ typedef enum {
 
 
 struct object_t {
+   std::string name; // for entity
    glm::vec3 max;
    glm::vec3 min;
    

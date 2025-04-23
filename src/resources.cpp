@@ -26,7 +26,7 @@ void Resources::load_entities(){
 
 int Resources::init_entity(std::string filename){
    Entity* entity = new Entity(filename);
-   entities[entity->name] = entity;
+   entities[filename] = entity;
    return 0;
 }
 

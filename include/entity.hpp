@@ -34,6 +34,9 @@ class Entity {
       }
       ~Entity() {};
    public:
+      void set_pos(glm::vec3 p) { pos = p; }
+      void set_size(glm::vec3 s) { size = s; }
+
       void update();
       void load_entity(const std::string& filename);
       void draw_entity();

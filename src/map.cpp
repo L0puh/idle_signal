@@ -11,8 +11,8 @@ void Map::edit_terrain(){
    ImGui::PushItemWidth(100.0f);
    ImGui::InputFloat("max height", &state.terrain->MAX_HEIGHT, 0.1f, 0.2f, "%.3f"); ImGui::SameLine();
    ImGui::InputFloat("min height", &state.terrain->MIN_HEIGHT, 0.1f, 0.2f, "%.3f");
-   ImGui::InputInt("max radius", &state.terrain->MAX_RADIUS, 1, 2); ImGui::SameLine();
-   ImGui::InputInt("min radius", &state.terrain->MIN_RADIUS, 1, 2); 
+   ImGui::InputInt("max radius",   &state.terrain->MAX_RADIUS, 1, 2); ImGui::SameLine();
+   ImGui::InputInt("min radius",   &state.terrain->MIN_RADIUS, 1, 2); 
    ImGui::PopItemWidth();
 
    if (ImGui::Button("regenerate")){
@@ -20,17 +20,30 @@ void Map::edit_terrain(){
    }
 
 }
-
-void Map::list_entities(){
-    std::string path = "assets/entities";
-    bool is_selected = false; 
+std::string Map::list_entities(){
+    std::string path = "assets/entities", current = "";
 
     for (const auto & file: std::filesystem::directory_iterator(path)){
-       if (ImGui::RadioButton(file.path().filename().c_str(), is_selected)){
-          //TODO:
-       }
-    }
+         std::string path = file.path();
+         Entity *e = state.resources->entities[path];
 
+         if (ImGui::Selectable(e->name.c_str(), entities[path].is_selected)){
+            entities[path].is_selected = true;
+            return path;
+         }
+         if (entities[path].is_selected)
+            current = path;
+         
+    }
+   return current;
+}
+
+
+void Map::add_entity(std::string& entity, glm::vec2 proj_pos){
+   if (ImGui::IsMouseClicked(0)){
+      entities[entity].pos.push_back(ImVec2(proj_pos.x, proj_pos.y));
+      entities[entity].is_selected = false;
+   }
 }
 
 void Map::show_tabs(){
@@ -56,7 +69,10 @@ void Map::show_tabs(){
          ImGui::EndTabItem();
       }
       if (ImGui::BeginTabItem("entity")){
-         list_entities();
+         std::string n = list_entities();
+         if (!n.empty()) {
+            add_entity(n, projected_pos); 
+         }
          ImGui::EndTabItem();
       }
    }
@@ -106,6 +122,11 @@ void Map::editor_popup(){
       }
       for (const auto& i: items){
          draw_list->AddCircle(ImVec2(i.pos.x * offset, i.pos.y * offset), 3.2f, imgui_color::yellow, 30, 2.0f);
+      }
+      for (const auto& e: entities){
+         for (const auto& n: e.second.pos){
+            draw_list->AddCircle(ImVec2(n.x * offset, n.y * offset), 3.2f, imgui_color::yellow, 30, 2.0f);
+         }
       }
       draw_grid(draw_list, {0.0f, 0.0f}, 50.f, imgui_color::black);
       show_tabs(); 
@@ -161,6 +182,12 @@ void Map::draw_objects(){
       item.model->set_size(glm::vec3(1.0f));
       item.model->draw();
    }
+   for (const auto& ent: entities_obj){
+      Entity* e = state.resources->entities[ent.name];
+      e->set_pos(ent.max);
+      e->set_size(glm::vec3(1.0f));
+      e->draw_entity();
+   }
 }
 
 
@@ -169,9 +196,9 @@ void Map::generate_coords(){
    Model* model;
    object_t obj;
    state.physics->clear_objects();
-   // TODO: add separate floor shape for buildings and groups? 
    
    items_obj.clear();
+   entities_obj.clear();
    for (int i = 0; i < items.size(); i++){
       glm::vec2 p = glm::vec2(items[i].pos.x, items[i].pos.y);
       y = state.terrain->get_height_at(p.x, p.y);
@@ -191,6 +218,19 @@ void Map::generate_coords(){
       state.physics->update_position(obj.bt_object, obj.max);
       state.physics->update_size(obj.bt_object, glm::vec3(1.0f));
    }
+
+   for (const auto& ent: entities){
+      std::vector<ImVec2> pp = ent.second.pos;
+      object_t obj;
+      state.resources->entities[ent.first]->init_physics();
+      for (const auto& p: pp){
+         y = state.terrain->get_height_at(p.x, p.y)-1.0;
+         obj.name = ent.first;
+         obj.max = {p.x, y, p.y};
+         entities_obj.push_back(obj);
+      }
+   }
+
    log_info("items are loaded");
 }
 

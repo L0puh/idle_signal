@@ -1,6 +1,5 @@
 #include "audio.hpp"
 #include "core.hpp"
-#include "entity.hpp"
 #include "map.hpp"
 #include "animation.hpp"
 #include "renderer.hpp"
@@ -35,15 +34,6 @@ int main() {
    sound.init_sounds(&audio);
    camera.init();
 
-   //REMOVEME: test entity
-   Entity house_ent("assets/entities/house.json");
-
-   house_ent.pos = glm::vec3(camera.pos.x+10.0f, -1.0f, camera.pos.z);
-   house_ent.size = glm::vec3(2.2f);
-
-   float y = state.terrain->get_height_at(house_ent.pos.x, house_ent.pos.z);
-   house_ent.pos = glm::vec3(house_ent.pos.x, y, house_ent.pos.z);
-
    while (!glfwWindowShouldClose(window)){
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -52,7 +42,6 @@ int main() {
       skybox.draw();
       terrain.draw_terrain();
 
-      house_ent.draw_entity();
       if (state.mode & PLAY_MODE){
          camera.update();
          camera.hide_cursor();

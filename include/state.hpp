@@ -51,6 +51,7 @@ class Object;
 class Physics;
 class Resources;
 class Terrain;
+class Light;
 
 struct fog_t {
    glm::vec3 color;
@@ -61,23 +62,6 @@ struct fog_t {
    int equation;
 };
 
-struct light_t{
-   glm::vec3 pos;
-   glm::vec3 color;
-   glm::vec3 direction;
-   glm::vec3 view_pos;
-   float cut_off;
-   float outer_cut_off;
-   float dist;
-
-   glm::vec3 ambient;
-   glm::vec3 diffuse;
-   glm::vec3 specular;
-
-   float constant;
-   float linear;
-   float quadratic;
-};
 
 struct STATE {
 
@@ -106,7 +90,7 @@ struct STATE {
    bool first_mouse;        // just touched the mouse
    
    fog_t fog;
-   light_t light;
+   Light *light;
 };
 
 extern STATE state;

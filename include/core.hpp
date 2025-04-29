@@ -179,7 +179,6 @@ class Shader {
       
       void use()    { glUseProgram(id); }
       void unuse()  { glUseProgram(0);  }
-      void set_light();
       void set_fog();
 
       void set_mat4fv(std::string location, glm::mat4x4 mat) { 

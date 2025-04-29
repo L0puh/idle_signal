@@ -1,6 +1,7 @@
 #include "core.hpp"
 #include "camera.hpp"
 #include "imgui/imgui.h"
+#include "light.hpp"
 
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -38,7 +39,8 @@ namespace imgui {
 
          // LIGHT
          ImGui::SeparatorText("LIGHT");
-         light_t light = state.light;
+         light_t light = state.light->get_flashlight();
+
          ImGui::ColorEdit3("color", &light.color.x);
          ImGui::SliderFloat("cut off", &light.cut_off, 0.0f, 180.0f); 
          ImGui::SliderFloat("outer cut off", &light.outer_cut_off, 0.0f, 180.0f);
@@ -50,7 +52,7 @@ namespace imgui {
          ImGui::SliderFloat("linear", &light.linear, 0.0f, 1.0f);
          ImGui::SliderFloat("quadratic", &light.quadratic, 0.0f, 1.0f);
         
-         state.light = light;
+         state.light->flashlight = light;
          if (state.camera->is_flying)
             ImGui::Text("FLYING ON");
          else

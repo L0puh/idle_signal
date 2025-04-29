@@ -133,33 +133,3 @@ void Shader::set_fog(){
    set_int("_fog.equation", state.fog.equation);
 }
 
-void Shader::set_light(){
-
-   light_t light = state.light;
-      
-   set_vec3("_light.pos", state.camera->pos);
-   set_vec3("_light.view_pos", state.camera->pos);
-   set_vec3("_light.direction", state.camera->front);
-   
-   set_vec3("_light.color", light.color);
-   set_float("_light.cut_off", glm::cos(glm::radians(light.cut_off)));
-   set_float("_light.outer_cut_off", glm::cos(glm::radians(light.outer_cut_off)));
-   set_float("_light.dist", light.dist); //vision distance
-   set_vec3("_light.ambient", light.ambient);
-   set_vec3("_light.diffuse", light.diffuse);
-   set_vec3("_light.specular", glm::vec3(0.4f));
-   set_float("_light.constant", light.constant);
-   set_float("_light.linear", light.linear);
-   set_float("_light.quadratic", light.quadratic);
-
-   set_float("_time", state.deltatime);
-   set_float("_noise_intensity", state.noise_intensity);
-   set_float("_threshold", state.filter_threshold);
-   set_float("_width", state.camera->window_width);
-   set_float("_height", state.camera->window_height);
-   set_float("_cell_size", state.cell_size);
-   set_vec3("_luminance_color", state.filter_luminance_color);
-
-   set_fog();
-
-}

@@ -6,6 +6,7 @@
 #include "core.hpp"
 #include "model.hpp"
 #include "collision.hpp"
+#include "light.hpp"
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -21,7 +22,7 @@ void Model::draw(){
    if (!with_texture) {
       shd->set_vec3("_color", color);
    } else {
-      shd->set_light();
+      state.light->set_all(shd);
    }
 
    for (uint i=0; i < meshes.size(); i++){

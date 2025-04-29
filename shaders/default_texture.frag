@@ -13,7 +13,22 @@ struct fog_t {
 
    int equation;
 };
-struct light_t{
+
+struct pointlight_t{
+   vec3 pos;
+
+   float constant;
+   float linear;
+   float quadratic;
+
+   vec3 ambient;
+   vec3 diffuse;
+   vec3 specular;
+};
+
+
+
+struct flashlight_t{
    vec3 pos;
    vec3 color;
    vec3 direction;
@@ -43,7 +58,13 @@ uniform float _width;
 uniform float _height;
 uniform float _cell_size;
 
-uniform light_t _light;
+uniform flashlight_t _flashlight;
+
+//FIXME
+
+#define pointlights_count 1
+uniform pointlight_t pointlights[1];
+
 uniform fog_t _fog;
 
 out vec4 color;
@@ -74,6 +95,8 @@ float fog_factor(fog_t fog, float coord){
    return res;
 }
 
+vec3 calc_pointlight(pointlight_t light, vec3 normal, vec3 pos, vec3 view_dir);
+
 void main() {
 
    // low poly
@@ -82,40 +105,45 @@ void main() {
    vec2 cell_center_uv = pixel_to_uv(cell_center);
 
    // light
-   vec3 ambient = _light.ambient *  texture(_texture, cell_center_uv).rgb; 
+   vec3 ambient = _flashlight.ambient * texture(_texture, cell_center_uv).rgb; 
    vec3 norm = normalize(_normal);
-   vec3 light_dir = normalize(_light.pos - _pos);
+   vec3 light_dir = normalize(_flashlight.pos - _pos);
    float diff = max(dot(norm, light_dir), 0.0f);
-   vec3 diffuse = _light.diffuse * diff  * _light.color.rgb;
+   vec3 diffuse = _flashlight.diffuse * diff  * _flashlight.color.rgb;
 
-   vec3 view_dir= normalize(_light.view_pos - _pos);
+   vec3 view_dir= normalize(_flashlight.view_pos - _pos);
    vec3 reflect_dir = reflect(-light_dir, norm);
    float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 0.4f);
-   vec3 specular = _light.specular * spec * _light.color;
+   vec3 specular = _flashlight.specular * spec * _flashlight.color;
 
-   float theta = dot(light_dir, normalize(-_light.direction));
-   float epsilon = (_light.cut_off - _light.outer_cut_off);
-   float intensity = clamp((theta-_light.outer_cut_off)/epsilon, 0.0, 1.0);
+   float theta = dot(light_dir, normalize(-_flashlight.direction));
+   float epsilon = (_flashlight.cut_off - _flashlight.outer_cut_off);
+   float intensity = clamp((theta-_flashlight.outer_cut_off)/epsilon, 0.0, 1.0);
    diffuse *= intensity;
    specular *= intensity;
    
-   float dist = length(_light.pos - _pos);
-   float attenuation = 1.0f / (_light.constant + _light.linear * dist +
-         _light.quadratic * (dist * dist));
+   float dist = length(_flashlight.pos - _pos);
+   float attenuation = 1.0f / (_flashlight.constant + _flashlight.linear * dist + _flashlight.quadratic * (dist * dist));
    ambient *= attenuation;
    diffuse *= attenuation;
 
-   if (dist >= _light.dist)
+   if (dist >= _flashlight.dist)
       color = vec4(ambient, 1.0f);
    else {
       vec3 result = (ambient + diffuse + specular);
       color = vec4(result, texture(_texture, cell_center_uv).a);
    }
+   
+
+   vec3 res = vec3(color);
+   for(int i = 0; i < pointlights_count; i++)
+      res += calc_pointlight(pointlights[i], norm, _pos, view_dir);
+   color = vec4(res, texture(_texture, cell_center_uv).a);
 
    // grain noise
    float noise = rand(_tex_coord + vec2(_time));
    float grain = (noise - 0.5) * _noise_intensity;
-   vec3 res = color.rgb + grain;
+   res = color.rgb + grain;
    res = clamp(res, 0.0, 1.0);
    color = vec4(res, color.a);
 
@@ -134,3 +162,20 @@ void main() {
 }
 
 
+vec3 calc_pointlight(pointlight_t light, vec3 normal, vec3 pos, vec3 view_dir){
+   vec3 dir = normalize(light.pos - pos);
+   float diff = max(dot(normal, dir), 0.0);
+   /* vec3 reflect_dir = reflect(-dir, normal); */
+   /* float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 0.4f); */
+   float dist = length(light.pos-pos);
+   float attenuation = 1.0 / (light.constant + light.linear * dist + light.quadratic * (dist * dist));
+
+   //TODO: add material
+   vec3 ambient = light.ambient;
+   vec3 diffuse = light.diffuse * diff;
+   /* vec3 specular = light.specular * spec; */
+   ambient *= attenuation;
+   diffuse *= attenuation;
+   /* specular *= attenuation; */
+   return (ambient + diffuse );
+}

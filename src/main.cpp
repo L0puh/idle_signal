@@ -1,6 +1,7 @@
 #include "audio.hpp"
 #include "core.hpp"
 #include "map.hpp"
+#include "light.hpp"
 #include "animation.hpp"
 #include "renderer.hpp"
 #include "resources.hpp"
@@ -20,6 +21,7 @@ int main() {
    enable_if_debug();
    
    Physics physics;
+   Light light;
    Resources resources;
    Skybox skybox;
    Camera camera(window, 0);
@@ -34,6 +36,11 @@ int main() {
    sound.init_sounds(&audio);
    camera.init();
 
+   //TEST LIGHT POINT
+   glm::vec3 light_point(camera.pos);
+   light.add_point_light(light_point);
+
+
    while (!glfwWindowShouldClose(window)){
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -41,6 +48,9 @@ int main() {
       update_deltatime();
       skybox.draw();
       terrain.draw_terrain();
+
+      renderer.draw_cube(glm::vec3(0.0f), glm::vec3(1.0f), color::blue, resources.shaders[DEFAULT_SHADER], {light_point, glm::vec3(1.0f)});
+      
 
       if (state.mode & PLAY_MODE){
          camera.update();

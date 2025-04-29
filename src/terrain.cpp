@@ -1,6 +1,7 @@
 #include "terrain.hpp"
 #include "camera.hpp"
 #include "core.hpp"
+#include "light.hpp"
 
 #include <random>
 #include <vector>
@@ -140,7 +141,7 @@ void Terrain::draw_terrain(){
    shd->set_mat4fv("_view", state.camera->get_view());
    shd->set_mat4fv("_projection", state.camera->get_projection());
    shd->set_mat4fv("_model", model);
-   shd->set_light();
+   state.light->set_all(shd);
    vert.bind();
    glDrawElements(GL_TRIANGLE_STRIP, indices_count, GL_UNSIGNED_INT, 0);
 }

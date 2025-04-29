@@ -1,6 +1,7 @@
 #include "object.hpp"
 #include "camera.hpp"
 #include "vertices.hpp"
+#include "light.hpp"
 #include <vector>
 
 void Object::draw(GLenum mode){
@@ -13,7 +14,7 @@ void Object::draw(GLenum mode){
    
    if (with_texture) {
       texture->use();
-      shd->set_light();
+      state.light->set_all(shd);
    }
    else shd->set_vec3("_color", {color[0], color[1], color[2]});
    

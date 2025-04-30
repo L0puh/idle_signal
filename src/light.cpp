@@ -43,19 +43,36 @@ void Light::set_flashlight(Shader *shd){
 }
 
 void Light::set_light(Shader *shd){
-   // shd->set_int("pointlights_count", point_light_pos.size());
-   for (int i = 0; i < point_light_pos.size(); i++){
+   shd->set_int("pointlights_count", point_lights.size());
+   for (int i = 0; i < point_lights.size(); i++){
       std::string ind = "pointlights[" + std::to_string(i) + "].";
-      shd->set_vec3(ind + "pos", point_light_pos[0]);
-      shd->set_vec3(ind + "ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-      shd->set_vec3(ind + "diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+      shd->set_vec3(ind + "pos", point_lights[i].pos);
+      shd->set_vec3(ind + "ambient", glm::vec3(0.5, 0.5, 0.5) * point_lights[i].color);
+      shd->set_vec3(ind + "diffuse", point_lights[i].color);
       shd->set_vec3(ind + "specular", glm::vec3(1.0f, 1.0f, 1.0f));
-      shd->set_float(ind + "constant", 1.0f);
-      shd->set_float(ind + "linear", 0.09f);
-      shd->set_float(ind + "quadratic", 0.032f);
+      shd->set_float(ind + "constant", flashlight.constant);
+      shd->set_float(ind + "linear", flashlight.linear);
+      shd->set_float(ind + "quadratic", flashlight.quadratic);
    }
 }
 
-void Light::add_point_light(glm::vec3 pos){
-   point_light_pos.push_back(pos);
+int Light::add_point_light(glm::vec3 pos, glm::vec3 color){
+   point_lights.push_back(light_t{pos, color});
+   return point_lights.size()-1;
+}
+int Light::add_point_light(glm::vec3 pos, const GLfloat* color){
+   point_lights.push_back(light_t{pos, glm::vec3(color[0], color[1], color[2])});
+   return point_lights.size()-1;
+}
+
+void Light::update_light_pos(glm::vec3 pos, int id){
+   if (id >= 0 && id < point_lights.size()) {
+      point_lights[id].pos = pos;
+   }
+}
+
+light_t* Light::get_light(int id){
+   if (id >= 0 && id < point_lights.size()) 
+      return &point_lights[id]; 
+   return NULL;
 }

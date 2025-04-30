@@ -1,6 +1,8 @@
 #include "entity.hpp"
 #include "model.hpp"
 #include "physics.hpp"
+#include "light.hpp"
+
 #include <fstream>
 #include <nlohmann/json.hpp>
 
@@ -29,6 +31,9 @@ void Entity::update() {
   
    component.main->set_pos(pos);
    component.main->set_size(size);
+
+   if (has_light) 
+      state.light->update_light_pos(pos, light_id);
 }
 
 void Entity::load_entity(const std::string& filename){
@@ -46,16 +51,25 @@ void Entity::load_entity(const std::string& filename){
    is_pickable = doc["is_pickable"];
    is_door     = doc["is_door"];
    is_wall     = doc["is_wall"]; 
+   has_light   = doc["has_light"];
+
+   is_main_collide = doc["main_collide"];
 
    if (is_floor)
       component.floor = new Model(doc["floor_path"]);
    if (is_door)
       component.door = new Model(doc["door_path"]);
-   if (is_wall) {
+   if (is_wall)
       component.walls = new Model(doc["wall_path"]);
+
+   if (has_light){
+      std::vector<float> p = doc["light_color"];
+      light_color = glm::vec3(p[0], p[1], p[2]);
    }
    
    component.main = new Model(doc["main_path"]);
+
+   if (has_light) init_light();
 }
 
 void Entity::draw_entity(){
@@ -73,6 +87,11 @@ void Entity::draw_entity(){
    component.main->draw();
 }
 
+void Entity::init_light(){
+   printf("added light\n");
+   light_id = state.light->add_point_light(pos+1.0f, light_color);
+}
+
 void Entity::init_physics(){
    Physics* physics = state.physics;
   
@@ -82,8 +101,9 @@ void Entity::init_physics(){
       component.collision.push_back(physics->add_model(*component.walls, DEFAULT)); 
    if (is_door)
       component.collision.push_back(physics->add_model(*component.door, DOOR)); 
-  
-   // component.collision.push_back(physics->add_model(*component.main, NOTHING));
+ 
+   if (is_main_collide)
+       component.collision.push_back(physics->add_model(*component.main, NOTHING));
 }
 
 

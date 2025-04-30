@@ -62,8 +62,9 @@ uniform flashlight_t _flashlight;
 
 //FIXME
 
-#define pointlights_count 1
-uniform pointlight_t pointlights[1];
+#define pointlights_count_max 20
+uniform int pointlights_count;
+uniform pointlight_t pointlights[pointlights_count_max];
 
 uniform fog_t _fog;
 
@@ -165,17 +166,16 @@ void main() {
 vec3 calc_pointlight(pointlight_t light, vec3 normal, vec3 pos, vec3 view_dir){
    vec3 dir = normalize(light.pos - pos);
    float diff = max(dot(normal, dir), 0.0);
-   /* vec3 reflect_dir = reflect(-dir, normal); */
-   /* float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 0.4f); */
+   vec3 reflect_dir = reflect(-dir, normal);
    float dist = length(light.pos-pos);
+   float camera_dist = length(light.pos - _flashlight.pos);
+   dist *= camera_dist / 1.5f;
    float attenuation = 1.0 / (light.constant + light.linear * dist + light.quadratic * (dist * dist));
 
    //TODO: add material
    vec3 ambient = light.ambient;
    vec3 diffuse = light.diffuse * diff;
-   /* vec3 specular = light.specular * spec; */
    ambient *= attenuation;
    diffuse *= attenuation;
-   /* specular *= attenuation; */
-   return (ambient + diffuse );
+   return (ambient + diffuse);
 }

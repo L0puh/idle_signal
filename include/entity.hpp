@@ -18,10 +18,15 @@ struct component_t {
 
 class Entity {
    public:
+      int light_id = 0;
       std::string name;
       glm::mat4* model;
 
       bool is_floor, is_pickable, is_door, is_wall;
+      bool is_main_collide = false;
+      bool has_light = false;
+      glm::vec3 light_color;
+
 
       float rotation_angle = 0.0f;
       glm::vec3 pos, rotation, size;
@@ -40,6 +45,7 @@ class Entity {
       void update();
       void load_entity(const std::string& filename);
       void draw_entity();
+      void init_light();
       void init_physics();
 };
 #endif 

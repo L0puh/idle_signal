@@ -1,6 +1,7 @@
 #ifndef LIGHT_H
 #define LIGHT_H 
 
+#include "core.hpp"
 #include "state.hpp"
 #include <vector>
 
@@ -24,7 +25,7 @@ struct light_t{
 
 class Light {
    public:
-      std::vector<glm::vec3> point_light_pos;
+      std::vector<light_t> point_lights;
       light_t flashlight;
 
    public:
@@ -42,9 +43,12 @@ class Light {
       light_t get_flashlight() { return flashlight; }
       void set_light(Shader* shd);
       void set_flashlight(Shader *shd);
-      void add_point_light(glm::vec3 pos);
-
-
+      void clear_point_lights() { point_lights.clear(); }
+      
+      int add_point_light(glm::vec3 pos, const GLfloat* color = color::blue);
+      int add_point_light(glm::vec3 pos, glm::vec3 color);
+      void update_light_pos(glm::vec3 pos, int id);
+      light_t* get_light(int id);
 
 };
 

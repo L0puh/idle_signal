@@ -37,7 +37,6 @@ class Map {
       bool is_drawing=false, show_camera=true;
       int amount_random_item = 0;
 
-      
       std::vector<item_t> items;
       std::map<std::string, entity_t> entities;
       std::vector<object_t> items_obj;
@@ -66,6 +65,7 @@ class Map {
       void draw_objects();
       void generate_coords();
       std::string list_entities();
+      void process_pickables(Entity*);
       
       void add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec2 projected_pos);
       void add_entity(std::string &entity, glm::vec2 proj_pos);

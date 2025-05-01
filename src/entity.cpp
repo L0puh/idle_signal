@@ -1,4 +1,5 @@
 #include "entity.hpp"
+#include "map.hpp"
 #include "model.hpp"
 #include "physics.hpp"
 #include "light.hpp"

@@ -2,6 +2,7 @@
 #include "camera.hpp"
 #include "object.hpp"
 #include "physics.hpp"
+#include "renderer.hpp"
 #include "terrain.hpp"
 
 #include <imgui/imgui.h>
@@ -182,13 +183,48 @@ void Map::draw_objects(){
       item.model->set_size(glm::vec3(1.0f));
       item.model->draw();
    }
-   for (const auto& ent: entities_obj){
+   for (auto& ent: entities_obj){
       Entity* e = state.resources->entities[ent.name];
       e->set_pos(ent.max);
       e->set_size(glm::vec3(1.0f));
+      if (e->is_pickable){
+         process_pickables(e);
+
+         float y = state.terrain->get_height_at(e->pos.x, e->pos.z) - 1.0f;
+         ent.max = glm::vec3(e->pos.x, y, e->pos.z);
+      }
       e->draw_entity();
    }
 }
+
+
+void Map::process_pickables(Entity *ent){
+   Camera *cam = state.camera;
+
+   if (!cam->is_picked_object && cam->is_close_to_object(ent->pos, 5.0f)
+       && cam->is_pointing_to_object(ent->pos) && !ent->is_picked)
+   {
+      state.renderer->draw_text("PICK UP (E)", {state.camera->window_width/2.0f,
+                  state.camera->window_height/2.0f - 40.0f }, 0.5, color::black);
+      if (state.keys[GLFW_KEY_E]){
+         ent->is_picked = true;
+         cam->is_picked_object = true;
+      }
+      return;
+   }
+
+   if (state.keys[GLFW_KEY_E] && ent->is_picked){
+      ent->set_pos(cam->pos + cam->front);
+      ent->set_size(glm::vec3(0.4f));
+   } else if (!state.keys[GLFW_KEY_E] && ent->is_picked){
+      ent->set_pos(cam->pos + cam->front);
+      printf("%.3f %.3f %.3f\n", ent->pos.x, ent->pos.y, ent->pos.z);
+      printf("%.3f %.3f %.3f\n", cam->pos.x, cam->pos.y, cam->pos.z);
+      ent->is_picked = false;
+      cam->is_picked_object = false;
+   }
+}
+
 
 
 void Map::generate_coords(){

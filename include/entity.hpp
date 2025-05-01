@@ -22,6 +22,7 @@ class Entity {
       std::string name;
       glm::mat4* model;
 
+      bool is_picked = false;
       bool is_floor, is_pickable, is_door, is_wall;
       bool is_main_collide = false;
       bool has_light = false;

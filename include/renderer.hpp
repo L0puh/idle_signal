@@ -9,12 +9,22 @@
 #include "object.hpp"
 #include "camera.hpp"
 
+struct text_t{
+   std::string str;
+   glm::vec2 pos;
+   float scale;
+   const GLfloat* color;
+   
+};
+
 class Renderer {
    public:
       Renderer() {
          state.renderer = this;
       } 
-
+      
+   public:
+      std::vector<text_t> texts;
    public:
 
       void draw_rectangle(glm::vec3 min, glm::vec3 max, const GLfloat *color, Shader *shd, line_data_t model) {
@@ -70,7 +80,7 @@ class Renderer {
          draw_line(glm::vec3(max.x, max.y, max.z), glm::vec3(min.x, max.y, max.z), color, 3.0f, shd, model);
          draw_line(glm::vec3(min.x, max.y, max.z), glm::vec3(min.x, min.y, max.z), color, 3.0f, shd, model);
       }
-
+      
       void draw_circle(glm::vec3 center, glm::vec3 axis, float radius, const GLfloat *color, Shader *shd, line_data_t data){
          float angle;
          int segment_count;
@@ -94,22 +104,28 @@ class Renderer {
             draw_line(points[i], points[i + 1], color, 3.0f, shd, data);
          }
       }
-      void draw_text(std::string text, glm::vec2 pos, float scale, const GLfloat *color){
+      void draw_texts(){
+         for (auto text: texts) draw_text(text);
+         clear_texts();
+      }
+      void add_text(text_t text) { texts.push_back(text); }
+      void clear_texts() { texts.clear(); }
+      void draw_text(text_t text){
          Object *obj = state.resources->text_obj;
          obj->shd->use();
          obj->shd->set_mat4fv("_projection", state.camera->get_projection_ortho());
-         obj->shd->set_vec3("_color", {color[0], color[1], color[2]});
+         obj->shd->set_vec3("_color", {text.color[0], text.color[1], text.color[2]});
          glActiveTexture(GL_TEXTURE0);
          obj->vert.bind();
-
+         
          std::string::const_iterator c;
-         for (c = text.begin(); c != text.end(); c++){
+         for (c = text.str.begin(); c != text.str.end(); c++){
             character_t ch = obj->texture->characters[*c];
             glm::vec2 p, s;
-            p.x = pos.x + ch.bearing.x * scale;
-            p.y = pos.y - (ch.size.y - ch.bearing.y) * scale;
+            p.x = text.pos.x + ch.bearing.x * text.scale;
+            p.y = text.pos.y - (ch.size.y - ch.bearing.y) * text.scale;
 
-            s = glm::vec2(ch.size) * scale;
+            s = glm::vec2(ch.size) * text.scale;
 
             float vertices[] = {
                p.x,       p.y + s.y, 0.0f, 0.0f,
@@ -124,7 +140,7 @@ class Renderer {
             obj->texture->use(ch.id);
             obj->vert.sub_data(vertices, sizeof(vertices));
             obj->vert.draw_VBO(GL_TRIANGLES, 6);
-            pos.x += (ch.advance >> 6) * scale;
+            text.pos.x += (ch.advance >> 6) * text.scale;
          }
          obj->vert.unbind();
          // obj->texture->unuse();

@@ -62,9 +62,11 @@ int main() {
          physics.update_collisions();
          animation.draw(HAND_ANIMATION);
       }
-      state.renderer->draw_text("+", {state.camera->window_width/2.0f,
-               state.camera->window_height/2.0f}, 0.5, color::white);
+      state.renderer->add_text({"+", {state.camera->window_width/2.0f,
+               state.camera->window_height/2.0f}, 0.5, color::white});
       
+      
+      state.renderer->draw_texts();
       imgui::render();
       glfwSwapBuffers(window);
       glfwPollEvents();

@@ -204,8 +204,8 @@ void Map::process_pickables(Entity *ent){
    if (!cam->is_picked_object && cam->is_close_to_object(ent->pos, 5.0f)
        && cam->is_pointing_to_object(ent->pos) && !ent->is_picked)
    {
-      state.renderer->draw_text("PICK UP (E)", {state.camera->window_width/2.0f,
-                  state.camera->window_height/2.0f - 40.0f }, 0.5, color::black);
+      state.renderer->add_text({"PICK UP (E)", {state.camera->window_width/2.0f,
+                  state.camera->window_height/2.0f - 40.0f }, 0.5, color::white});
       if (state.keys[GLFW_KEY_E]){
          ent->is_picked = true;
          cam->is_picked_object = true;
@@ -217,9 +217,7 @@ void Map::process_pickables(Entity *ent){
       ent->set_pos(cam->pos + cam->front);
       ent->set_size(glm::vec3(0.4f));
    } else if (!state.keys[GLFW_KEY_E] && ent->is_picked){
-      ent->set_pos(cam->pos + cam->front);
-      printf("%.3f %.3f %.3f\n", ent->pos.x, ent->pos.y, ent->pos.z);
-      printf("%.3f %.3f %.3f\n", cam->pos.x, cam->pos.y, cam->pos.z);
+      ent->set_pos(cam->pos + cam->front * 1.5f);
       ent->is_picked = false;
       cam->is_picked_object = false;
    }

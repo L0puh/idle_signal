@@ -75,3 +75,29 @@ namespace imgui {
 
 
 };
+
+//                                 UTILS:                                 //
+
+void draw_grid(ImDrawList* draw_list, ImVec2 origin, float cell_size, ImU32 color){
+   int width, height;
+   width = state.camera->window_width, height = state.camera->window_height;
+   height /= cell_size;
+   width  /= cell_size;
+
+   for (int i = 0; i <= height; i++){
+      draw_list->AddLine(
+            ImVec2(origin.x, origin.y + i * cell_size),
+            ImVec2(origin.x + width * cell_size, origin.y + i * cell_size),
+            color, 0.5f
+        );
+   }
+
+   for (int i = 0; i <= width; i++){
+      draw_list->AddLine(
+            ImVec2(origin.x + i * cell_size, origin.y),
+            ImVec2(origin.x + i * cell_size, origin.y + height * cell_size),
+            color, 0.5f
+        );
+   }
+}
+

@@ -5,13 +5,11 @@
 #include "collision.hpp"
 #include "physics.hpp"
 #include "terrain.hpp"
-#include <iostream>
+
 
 glm::mat4 Camera::get_projection_ortho() {
    float aspect = (float)window_width / (float)window_height;
    return glm::ortho(0.0f, (float)window_width, 0.0f, (float)window_height, 0.0f, 1.0f);
-
-
 }
 
 glm::mat4 Camera::get_projection(){
@@ -79,25 +77,10 @@ void Camera::update_movement(){
       if (!is_flying)
          pos.y = state.terrain->get_height_at(pos.x, pos.z) + height/2.0f;
    }
+
    state.physics->perform_raycast_for_camera();
 }
 
-bool Camera::check_collision_with_walls(glm::vec3 p){
-   // NO SLIDING
-   // for (const auto& wall: state.map->get_walls()){
-   //    glm::vec3 min, max;
-   //    min = glm::vec3(wall.min.x, state.ground_level, wall.min.z);
-   //    max = wall.max;
-   //    if (collision::line_circle(glm::vec2(min.x, min.z),
-   //             glm::vec2(max.x, max.z), glm::vec2(p.x,
-   //                p.z), 0.4f))
-   //    {
-   //       return true;
-   //    }
-   // }
-   
-   return false;
-}
 
 void Camera::update_movement2D(){
    if (input::is_pressed(window, GLFW_KEY_W)){
@@ -162,7 +145,8 @@ glm::vec2 Camera::get_mouse_pos() {
       
 void Camera::update(){ 
    update_movement();
-   view = glm::lookAt(pos + glm::vec3(0.0f, walk_offset, 0.0f), pos+front, up);
+   view = glm::lookAt(pos + glm::vec3(0.0f, walk_offset + breathe_offset, 0.0f), pos+front, up);
+   
    if (camera_bt != NULL)
       state.physics->update_camera_position();
 }

@@ -42,7 +42,7 @@ void Resources::init_text(){
    if (textures[TEXT_TEXTURE] == NULL || shaders[TEXT_SHADER] == NULL){
       error_and_exit("init text shader and texture first");
    }
-   text_obj = new Object(object_e::text, textures[TEXT_TEXTURE], shaders[TEXT_SHADER]);
+   text_obj = new Text();
    log_info("init text done");
 }
 

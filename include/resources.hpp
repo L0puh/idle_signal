@@ -47,7 +47,7 @@ class Resources {
           "back.png"
       };
 
-      Object *text_obj;
+      Text *text_obj;
 
       std::vector<std::vector<Model*>> models;
       std::map<std::string, Entity*> entities;

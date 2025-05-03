@@ -14,7 +14,7 @@ struct collider_t {
    glm::vec3 min;
    glm::vec3 max;
    Model *model;
-   Object *obj;
+   Text *obj;
 };
 
 
@@ -59,7 +59,7 @@ namespace collision {
 
          // draw closest point
          state.renderer->draw_circle(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f,
-                  0.0f), 0.1f, color::red, state.resources->shaders[DEFAULT_SHADER], {
+                  0.0f), 0.1f, color::red, {
                glm::vec3(closest.x, state.ground_level, closest.y),
                glm::vec3(1.0f)});
          

@@ -40,7 +40,7 @@ class Texture;
 class Mesh;
 class Model;
 class Camera;
-class Object;
+class Text;
 
 struct line_data_t {
    glm::vec3 pos;

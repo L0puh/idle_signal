@@ -12,7 +12,7 @@ class Camera {
 
       btCollisionObject* camera_bt;
       bool is_picked_object = false;
-      float walk_offset = 0.0f;
+      float walk_offset = 0.0f, breathe_offset = 0.0f;
       bool is_walking = false, is_colliding = false;
       GLFWwindow* window;
       uint8_t flags;
@@ -97,7 +97,6 @@ class Camera {
          }
       }
    public:
-      bool check_collision_with_walls(glm::vec3 pos);
       bool is_pointing_to_object(glm::vec3& pos, float threshold=0.9f);
       inline bool is_close_to_object(glm::vec3& pos, float threshold=1.5f) {
          float dist = glm::length(this->pos - pos);

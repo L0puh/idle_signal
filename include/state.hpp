@@ -47,7 +47,7 @@ class Renderer;
 class Shader;
 class Sound;
 class Map;
-class Object;
+class Text;
 class Physics;
 class Resources;
 class Terrain;

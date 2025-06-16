@@ -24,13 +24,15 @@ struct item_t {
 struct entity_t {
    bool is_selected;
    std::vector<ImVec2> pos;
+   float size = 1.0f;
+   //TODO...
 
 };
 
 class Map {
    private:
       Shader *shd;
-     
+      entity_t *last_to_edit = NULL;
       int state_drawing = item;
       int random_item = NONE;
       models_type item_type = NONE;
@@ -65,6 +67,7 @@ class Map {
       void draw_objects();
       void generate_coords();
       std::string list_entities();
+      void open_edit_item(entity_t *entity);
       void process_pickables(Entity*);
       
       void add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec2 projected_pos);
@@ -78,6 +81,7 @@ class Map {
       }
       void editor_popup();
    private:
+      bool is_item_is_hovered(glm::vec2, glm::vec2);
       models_type popup_items();
       void init(){
          scale = state.terrain->width;

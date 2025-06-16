@@ -1,10 +1,12 @@
 #include "map.hpp"
 #include "camera.hpp"
+#include "glm/geometric.hpp"
 #include "object.hpp"
 #include "physics.hpp"
 #include "renderer.hpp"
 #include "terrain.hpp"
 
+#include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
 #include <vector>
 
@@ -106,6 +108,17 @@ void Map::generate_random_items(){
    amount_random_item = size;
 }
 
+void Map::open_edit_item(entity_t *entity){
+
+   if(ImGui::BeginPopup("EDIT ITEM"))
+   {
+      //TODO:
+      ImGui::DragFloat("SIZE:", &entity->size, 0.5, 0.0f, 10.0f);
+      ImGui::EndPopup();
+   }
+}
+
+
 void Map::editor_popup(){
    ImGui::SetNextWindowSize(ImVec2(state.terrain->height * offset, state.terrain->width * offset), ImGuiCond_Always);
    ImGui::SetNextWindowPos(ImVec2(1, 1), ImGuiCond_Always); 
@@ -123,10 +136,17 @@ void Map::editor_popup(){
       for (const auto& i: items){
          draw_list->AddCircle(ImVec2(i.pos.x * offset, i.pos.y * offset), 3.2f, imgui_color::yellow, 30, 2.0f);
       }
-      for (const auto& e: entities){
+      for (auto& e: entities){
          for (const auto& n: e.second.pos){
+            if (is_item_is_hovered(glm::vec2(pos.x, pos.y), {n.x*offset, n.y*offset}) && state.keys[GLFW_MOUSE_BUTTON_LEFT]){
+               last_to_edit = &e.second;
+            } 
             draw_list->AddCircle(ImVec2(n.x * offset, n.y * offset), 3.2f, imgui_color::yellow, 30, 2.0f);
          }
+      }
+      if (last_to_edit != NULL){
+         ImGui::OpenPopup("EDIT ITEM");
+         open_edit_item(last_to_edit);
       }
       draw_grid(draw_list, {0.0f, 0.0f}, 50.f, imgui_color::black);
       show_tabs(); 
@@ -150,6 +170,9 @@ void Map::editor_popup(){
 }
 
 
+bool Map::is_item_is_hovered(glm::vec2 mouse_pos, glm::vec2 item_pos){
+   return glm::distance(mouse_pos, item_pos) <= 7.0f;
+}
 void Map::add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec2 projected_pos){
    if (ImGui::IsMouseClicked(0) && type != NONE){
       items.push_back({type, ImVec2(projected_pos.x, projected_pos.y)});
@@ -185,7 +208,7 @@ void Map::draw_objects(){
    for (auto& ent: entities_obj){
       Entity* e = state.resources->entities[ent.name];
       e->set_pos(ent.max);
-      e->set_size(glm::vec3(1.0f));
+      e->set_size(glm::vec3(ent.size));
       if (e->is_pickable){
          process_pickables(e);
 
@@ -260,6 +283,7 @@ void Map::generate_coords(){
          y = state.terrain->get_height_at(p.x, p.y)-1.0;
          obj.name = ent.first;
          obj.max = {p.x, y, p.y};
+         obj.size = ent.second.size;
          entities_obj.push_back(obj);
       }
    }

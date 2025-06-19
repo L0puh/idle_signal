@@ -42,16 +42,7 @@
 const std::string TEXTURES_DIR = "assets/textures/";
 const std::string MODELS_DIR  =  "assets/models/";
 
-class Camera;
-class Renderer;
-class Shader;
 class Sound;
-class Map;
-class Text;
-class Physics;
-class Resources;
-class Terrain;
-class Light;
 
 struct fog_t {
    glm::vec3 color;
@@ -66,13 +57,7 @@ struct fog_t {
 struct STATE {
 
    uint8_t mode;
-   Physics *physics;
-   Resources *resources;
-   Renderer *renderer;
-   Camera *camera;
-   Map *map;
    Sound *sound;
-   Terrain *terrain;
   
    float cell_size = 8.0f;
    glm::vec4 filter_luminance_color = {0.941, 0.561, 0.024, 1.0f};
@@ -90,7 +75,6 @@ struct STATE {
    bool first_mouse;        // just touched the mouse
    
    fog_t fog;
-   Light *light;
 };
 
 extern STATE state;

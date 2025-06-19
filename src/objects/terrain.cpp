@@ -138,10 +138,10 @@ void Terrain::draw_terrain(){
    model = glm::translate(model, center_pos);
    model = glm::scale(model, glm::vec3(1.0));
 
-   shd->set_mat4fv("_view", state.camera->get_view());
-   shd->set_mat4fv("_projection", state.camera->get_projection());
+   shd->set_mat4fv("_view", Camera::get_instance()->get_view());
+   shd->set_mat4fv("_projection", Camera::get_instance()->get_projection());
    shd->set_mat4fv("_model", model);
-   state.light->set_all(shd);
+   Light::get_instance()->set_all(shd);
    vert.bind();
    glDrawElements(GL_TRIANGLE_STRIP, indices_count, GL_UNSIGNED_INT, 0);
 }

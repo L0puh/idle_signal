@@ -3,7 +3,6 @@
 
 
 #include "model.hpp"
-#include "state.hpp"
 #include <btBulletDynamicsCommon.h>
 #include <vector>
 
@@ -25,9 +24,18 @@ struct col_output_t {
 };
 
 class Physics {
+   protected:
+      static Physics *instance;
+      Physics() {};
+
+
+   public:
+      static Physics *get_instance() {
+         if (instance == NULL) instance = new Physics();
+         return instance;
+      }
    
    private:
-
       btBroadphaseInterface* broadphase;
       btDefaultCollisionConfiguration* config;
       btCollisionDispatcher* dispatcher;
@@ -37,20 +45,6 @@ class Physics {
       btVector3 gravity = btVector3(0, -9.81f, 0);
       std::vector<btCollisionObject*> objects;
 
-   public:
-      Physics() {
-         state.physics = this;
-         init_world();
-      };
-
-      ~Physics() {
-         // FIXME: seg fault???
-         // delete broadphase;
-         // delete config;
-         // delete dispatcher;
-         // delete solver;
-         // delete world;
-      };
 
    public:
       void init_world();

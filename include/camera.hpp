@@ -1,13 +1,29 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP 
 
-#include "map.hpp"
 #include "core.hpp"
+#include "physics.hpp"
+#include "terrain.hpp"
 
 #include <glm/glm.hpp>
 #include <BulletCollision/CollisionDispatch/btCollisionObject.h>
 
 class Camera {
+   protected:
+      static Camera *instance;
+      Camera(): 
+         speed(default_speed), 
+         zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f),
+         pos(glm::vec3(0.0f)), height(1.8f), window_width (600), window_height(600)
+      {
+      }
+
+   public:
+      static Camera *get_instance() { 
+         if (instance == NULL) instance = new Camera();
+         return instance; 
+      }
+
    public:
 
       btCollisionObject* camera_bt;
@@ -37,17 +53,16 @@ class Camera {
       float last_yaw, last_pitch;
       glm::vec3 last_pos;
 
-   public:
-      Camera(GLFWwindow* window, uint8_t flags): window(window),
-         speed(default_speed), flags(flags), 
-         zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f),
-         pos(glm::vec3(0.0f)), height(1.8f)
-      {
-         state.camera = this;
-      }
 
    public:
-      
+      void init(GLFWwindow* window, uint8_t flags) {
+         this->window = window;
+         this->flags = flags;
+      }
+      void setup_camera(){
+         pos = {Terrain::get_instance()->height/2.0f, 0.0f, Terrain::get_instance()->width/2.0f};
+         Physics::get_instance()->set_camera_object();
+      }
       glm::vec2 unproject(glm::vec3 pos, glm::vec2 size);
       glm::vec2 project(double x, double y, glm::ivec2 size);
       
@@ -102,7 +117,6 @@ class Camera {
          float dist = glm::length(this->pos - pos);
          return dist < threshold;
       }
-      void init();
    private:
       void update_vectors();
       void update_movement2D();

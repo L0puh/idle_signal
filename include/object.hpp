@@ -4,7 +4,6 @@
 #include "core.hpp"
 #include "resources.hpp"
 
-#include <cstdio>
 
 typedef enum {
    item,
@@ -76,8 +75,8 @@ class Text {
 
    public:
       Text() {
-         shd = state.resources->shaders[TEXT_SHADER];
-         texture = state.resources->textures[TEXT_TEXTURE];
+         shd = Resources::get_instance()->shaders[TEXT_SHADER];
+         texture = Resources::get_instance()->textures[TEXT_TEXTURE];
          init();
       }
       ~Text(){

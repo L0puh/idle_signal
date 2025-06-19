@@ -7,9 +7,9 @@ STATE state;
 
 void frame_buffer_size(GLFWwindow* wind, int width, int height){
    glViewport(0, 0, width, height);
-   if (state.camera != NULL){
-      state.camera->window_width = width;
-      state.camera->window_height = height;
+   if (Camera::get_instance() != NULL){
+      Camera::get_instance()->window_width = width;
+      Camera::get_instance()->window_height = height;
    }
 }
 

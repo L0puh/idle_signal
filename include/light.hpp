@@ -2,7 +2,6 @@
 #define LIGHT_H 
 
 #include "core.hpp"
-#include "state.hpp"
 #include <vector>
 
 struct light_t{
@@ -28,12 +27,16 @@ class Light {
       std::vector<light_t> point_lights;
       light_t flashlight;
 
+   protected:
+      static Light *instance;
+      Light() {}
+
    public:
-      Light() { 
-         init_flashlight();
-         state.light = this;
+      static Light *get_instance() { 
+         if (instance == NULL) instance = new Light();
+         return instance; 
       }
-      ~Light() {}
+   
    public:
       void set_all(Shader* shd) {
          set_flashlight(shd);

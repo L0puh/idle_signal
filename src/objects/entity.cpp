@@ -10,8 +10,8 @@ using json = nlohmann::json;
 
 void Entity::update() {
    for (int i = 0; i < component.collision.size(); i++){
-      state.physics->update_position(component.collision[i], pos);
-      state.physics->update_size(component.collision[i], size);
+      Physics::get_instance()->update_position(component.collision[i], pos);
+      Physics::get_instance()->update_size(component.collision[i], size);
    }
 
    if (is_floor) {
@@ -33,7 +33,7 @@ void Entity::update() {
    component.main->set_size(size);
 
    if (has_light) 
-      state.light->update_light_pos(pos, light_id);
+      Light::get_instance()->update_light_pos(pos, light_id);
 }
 
 void Entity::load_entity(const std::string& filename){
@@ -88,12 +88,11 @@ void Entity::draw_entity(){
 }
 
 void Entity::init_light(){
-   printf("added light\n");
-   light_id = state.light->add_point_light(pos+1.0f, light_color);
+   light_id = Light::get_instance()->add_point_light(pos+1.0f, light_color);
 }
 
 void Entity::init_physics(){
-   Physics* physics = state.physics;
+   Physics* physics = Physics::get_instance();
   
    if (is_floor)
       component.collision.push_back(physics->add_model(*component.floor, FLOOR));

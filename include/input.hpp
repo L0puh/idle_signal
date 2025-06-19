@@ -53,19 +53,19 @@ namespace input {
          case GLFW_KEY_G:
             if (!state.keys_lastpress[GLFW_KEY_G] || state.cooldown < glfwGetTime() - state.keys_lastpress[GLFW_KEY_G]){
                state.keys_lastpress[GLFW_KEY_G] = glfwGetTime(); 
-               state.camera->is_flying = !state.camera->is_flying;
+               Camera::get_instance()->is_flying = !Camera::get_instance()->is_flying;
             }
             break;
          case GLFW_KEY_M:
             if (!state.keys_lastpress[GLFW_KEY_M] || state.cooldown < glfwGetTime() - state.keys_lastpress[GLFW_KEY_M]){
                if (state.mode & EDIT_MODE){
-                  state.map->generate_coords();
+                  Map::get_instance()->generate_coords();
                   state.mode = PLAY_MODE;
-                  state.camera->change_mode(state.mode);
+                  Camera::get_instance()->change_mode(state.mode);
                }
                else if (state.mode & PLAY_MODE){
                   state.mode = EDIT_MODE;
-                  state.camera->change_mode(state.mode);
+                  Camera::get_instance()->change_mode(state.mode);
                }
                state.keys_lastpress[GLFW_KEY_M] = glfwGetTime(); 
             }
@@ -89,7 +89,7 @@ namespace input {
       offset.y = state.last_mouse_pos.y - pos.y;
       state.last_mouse_pos = pos;
       offset *= state.mouse_sensitivity;
-      state.camera->update_mouse_turn(offset);
+      Camera::get_instance()->update_mouse_turn(offset);
    }
 };
 

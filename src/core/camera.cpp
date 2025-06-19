@@ -72,13 +72,13 @@ void Camera::update_movement(){
       speed = default_speed;
    }
 
-   if (state.terrain->is_within(p, 20.0f)){
+   if (Terrain::get_instance()->is_within(p, 20.0f)){
       this->pos = p;
       if (!is_flying)
-         pos.y = state.terrain->get_height_at(pos.x, pos.z) + height/2.0f;
+         pos.y = Terrain::get_instance()->get_height_at(pos.x, pos.z) + height/2.0f;
    }
 
-   state.physics->perform_raycast_for_camera();
+   Physics::get_instance()->perform_raycast_for_camera();
 }
 
 
@@ -97,10 +97,6 @@ void Camera::update_movement2D(){
    }
 }
 
-void Camera::init(){
-   pos = {state.terrain->height/2.0f, 0.0f, state.terrain->width/2.0f};
-   state.physics->set_camera_object();
-}
 
 void Camera::update_vectors(){
    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -148,5 +144,5 @@ void Camera::update(){
    view = glm::lookAt(pos + glm::vec3(0.0f, walk_offset + breathe_offset, 0.0f), pos+front, up);
    
    if (camera_bt != NULL)
-      state.physics->update_camera_position();
+      Physics::get_instance()->update_camera_position();
 }

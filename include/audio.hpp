@@ -17,28 +17,36 @@ enum sound_type {
 };
 
 class Audio {
+   protected:
+      static Audio *instance;
+      Audio() {
+      };
+   public:
+      static Audio *get_instance() { 
+         if (instance == NULL) instance = new Audio();
+         return instance; 
+      }
+
    public:
       ALCdevice* device;
       ALCcontext* context;
       
       std::vector<ALuint> sound_effects;
+
    public:
-      Audio() {init();}
-      ~Audio() {
+      void init();
+      ALuint add_sound_effect(const char* src);
+      bool remove_sound_effect(const ALuint& buffer);
+      void cleanup() {
          alDeleteBuffers(sound_effects.size(), sound_effects.data());
          sound_effects.clear();
       }
-
-   public:
-      ALuint add_sound_effect(const char* src);
-      bool remove_sound_effect(const ALuint& buffer);
-   private:
-      void init();
 };
 
 
 
 class Sound {
+
    private:
       ALuint source, buffer;
       float pitch, gain;
@@ -56,14 +64,15 @@ class Sound {
          buffers.resize(sound_type::ST_SIZE_ENUM);
          states.resize(sound_state::SS_SIZE_ENUM);
          init();
-
+         
+         //FIXME:
          state.sound = this;
       }
       ~Sound() {};
 
    public:
-      void init_sounds(Audio *audio) {
-         buffers[sound_type::WALKING] = audio->add_sound_effect(WALKING_OGG);
+      void init_sounds() {
+         buffers[sound_type::WALKING] = Audio::get_instance()->add_sound_effect(WALKING_OGG);
       }
       void play_sound(sound_type type);
       void pause_sound(sound_type type);

@@ -24,8 +24,8 @@ namespace imgui {
    void main_draw(){
       ImGui::Begin("main window", 0, ImGuiWindowFlags_AlwaysAutoResize);
       {
-         ImGui::SliderFloat("ZOOM OF CAMERA:", &state.camera->zoom, -90.0f, 90.0f, "%.5f", 0);
-         ImGui::SliderFloat3("POS OF CAMERA:", &state.camera->pos.x, -100.0f, 100.0f, "%.5f", 0);
+         ImGui::SliderFloat("ZOOM OF CAMERA:", &Camera::get_instance()->zoom, -90.0f, 90.0f, "%.5f", 0);
+         ImGui::SliderFloat3("POS OF CAMERA:", &Camera::get_instance()->pos.x, -100.0f, 100.0f, "%.5f", 0);
          ImGui::SliderFloat("NOISE INTENSITY:", &state.noise_intensity, 0.0f, 1.0f, "%.8f");
          ImGui::SliderFloat("CELL SIZE(LOW POLY):", &state.cell_size, 0.0f, 30.0f, "%.8f");
          ImGui::SliderFloat("FILTER THRESHOLD:", &state.filter_threshold, 0.0f, 1.0f, "%.8f");
@@ -39,7 +39,7 @@ namespace imgui {
 
          // LIGHT
          ImGui::SeparatorText("LIGHT");
-         light_t light = state.light->get_flashlight();
+         light_t light = Light::get_instance()->get_flashlight();
 
          ImGui::ColorEdit3("color", &light.color.x);
          ImGui::SliderFloat("cut off", &light.cut_off, 0.0f, 180.0f); 
@@ -52,8 +52,8 @@ namespace imgui {
          ImGui::SliderFloat("linear", &light.linear, 0.0f, 1.0f);
          ImGui::SliderFloat("quadratic", &light.quadratic, 0.0f, 1.0f);
         
-         state.light->flashlight = light;
-         if (state.camera->is_flying)
+         Light::get_instance()->flashlight = light;
+         if (Camera::get_instance()->is_flying)
             ImGui::Text("FLYING ON");
          else
             ImGui::Text("FLYING OFF");
@@ -80,7 +80,7 @@ namespace imgui {
 
 void draw_grid(ImDrawList* draw_list, ImVec2 origin, float cell_size, ImU32 color){
    int width, height;
-   width = state.camera->window_width, height = state.camera->window_height;
+   width = Camera::get_instance()->window_width, height = Camera::get_instance()->window_height;
    height /= cell_size;
    width  /= cell_size;
 

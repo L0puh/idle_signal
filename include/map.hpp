@@ -16,77 +16,86 @@ namespace imgui_color {
    const ImU32 green = IM_COL32(0, 255, 0, 255);
 }
 
-struct item_t {
-   models_type type;
-   ImVec2 pos;
-
-};
-struct entity_t {
-   bool is_selected;
-   std::vector<ImVec2> pos;
-   float size = 1.0f;
-   //TODO...
-
-};
 
 class Map {
+   protected:
+      static Map* instance;
+      Map () {}
+   public:
+      static Map* get_instance() {
+         if (instance == NULL) {
+            instance = new Map();
+         }
+         return instance;
+      }
+
+   private:
+      struct item_t {
+         models_type type;
+         ImVec2 pos;
+
+      };
+      struct entity_t {
+         bool is_selected;
+         float size = 1.0f;
+         std::vector<ImVec2> pos;
+      };
+
    private:
       Shader *shd;
-      entity_t *last_to_edit = NULL;
+      entity_t *last_entity_to_edit = NULL; 
+      
       int state_drawing = item;
       int random_item = NONE;
-      models_type item_type = NONE;
-      bool is_drawing=false, show_camera=true;
-      int amount_random_item = 0;
+      models_type item_type_to_draw = NONE;
+      bool is_drawing=false, show_camera_pos=true;
+      int amount_random_items = 0;
 
+      /* objects in map */
       std::vector<item_t> items;
       std::map<std::string, entity_t> entities;
+      
+      /* objects in terrain (drawn after closing map) */
       std::vector<object_t> items_obj;
       std::vector<object_t> entities_obj;
 
-      glm::vec2 projected_pos; //mouse position in the world
-      ImVec2 pos; //mouse position on canvas
+      glm::vec2 mouse_pos_world;  //mouse position in the world
+      ImVec2 mouse_pos_map;       //mouse position on canvas
    public:
-      float scale; // the terrian size!
+      float terrain_size; 
       float offset = 2.0f;
-   public:
-      Map() { 
-         state.map = this;
-         init(); 
-
-      }
-      ~Map() {
-         delete shd;
-      }
 
    public:
-      void set_shader(Shader *shd) {this->shd = shd; }
-   public:
+      void init(){
+         terrain_size = Terrain::get_instance()->width;
+         shd = Resources::get_instance()->shaders[MAP_SHADER];
+      }
+      /* UI ELEMENTS: */
+      void editor_popup();
       void show_tabs();
       void edit_terrain();
-      void draw_objects();
+      void draw_entites_on_map(ImDrawList* draw_list);
+      void open_edit_item(entity_t *entity);
+      
+      /* MAP PROCESS */
       void generate_coords();
       std::string list_entities();
-      void open_edit_item(entity_t *entity);
+      void draw_objects_on_terrain();
       void process_pickables(Entity*);
+      void generate_random_items();
       
       void add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec2 projected_pos);
       void add_entity(std::string &entity, glm::vec2 proj_pos);
      
-      void generate_random_items();
       void update() {
          if (state.mode & EDIT_MODE){
             editor_popup();
          }
       }
-      void editor_popup();
    private:
+
       bool is_item_is_hovered(glm::vec2, glm::vec2);
       models_type popup_items();
-      void init(){
-         scale = state.terrain->width;
-         shd = state.resources->shaders[MAP_SHADER];
-      }
 };
 
 void draw_grid(ImDrawList* draw_list, ImVec2 origin, float cell_size, ImU32 color);

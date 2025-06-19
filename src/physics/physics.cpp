@@ -23,18 +23,18 @@ void Physics::clear_objects(){
 }
 
 bool Physics::perform_raycast_for_camera(){
-   Camera *camera = state.camera;
+   Camera *camera = Camera::get_instance();
    glm::vec3 pos = camera->pos;
    btVector3 from(pos.x, pos.y + 100.0f, pos.z); 
    btVector3 to(pos.x, pos.y - 100.0f, pos.z); 
    btVector3 hit_point;
    
-   state.physics->update_camera_position();
-   bool hit = raycast(state.physics->get_world(), from, to, camera->camera_bt, FLOOR, hit_point);
+   instance->update_camera_position();
+   bool hit = raycast(Physics::get_instance()->get_world(), from, to, camera->camera_bt, FLOOR, hit_point);
    if (hit) {
       float y = hit_point.y() + camera->height;
       pos.y = y > pos.y ? y: pos.y;
-      state.camera->set_pos(pos);
+      Camera::get_instance()->set_pos(pos);
       return 1.0f;
    } 
    return 0.0f;
@@ -49,7 +49,7 @@ void Physics::move_objects(col_output_t output){
    if (output.door_detected) {
       // ... 
    } else {
-      state.camera->pos += output.displace;
+      Camera::get_instance()->pos += output.displace;
    }
 
    update_camera_position();
@@ -62,7 +62,7 @@ void Physics::update_collisions(){
    btManifoldPoint pt;
    btPersistentManifold* contract;
    btScalar dist;
-   Camera* camera = state.camera;
+   Camera* camera = Camera::get_instance();
 
    bool is_detected_door = false;
    
@@ -264,16 +264,16 @@ void Physics::update_position(uint id, glm::vec3 pos){
 void Physics::update_camera_position(){
     btTransform transform;
     transform.setIdentity();
-    transform.setOrigin({state.camera->pos.x, state.camera->pos.y-state.camera->height,
-         state.camera->pos.z});
-    state.camera->camera_bt->setWorldTransform(transform);
+    transform.setOrigin({Camera::get_instance()->pos.x, Camera::get_instance()->pos.y-Camera::get_instance()->height,
+         Camera::get_instance()->pos.z});
+    Camera::get_instance()->camera_bt->setWorldTransform(transform);
 }
 void Physics::set_camera_object(){
-   btCapsuleShape* shape = new btCapsuleShape(0.4f, state.camera->height - 2.0f); 
+   btCapsuleShape* shape = new btCapsuleShape(0.4f, Camera::get_instance()->height - 2.0f); 
    btCollisionObject* bt = new btCollisionObject();
    bt->setCollisionShape(shape);
 
-   state.camera->camera_bt = bt;
+   Camera::get_instance()->camera_bt = bt;
    world->addCollisionObject(bt, DEFAULT, 1);
    update_camera_position();
 

@@ -6,13 +6,13 @@ void Text::draw(GLenum mode){
    update();
 
    shd->use();
-   shd->set_mat4fv("_projection", state.camera->get_projection());
-   shd->set_mat4fv("_view", state.camera->get_view());
+   shd->set_mat4fv("_projection", Camera::get_instance()->get_projection());
+   shd->set_mat4fv("_view", Camera::get_instance()->get_view());
    shd->set_mat4fv("_model", model);
    
    if (with_texture) {
       texture->use();
-      state.light->set_all(shd);
+      Light::get_instance()->set_all(shd);
    }
    else shd->set_vec3("_color", {color[0], color[1], color[2]});
    
@@ -37,7 +37,7 @@ void Text::init(){
 }
 
 void Line::init(glm::vec3 from, glm::vec3 to) {
-   shd = state.resources->shaders[DEFAULT_SHADER];
+   shd = Resources::get_instance()->shaders[DEFAULT_SHADER];
    
    const float vertices[] = {
       from.x, from.y, from.z,
@@ -51,8 +51,8 @@ void Line::draw(GLenum mode){
    update();
 
    shd->use();
-   shd->set_mat4fv("_projection", state.camera->get_projection());
-   shd->set_mat4fv("_view", state.camera->get_view());
+   shd->set_mat4fv("_projection", Camera::get_instance()->get_projection());
+   shd->set_mat4fv("_view", Camera::get_instance()->get_view());
    shd->set_mat4fv("_model", model);
 
    shd->set_vec3("_color", {color[0], color[1], color[2]});

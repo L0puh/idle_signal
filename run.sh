@@ -22,7 +22,7 @@ if [ ! -d "$BUILDDIR" ]; then
    mkdir -p build
    cd build
    if [ $IS_VERBOSE == 1 ]; then
-      cmake ..
+      cmake .. 
    else 
       echo " + verbose is off"
       cmake .. >> /dev/null

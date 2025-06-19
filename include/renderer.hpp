@@ -5,9 +5,9 @@
 #include <math.h>
 #include <vector>
 
+#include "camera.hpp"
 #include "core.hpp"
 #include "object.hpp"
-#include "camera.hpp"
 
 struct text_t{
    std::string str;
@@ -18,10 +18,15 @@ struct text_t{
 };
 
 class Renderer {
+   protected:
+      static Renderer *instance;
+      Renderer(){}
+
    public:
-      Renderer() {
-         state.renderer = this;
-      } 
+      static Renderer *get_instance() { 
+         if (instance == NULL) instance = new Renderer();
+         return instance; 
+      }
       
    public:
       std::vector<text_t> texts;
@@ -108,9 +113,9 @@ class Renderer {
       void add_text(text_t text) { texts.push_back(text); }
       void clear_texts() { texts.clear(); }
       void draw_text(text_t text){
-         Text *obj = state.resources->text_obj;
+         Text *obj = Resources::get_instance()->text_obj;
          obj->shd->use();
-         obj->shd->set_mat4fv("_projection", state.camera->get_projection_ortho());
+         obj->shd->set_mat4fv("_projection", Camera::get_instance()->get_projection_ortho());
          obj->shd->set_vec3("_color", {text.color[0], text.color[1], text.color[2]});
          glActiveTexture(GL_TEXTURE0);
          obj->vert.bind();

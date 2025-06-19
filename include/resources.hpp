@@ -3,7 +3,6 @@
 
 #include "entity.hpp"
 #include "model.hpp"
-#include "state.hpp"
 #include <vector>
 
 
@@ -37,6 +36,16 @@ enum models_type {
 
 class Resources {
 
+   protected:
+      static Resources *instance;
+      Resources() { }
+
+   public:
+      static Resources *get_instance() { 
+         if (instance == NULL) instance = new Resources();
+         return instance; 
+      }
+  
    public:
       std::vector<std::string> cubemap_faces = {
           "right.png",
@@ -53,21 +62,14 @@ class Resources {
       std::map<std::string, Entity*> entities;
       std::vector<Texture*> textures;
       std::vector<Shader*> shaders;
-
-
+   
    public:
-      Resources() {
-         state.resources = this;
+      void init() {
          textures.resize(texture_type::TEXTURE_TYPE_SIZE);
          shaders.resize(shader_type::SHADER_TYPE_SIZE);
          models.resize(models_type::MODELS_TYPE_SIZE);
          init_resources();
-      };
-      ~Resources() {
-         cleanup();
-      };
-   
-   public:
+      }
       void init_resources();
       int  init_entity(std::string filename);
       void init_models_counter(std::string filename, models_type type);

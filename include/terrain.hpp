@@ -7,37 +7,45 @@
 
 class Terrain {
 
-   Vertex vert;
-   Texture *texture;
-   Shader *shd;
-   std::vector<uint> indices;
-   std::vector<std::vector<glm::vec3>> vertices;
-   std::vector<std::vector<glm::vec2>> tex_coords;
-   std::vector<std::vector<glm::vec3>> normals;
-
-   std::vector<float> vbo_data;
 
 
-   int indices_count;
-   std::vector<std::vector<float>> heights;
+   protected:
+      static Terrain *instance;
+      Terrain(){}
+   public:
+      static Terrain *get_instance() { 
+         if (instance == NULL) instance = new Terrain();
+         return instance; 
+      }
+   
    public:
       int MIN_RADIUS = 6.0f, MAX_RADIUS = 8.0f;
       float MIN_HEIGHT = 0.1f, MAX_HEIGHT = 0.5f;
 
       int width, height;
       glm::vec3 center_pos = {0.0, -1.0f, 0.0f};
-   public:
-      Terrain(float width, float height): width(width), height(height){
+   
+   private:
+      Vertex vert;
+      Texture *texture;
+      Shader *shd;
+      std::vector<uint> indices;
+      std::vector<std::vector<glm::vec3>> vertices;
+      std::vector<std::vector<glm::vec2>> tex_coords;
+      std::vector<std::vector<glm::vec3>> normals;
 
-         texture = state.resources->textures[TERRAIN_TEXTURE];
-         shd = state.resources->shaders[TEXTURE_SHADER];
+      std::vector<float> vbo_data;
+
+
+      int indices_count;
+      std::vector<std::vector<float>> heights;
+   public:
+      void init(float width, float height) {
+         this->width = width, this->height = height;
+         texture = Resources::get_instance()->textures[TERRAIN_TEXTURE];
+         shd     = Resources::get_instance()->shaders[TEXTURE_SHADER];
          generate();
-
-         state.terrain = this;
       }
-      ~Terrain(){}
-      
-   public:
       void draw_terrain();
       float get_height_at(float x, float z);
       void generate_random_coordinates(int count, std::vector<glm::vec2>* coordinates);

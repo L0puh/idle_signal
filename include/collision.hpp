@@ -5,7 +5,6 @@
 #include "model.hpp"
 #include "renderer.hpp"
 
-#include <vector>
 
 
 struct collider_t {
@@ -58,7 +57,7 @@ namespace collision {
          if (!point_on_segment(from, to, closest)) return false;
 
          // draw closest point
-         state.renderer->draw_circle(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f,
+         Renderer::get_instance()->draw_circle(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f,
                   0.0f), 0.1f, color::red, {
                glm::vec3(closest.x, state.ground_level, closest.y),
                glm::vec3(1.0f)});

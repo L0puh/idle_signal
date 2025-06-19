@@ -3,6 +3,7 @@
 #include <glm/geometric.hpp>
 #include <nlohmann/json.hpp>
 
+#include "camera.hpp"
 #include "core.hpp"
 #include "model.hpp"
 #include "collision.hpp"
@@ -16,13 +17,13 @@
 void Model::draw(){
    update();
    shd->use();
-   shd->set_mat4fv("_projection", state.camera->get_projection());
-   shd->set_mat4fv("_view", state.camera->get_view());
+   shd->set_mat4fv("_projection", Camera::get_instance()->get_projection());
+   shd->set_mat4fv("_view", Camera::get_instance()->get_view());
    shd->set_mat4fv("_model", model);
    if (!with_texture) {
       shd->set_vec3("_color", color);
    } else {
-      state.light->set_all(shd);
+      Light::get_instance()->set_all(shd);
    }
 
    for (uint i=0; i < meshes.size(); i++){
@@ -43,7 +44,7 @@ void Model::draw_debug(glm::vec3 pos, glm::vec3 size){
          glm::vec3 s, e;
          s = meshes[i].vertices[j].position;
          e = meshes[i].vertices[j+1].position;
-         state.renderer->draw_line(s, e, color::red, 1.0f, {pos, size});
+         Renderer::get_instance()->draw_line(s, e, color::red, 1.0f, {pos, size});
       }
    }
 }
@@ -65,9 +66,9 @@ void Model::load_model(const std::string src){
 
    process_node(scene->mRootNode, scene);
    if (with_texture) 
-      shd = state.resources->shaders[TEXTURE_SHADER];
+      shd = Resources::get_instance()->shaders[TEXTURE_SHADER];
    else 
-      shd = state.resources->shaders[DEFAULT_SHADER];
+      shd = Resources::get_instance()->shaders[DEFAULT_SHADER];
 
    if (shd == NULL) error_and_exit("error in init shader for model");
 

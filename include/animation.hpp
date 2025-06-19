@@ -21,26 +21,36 @@ enum animation_type {
 
 /*TODO: refactor, for now it's hardcoded */
 class Animation{
-
-   Shader *shd;
-   Vertex vert;
-  
-   float last_change = 0.0f, framerate = 20/60.0f;;
-   
-   std::vector<Texture*> frames_flashlight;
-   std::vector<Texture*> frames_hand;
-
-   int frame = 0;
-   int count_vertices;
-   int count_frames_hand, count_frames_flashlight;
-   
+   protected:
+      static Animation *instance;
+      Animation() {};
    public:
+      static Animation *get_instance() { 
+         if (instance == NULL) instance = new Animation();
+         return instance; 
+      }
+   
+   private:
 
-      Animation() {
+      Shader *shd;
+      Vertex vert;
+     
+      float last_change = 0.0f, framerate = 20/60.0f;;
+      
+      std::vector<Texture*> frames_flashlight;
+      std::vector<Texture*> frames_hand;
+
+      int frame = 0;
+      int count_vertices;
+      int count_frames_hand, count_frames_flashlight;
+   
+
+   public: 
+      void init() {
          create_sprite_vertex();
          load_frames();
-      };
-      ~Animation() {
+      }
+      void cleanup(){
          for (int i = 0; i < count_frames_hand; i++){
             delete frames_hand[i];
          }
@@ -49,8 +59,6 @@ class Animation{
          }
          delete shd;
       }
-
-   public: 
       void draw(animation_type type){
          float time = glfwGetTime();
          switch (type) {
@@ -69,14 +77,14 @@ class Animation{
             break;
          }
          glm::mat4 model(1.0f); 
-         glm::vec3 p = (glm::vec3(state.camera->window_width - 190.0f, state.camera->walk_offset*2.0f + 200.0f, 0.0f));
+         glm::vec3 p = (glm::vec3(Camera::get_instance()->window_width - 190.0f, Camera::get_instance()->walk_offset*2.0f + 200.0f, 0.0f));
          model = glm::translate(model, p);
          model = glm::scale(model, glm::vec3(450.0f));
          shd->use();
-         shd->set_mat4fv("_model", state.camera->get_projection_ortho() * model);
+         shd->set_mat4fv("_model", Camera::get_instance()->get_projection_ortho() * model);
          shd->set_float("_cell_size", state.cell_size);
-         shd->set_float("_width", state.camera->window_width);
-         shd->set_float("_height", state.camera->window_height);
+         shd->set_float("_width", Camera::get_instance()->window_width);
+         shd->set_float("_height", Camera::get_instance()->window_height);
          vert.draw_EBO(GL_TRIANGLES, count_vertices);
       }
    private:
@@ -101,7 +109,7 @@ class Animation{
       }
 
       void create_sprite_vertex(){
-         shd = state.resources->shaders[BLANK_SHADER]; 
+         shd = Resources::get_instance()->shaders[BLANK_SHADER]; 
          vert.create_VBO(vertices::rectangle_with_texture, sizeof(vertices::rectangle_with_texture));
          vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
          vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float)); 

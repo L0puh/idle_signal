@@ -112,8 +112,12 @@ void Map::open_edit_item(entity_t *entity){
 
    if(ImGui::BeginPopup("EDIT ITEM"))
    {
-      //TODO:
       ImGui::DragFloat("SIZE:", &entity->size, 0.5, 0.0f, 10.0f);
+      for (int i = 0; i < entity->pos.size(); i++){
+         ImGui::PushID(i);
+         ImGui::DragFloat2("POS:", &entity->pos[i].x, 0.5, 0.0, state.terrain->width * offset);
+         ImGui::PopID();
+      }
       ImGui::EndPopup();
    }
 }
@@ -138,16 +142,24 @@ void Map::editor_popup(){
       }
       for (auto& e: entities){
          for (const auto& n: e.second.pos){
-            if (is_item_is_hovered(glm::vec2(pos.x, pos.y), {n.x*offset, n.y*offset}) && state.keys[GLFW_MOUSE_BUTTON_LEFT]){
+            bool timesout = glfwGetTime() - state.keys_lastpress[GLFW_MOUSE_BUTTON_LEFT] > state.cooldown;
+            bool is_hovered = is_item_is_hovered(glm::vec2(pos.x, pos.y), {n.x*offset, n.y*offset});
+            if (is_hovered && state.keys[GLFW_MOUSE_BUTTON_LEFT] && timesout && last_to_edit == NULL){
+               state.keys_lastpress[GLFW_MOUSE_BUTTON_LEFT] = glfwGetTime();
                last_to_edit = &e.second;
+               break;
             } 
             draw_list->AddCircle(ImVec2(n.x * offset, n.y * offset), 3.2f, imgui_color::yellow, 30, 2.0f);
          }
       }
+      if (state.keys[GLFW_MOUSE_BUTTON_RIGHT]){
+         last_to_edit = NULL;
+      }
       if (last_to_edit != NULL){
          ImGui::OpenPopup("EDIT ITEM");
          open_edit_item(last_to_edit);
-      }
+      } 
+
       draw_grid(draw_list, {0.0f, 0.0f}, 50.f, imgui_color::black);
       show_tabs(); 
       ImGui::InvisibleButton("canvas", ImGui::GetContentRegionAvail());
@@ -171,7 +183,7 @@ void Map::editor_popup(){
 
 
 bool Map::is_item_is_hovered(glm::vec2 mouse_pos, glm::vec2 item_pos){
-   return glm::distance(mouse_pos, item_pos) <= 7.0f;
+   return glm::distance(mouse_pos, item_pos) <= 4.0f;
 }
 void Map::add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec2 projected_pos){
    if (ImGui::IsMouseClicked(0) && type != NONE){

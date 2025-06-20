@@ -1,0 +1,42 @@
+# Blender 4.4.0 MTL File: 'None'
+# www.blender.org
+
+newmtl atlas
+Ns 96.078415
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 1
+map_Kd Map.png
+map_d Map.png
+
+newmtl ceiling
+Ns 96.078415
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 0.000000
+illum 1
+map_Kd Ceiling.jpg
+
+newmtl wall
+Ns 96.078415
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 0.000000
+illum 1
+map_Kd Wall.jpg
+
+newmtl wallP
+Ns 96.078415
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 0.000000
+illum 1
+map_Kd WallP.png

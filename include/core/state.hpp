@@ -31,8 +31,6 @@
 #define TEXT_SHADER_VERT "shaders/text.vert"
 #define TEXT_SHADER_FRAG "shaders/text.frag"
 
-#define TERRAIN_HEIGHTMAP "assets/heightmap/simple.png"
-
 #define FONT_PATH "assets/fonts/freeSans.ttf"
 #define EDIT_MODE  0b1000
 #define PLAY_MODE  0b0100

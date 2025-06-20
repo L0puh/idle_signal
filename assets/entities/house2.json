@@ -1,0 +1,14 @@
+{
+  "name": "house2",
+  "type": "static",
+  "is_floor": true,
+  "main_collide": false,
+  "has_light": false,
+  "is_wall": true,
+  "is_door": false,
+  "is_pickable": false,
+  "main_path": "house_main.obj",
+  "floor_path": "house_floor.obj",
+  "wall_path": "house_walls.obj",
+  "door_path": "house_door.obj"
+}

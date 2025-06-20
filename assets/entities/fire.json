@@ -1,0 +1,12 @@
+{
+  "name": "fire",
+  "type": "static",
+  "is_floor": false,
+  "is_wall": false,
+  "is_door": false,
+  "main_collide": true,
+  "light_color": [1, 0.753, 0.243],
+  "has_light": true,
+  "is_pickable": false,
+  "main_path": "campfire.obj"
+}

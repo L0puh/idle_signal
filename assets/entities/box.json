@@ -1,0 +1,11 @@
+{
+  "name": "box",
+  "type": "static",
+  "is_floor": false,
+  "main_collide": true,
+  "has_light": false,
+  "is_wall": false,
+  "is_door": false,
+  "is_pickable": true,
+  "main_path": "box.obj"
+}

@@ -1,0 +1,12 @@
+# Blender 4.4.0 MTL File: 'bush_05.blend'
+# www.blender.org
+
+newmtl _bush_05default
+Ns 20.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 1
+map_Kd bush_05.png
+map_d bush_05.png

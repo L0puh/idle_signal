@@ -1,6 +1,7 @@
 #include <vector>
 #define STB_IMAGE_IMPLEMENTATION
-#include "core.hpp"
+#include "core/core.hpp"
+#include "shaders/texture.hpp"
 #include <stb_image.h>
 
 #include <freetype2/ft2build.h>

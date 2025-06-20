@@ -1,9 +1,9 @@
 #ifndef ENTITY_H
 #define ENTITY_H 
 
-#include "core.hpp"
 #include <string>
 #include <vector>
+#include <glm/glm.hpp>
 
 class Model;
 struct component_t {

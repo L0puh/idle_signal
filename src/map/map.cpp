@@ -1,12 +1,11 @@
-#include "map.hpp"
-#include "camera.hpp"
-#include "glm/geometric.hpp"
-#include "object.hpp"
-#include "physics.hpp"
-#include "renderer.hpp"
-#include "terrain.hpp"
+#include "map/map.hpp"
+#include "core/window.hpp"
+#include "utils/renderer.hpp"
+#include "core/camera.hpp"
+#include "objects/object.hpp"
+#include "physics/physics.hpp"
+#include "objects/terrain.hpp"
 
-#include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
 #include <vector>
 
@@ -75,12 +74,11 @@ void Map::add_item(models_type type, ImVec2 pos, ImDrawList* draw_list, glm::vec
 void Map::process_pickables(Entity *ent){
    Camera *cam = Camera::get_instance();
 
-   if (!cam->is_picked_object && cam->is_close_to_object(ent->pos, 5.0f)
+   if (!cam->is_picked_object && cam->is_close_to_object(ent->pos, 5.0f * ent->size.x)
        && cam->is_pointing_to_object(ent->pos) && !ent->is_picked)
    {
-      Renderer::get_instance()->add_text({"PICK UP (E)", {Camera::get_instance()->window_width/2.0f,
-
-                  Camera::get_instance()->window_height/2.0f - 40.0f }, 0.5, color::white});
+      Renderer::get_instance()->add_text({"PICK UP (E)", {Window::get_width()/2.0f,
+                  Window::get_height()/2.0f - 40.0f }, 0.5, color::white});
       if (state.keys[GLFW_KEY_E]){
          ent->is_picked = true;
          cam->is_picked_object = true;
@@ -89,10 +87,10 @@ void Map::process_pickables(Entity *ent){
    }
 
    if (state.keys[GLFW_KEY_E] && ent->is_picked){
-      ent->set_pos(cam->pos + cam->front);
+      ent->set_pos(cam->pos + cam->front );
       ent->set_size(glm::vec3(0.4f));
    } else if (!state.keys[GLFW_KEY_E] && ent->is_picked){
-      ent->set_pos(cam->pos + cam->front * 1.5f);
+      ent->set_pos(cam->pos + cam->front * (ent->size.x + 3.0f));
       ent->is_picked = false;
       cam->is_picked_object = false;
    }

@@ -1,17 +1,24 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "core.hpp"
-#include "camera.hpp"
-#include "map.hpp"
-#include <GLFW/glfw3.h>
+#include "core/core.hpp"
+#include "core/window.hpp"
+#include "core/camera.hpp"
+#include "map/map.hpp"
 
 namespace input {
-   inline bool is_pressed(GLFWwindow* window, int key) {
-      return glfwGetKey(window, key) == GLFW_PRESS;
+
+   inline void hide_cursor() {
+      glfwSetInputMode(Window::get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
    }
-   inline bool is_released(GLFWwindow *window, int key) {
-      return glfwGetKey(window, key) == GLFW_RELEASE; 
+   inline void show_cursor() {
+      glfwSetInputMode(Window::get_window(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+   }
+   inline bool is_pressed(int key) {
+      return glfwGetKey(Window::get_window(), key) == GLFW_PRESS;
+   }
+   inline bool is_released(int key) {
+      return glfwGetKey(Window::get_window(), key) == GLFW_RELEASE; 
    }
    inline void mouse_callback(GLFWwindow *window, int key, int action, int mods){
       if (action == GLFW_PRESS){

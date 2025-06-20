@@ -5,9 +5,9 @@
 #include <math.h>
 #include <vector>
 
-#include "camera.hpp"
-#include "core.hpp"
-#include "object.hpp"
+#include "core/camera.hpp"
+#include "core/core.hpp"
+#include "objects/object.hpp"
 
 struct text_t{
    std::string str;

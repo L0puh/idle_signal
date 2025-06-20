@@ -1,9 +1,10 @@
-#include "core.hpp"
+#include "core/core.hpp"
+#include "audio/audio.hpp"
+
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <sndfile.h>
 #include <AL/alext.h>
-#include "audio.hpp"
+#include <sndfile.h>
 
 
 void Audio::init(){ 
@@ -113,22 +114,4 @@ bool Audio::remove_sound_effect(const ALuint& buffer){
       it++;
    }
    return -1;
-}
-void Sound::pause_sound(sound_type type){
-   buffer = buffers[type];
-   alSourcei(source, AL_BUFFER, (ALint)buffer);
-
-   if (states[type] == PLAY){
-      alSourcePause(source);
-      states[type] = PAUSE;
-   }
-}
-
-void Sound::play_sound(sound_type type){
-   buffer = buffers[type];
-   alSourcei(source, AL_BUFFER, (ALint)buffer);
-   if (states[type] == PAUSE){
-      alSourcePlay(source);
-      states[type] = PLAY;
-   }
 }

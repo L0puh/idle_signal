@@ -1,20 +1,16 @@
-#include "core.hpp"
-#include <GLFW/glfw3.h>
-#include <cstdlib>
-#include "input.hpp"
+#include "core/core.hpp"
+#include "core/window.hpp"
+#include "core/camera.hpp"
+#include "utils/input.hpp"
 
-STATE state;
-
-void frame_buffer_size(GLFWwindow* wind, int width, int height){
+void Window::frame_buffer_size(GLFWwindow* wind, int width, int height){
    glViewport(0, 0, width, height);
    if (Camera::get_instance() != NULL){
-      Camera::get_instance()->window_width = width;
-      Camera::get_instance()->window_height = height;
+      Window::get_instance()->set_size(width, height);
    }
 }
 
-GLFWwindow* init_window(int width, int height){
-   GLFWwindow* window;
+GLFWwindow* Window::init_window(int width, int height){
 
    if (!glfwInit())
       error_and_exit("glfw init failed");
@@ -52,7 +48,7 @@ GLFWwindow* init_window(int width, int height){
    return window;
 }
 
-void debug_message_callback(GLenum src, GLenum type, 
+void Window::debug_message_callback(GLenum src, GLenum type, 
                       GLuint id,GLuint sev, GLsizei len, 
                       const GLchar* msg, const GLvoid* parm)
 {
@@ -62,20 +58,27 @@ void debug_message_callback(GLenum src, GLenum type,
    }
 }
 
-void update_deltatime(){
+void Window::update_deltatime(){
    float time;
    time = glfwGetTime();
    state.deltatime = time - state.last_frame;
    state.last_frame = time;
 }
 
-glm::vec3 from_ndc_to_world(const glm::vec2& ndc){
+glm::vec3 Window::from_ndc_to_world(const glm::vec2& ndc){
     const auto r =  glm::vec4{ndc.x, ndc.y, 0.f, 1.f};
     return glm::vec3(r);
 }
-glm::vec2 from_screen_to_ndc(const glm::ivec2& pos, const glm::ivec2& window_size){
+glm::vec2 Window::from_screen_to_ndc(const glm::ivec2& pos, const glm::ivec2& window_size){
     // return static_cast<glm::vec2>(pos) / static_cast<glm::vec2>(window_size) * 2.f -
     //        glm::vec2{1.f};
     return static_cast<glm::vec2>(pos) / static_cast<glm::vec2>(window_size);
 
 }
+void Window::shutdown(){
+   glfwDestroyWindow(window);
+   glfwTerminate();
+   log_info("shutting down");
+}
+
+

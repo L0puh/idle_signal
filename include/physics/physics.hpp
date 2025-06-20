@@ -2,9 +2,10 @@
 #define PHYSICS_H 
 
 
-#include "model.hpp"
 #include <btBulletDynamicsCommon.h>
 #include <vector>
+
+#include "objects/model.hpp"
 
 enum collision_type {
    NOTHING  = 0, 

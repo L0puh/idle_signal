@@ -1,9 +1,9 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP 
 
-#include "core.hpp"
-#include "physics.hpp"
-#include "terrain.hpp"
+#include "core/core.hpp"
+#include "physics/physics.hpp"
+#include "objects/terrain.hpp"
 
 #include <glm/glm.hpp>
 #include <BulletCollision/CollisionDispatch/btCollisionObject.h>
@@ -11,12 +11,7 @@
 class Camera {
    protected:
       static Camera *instance;
-      Camera(): 
-         speed(default_speed), 
-         zoom(45.0f), yaw(-90.0f), pitch(0.0f), size(0.1f, 0.2f, 0.1f),
-         pos(glm::vec3(0.0f)), height(1.8f), window_width (600), window_height(600)
-      {
-      }
+      Camera(){}
 
    public:
       static Camera *get_instance() { 
@@ -30,37 +25,34 @@ class Camera {
       bool is_picked_object = false;
       float walk_offset = 0.0f, breathe_offset = 0.0f;
       bool is_walking = false, is_colliding = false;
-      GLFWwindow* window;
       uint8_t flags;
       glm::mat4 view;
-      glm::vec3 pos, size;
       float default_speed = 3.4f;
       float speed, zoom;
-      double window_width, window_height;
 
-      
       glm::mat4 last_view;
       bool is_flying = false;
-
-      glm::vec3 front   = {0.0f, 0.0f, -1.0f};
-      glm::vec3 worldup = {0.0f, 1.0f, 0.0f};
-      glm::vec3 up      = {0.0f, 1.0f, 0.0f};
+      
+      static glm::vec3 pos, size;
+      static glm::vec3 front;
+      static glm::vec3 worldup;
+      static glm::vec3 up;
+      
       glm::vec3 right;
-
       float yaw, pitch, height;
-
-
       float last_yaw, last_pitch;
       glm::vec3 last_pos;
 
 
    public:
-      void init(GLFWwindow* window, uint8_t flags) {
-         this->window = window;
+      void init(uint8_t flags) {
          this->flags = flags;
+         speed = default_speed;
+         zoom = 45.0f, yaw = -90.0f, pitch = 0.0f; 
+         height = 1.8f;
       }
       void setup_camera(){
-         pos = {Terrain::get_instance()->height/2.0f, 0.0f, Terrain::get_instance()->width/2.0f};
+         pos = {Terrain::get_height()/2.0f, 0.0f, Terrain::get_width()/2.0f};
          Physics::get_instance()->set_camera_object();
       }
       glm::vec2 unproject(glm::vec3 pos, glm::vec2 size);
@@ -73,44 +65,22 @@ class Camera {
       void update_mouse_turn(glm::vec2 offset);
 
    public:
-      void hide_cursor() { 
-         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-         last_yaw = yaw;
-         last_pitch = pitch;
-      }
-      void show_cursor() { 
-         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-         pitch = last_pitch;
-         yaw = last_yaw;
-      }
+      void hide_cursor();
+      void show_cursor();
       
       void set_pos(glm::vec3 pos)   { this->pos   = pos; }
       void set_speed(float speed)   { this->speed = speed; }
       void set_zoom(float zoom)     { this->zoom  = zoom; }
-      glm::vec2 get_window_size()   { return glm::vec2(window_width, window_height); }
       glm::mat4 get_view()          { return view;}
       void clear_flag(uint8_t flag) { flags &= ~flag; }
       void set_flag(uint8_t flag)   { flags |= flag; }
+      void change_mode(uint8_t mode);
 
-      void change_mode(uint8_t mode){
-         if (mode & PLAY_MODE){
-            pos = last_pos;
-            pitch = last_pitch;
-            yaw = last_yaw;
-            is_flying = false;
-         } 
-         if (mode & EDIT_MODE){
-            last_pos = pos;
-            last_yaw = yaw;
-            last_pitch = pitch;
-            is_flying = true;
-            yaw = 0.0f;
-            pitch = -90.0f;
-            pos = glm::vec3(window_height/2.0, 00.0f, window_height/2.0f);
-            update_vectors();
-            update();
-         }
-      }
+      static glm::vec3 get_pos()   { return pos; }
+      static glm::vec3 get_size()  { return size; }
+      static glm::vec3 get_front() { return front; }
+      static glm::vec3 get_up()    { return up; }
+
    public:
       bool is_pointing_to_object(glm::vec3& pos, float threshold=0.9f);
       inline bool is_close_to_object(glm::vec3& pos, float threshold=1.5f) {

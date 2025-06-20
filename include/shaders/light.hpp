@@ -1,8 +1,9 @@
 #ifndef LIGHT_H
 #define LIGHT_H 
 
-#include "core.hpp"
+#include "core/core.hpp"
 #include <vector>
+
 
 struct light_t{
    glm::vec3 pos;

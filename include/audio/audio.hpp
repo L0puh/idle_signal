@@ -1,6 +1,7 @@
 #ifndef AUDIO_H
 #define AUDIO_H 
-#include "state.hpp"
+#include "core/state.hpp"
+
 #include <glm/glm.hpp>
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -46,7 +47,20 @@ class Audio {
 
 
 class Sound {
-
+   protected: 
+      static Sound* instance;
+      Sound():
+      pitch(1.0f), gain(0.09f), pos(glm::vec3(0.0f)), vel(glm::vec3(0.0))
+      {
+         buffers.resize(sound_type::ST_SIZE_ENUM);
+         states.resize(sound_state::SS_SIZE_ENUM);
+      }
+      ~Sound() {};
+   public:
+      static Sound *get_instance() {
+         if (instance == NULL) instance = new Sound();
+         return instance;
+      }
    private:
       ALuint source, buffer;
       float pitch, gain;
@@ -57,18 +71,6 @@ class Sound {
       std::vector<sound_state> states;
      
       ALuint walking;
-   public:
-      Sound():
-      pitch(1.0f), gain(0.09f), pos(glm::vec3(0.0f)), vel(glm::vec3(0.0))
-      {
-         buffers.resize(sound_type::ST_SIZE_ENUM);
-         states.resize(sound_state::SS_SIZE_ENUM);
-         init();
-         
-         //FIXME:
-         state.sound = this;
-      }
-      ~Sound() {};
 
    public:
       void init_sounds() {
@@ -77,7 +79,6 @@ class Sound {
       void play_sound(sound_type type);
       void pause_sound(sound_type type);
 
-   private:
       void init(){
          alGenSources(1, &source);
          alSourcef(source, AL_PITCH, pitch);

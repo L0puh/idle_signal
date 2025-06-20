@@ -1,8 +1,16 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H 
-#include "camera.hpp"
-#include "core.hpp"
-#include "vertices.hpp"
+#include "core/camera.hpp"
+#include "core/core.hpp"
+#include "objects/vertices.hpp"
+
+struct fog_t {
+   glm::vec3 color;
+   float start;
+   float end;
+   float density;
+   int equation;
+};
 
 class Skybox {
    int count_vertices;
@@ -22,6 +30,7 @@ class Skybox {
       }
 
    public:
+      fog_t fog;
       void draw(){
          glDepthFunc(GL_LEQUAL);
          glm::mat4 model = glm::mat4(1.0f);
@@ -47,13 +56,11 @@ class Skybox {
          init_fog();
       }
       void init_fog(){
-         fog_t fog;
          fog.color = glm::vec3(color::dark_blue[0], color::dark_blue[1], color::dark_blue[2]);
          fog.density = 0.0145f;
          fog.start = 0.4f;
          fog.end = 0.1f;
          fog.equation = 1;
-         state.fog = fog;
       }
    
 

@@ -1,5 +1,5 @@
-#include "camera.hpp"
-#include "map.hpp"
+#include "core/camera.hpp"
+#include "map/map.hpp"
 
 void Map::draw_entites_on_map(ImDrawList* draw_list) {
    for (auto& e: entities){

@@ -1,8 +1,11 @@
 #ifndef OBJECT_HPP
 #define OBJECT_HPP
 
-#include "core.hpp"
-#include "resources.hpp"
+#include "utils/resources.hpp"
+#include "objects/vertex.hpp"
+
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 
 typedef enum {

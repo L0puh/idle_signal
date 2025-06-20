@@ -1,6 +1,6 @@
-#include "object.hpp"
-#include "camera.hpp"
-#include "light.hpp" 
+#include "objects/object.hpp"
+#include "core/camera.hpp"
+#include "shaders/light.hpp" 
 
 void Text::draw(GLenum mode){
    update();

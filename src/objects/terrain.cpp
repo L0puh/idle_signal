@@ -1,7 +1,7 @@
-#include "terrain.hpp"
-#include "camera.hpp"
-#include "core.hpp"
-#include "light.hpp"
+#include "objects/terrain.hpp"
+#include "core/camera.hpp"
+#include "core/core.hpp"
+#include "shaders/light.hpp"
 
 #include <random>
 #include <vector>

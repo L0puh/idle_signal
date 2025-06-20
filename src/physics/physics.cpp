@@ -1,8 +1,9 @@
-#include "physics.hpp"
-#include "BulletCollision/CollisionDispatch/btManifoldResult.h"
-#include "camera.hpp"
+#include "physics/physics.hpp"
+#include "core/camera.hpp"
+
 #include <vector>
 
+#include <BulletCollision/CollisionDispatch/btManifoldResult.h>
 #include <BulletCollision/CollisionShapes/btCapsuleShape.h>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
  
@@ -49,7 +50,7 @@ void Physics::move_objects(col_output_t output){
    if (output.door_detected) {
       // ... 
    } else {
-      Camera::get_instance()->pos += output.displace;
+      Camera::get_instance()->set_pos(Camera::get_pos() + output.displace);
    }
 
    update_camera_position();

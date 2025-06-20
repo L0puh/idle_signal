@@ -1,9 +1,7 @@
-#include "camera.hpp"
-#include "core.hpp"
-#include "glm/trigonometric.hpp"
+#include "core/core.hpp"
+#include "objects/skybox.hpp"
 #include <cstdio>
 #include <fstream>
-#include <sstream>
 
 Shader::Shader(std::string vert_src, std::string frag_src, std::string geom_src) {
    init_shader(vert_src, frag_src, geom_src);
@@ -126,10 +124,10 @@ const int Shader::get_location(std::string name){
    return location;
 }
 void Shader::set_fog(){
-   set_vec3("_fog.color", state.fog.color);
-   set_float("_fog.start", state.fog.start);
-   set_float("_fog.end", state.fog.end);
-   set_float("_fog.density", state.fog.density);
-   set_int("_fog.equation", state.fog.equation);
+   set_vec3("_fog.color", Skybox::get_instance()->fog.color);
+   set_float("_fog.start", Skybox::get_instance()->fog.start);
+   set_float("_fog.end", Skybox::get_instance()->fog.end);
+   set_float("_fog.density", Skybox::get_instance()->fog.density);
+   set_int("_fog.equation", Skybox::get_instance()->fog.equation);
 }
 

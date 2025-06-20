@@ -1,7 +1,8 @@
-#include "resources.hpp"
-#include "core.hpp"
-#include "state.hpp"
-#include "object.hpp"
+#include "utils/resources.hpp"
+#include "core/core.hpp"
+#include "core/state.hpp"
+#include "objects/object.hpp"
+#include "objects/model.hpp"
 
 #include <string>
 

@@ -1,17 +1,16 @@
 #ifndef TERRAIN_H
 #define TERRAIN_H 
 
-#include "core.hpp"
-#include "resources.hpp"
+#include "core/core.hpp"
+#include "utils/resources.hpp"
+#include "objects/vertex.hpp"
 #include <vector>
 
 class Terrain {
-
-
-
    protected:
       static Terrain *instance;
-      Terrain(){}
+      Terrain(){
+      }
    public:
       static Terrain *get_instance() { 
          if (instance == NULL) instance = new Terrain();
@@ -22,7 +21,7 @@ class Terrain {
       int MIN_RADIUS = 6.0f, MAX_RADIUS = 8.0f;
       float MIN_HEIGHT = 0.1f, MAX_HEIGHT = 0.5f;
 
-      int width, height;
+      static int width, height;
       glm::vec3 center_pos = {0.0, -1.0f, 0.0f};
    
    private:
@@ -46,6 +45,9 @@ class Terrain {
          shd     = Resources::get_instance()->shaders[TEXTURE_SHADER];
          generate();
       }
+      static int get_width() { return width;}
+      static int get_height() { return height;}
+      static glm::vec2 get_size() { return {height, width};}
       void draw_terrain();
       float get_height_at(float x, float z);
       void generate_random_coordinates(int count, std::vector<glm::vec2>* coordinates);

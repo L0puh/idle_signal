@@ -1,5 +1,4 @@
-#include "core.hpp"
-
+#include "objects/vertex.hpp"
 
 void Vertex::sub_data(const void* data, size_t size){
    bind_vbo();

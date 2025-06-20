@@ -1,18 +1,20 @@
-#include "core.hpp"
-#include "camera.hpp"
-#include "imgui/imgui.h"
-#include "light.hpp"
+#include "core/core.hpp"
+#include "core/camera.hpp"
+#include "core/window.hpp"
+#include "shaders/light.hpp"
+#include "objects/skybox.hpp"
 
+#include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
 
 namespace imgui {
-   void init(GLFWwindow* window){
+   void init(){
       ImGui::CreateContext();
       ImGuiIO& IO = ImGui::GetIO();
       ImGui::StyleColorsDark();
-      ImGui_ImplGlfw_InitForOpenGL(window, true);
+      ImGui_ImplGlfw_InitForOpenGL(Window::get_window(), true);
       ImGui_ImplOpenGL3_Init();
    }
    void frame(){
@@ -31,11 +33,12 @@ namespace imgui {
          ImGui::SliderFloat("FILTER THRESHOLD:", &state.filter_threshold, 0.0f, 1.0f, "%.8f");
          ImGui::ColorEdit4("LUMINANCE:", &state.filter_luminance_color.x);
 
-         ImGui::ColorEdit4("FOG COLOR:", &state.fog.color.x);
-         ImGui::SliderFloat("FOG DENSITY:", &state.fog.density, 0.0f, 1.0f, "%.8f");
-         ImGui::SliderFloat("FOG START", &state.fog.start, 0.0f, 2.0f, "%.8f");
-         ImGui::SliderFloat("FOG END", &state.fog.end, 0.0f, 2.0f, "%.8f");
-         ImGui::SliderInt("FOG EQUATION:", &state.fog.equation, 0, 2);
+         ImGui::ColorEdit4("FOG COLOR:", &Skybox::get_instance()->fog.color.x);
+         ImGui::SliderFloat("FOG DENSITY:", &Skybox::get_instance()->fog.density, 0.0f, 1.0f, "%.8f");
+         ImGui::SliderFloat("FOG START", &Skybox::get_instance()->fog.start, 0.0f, 2.0f, "%.8f");
+         ImGui::SliderFloat("FOG END", &Skybox::get_instance()->fog.end, 0.0f, 2.0f, "%.8f");
+         ImGui::SliderInt("FOG EQUATION:", &Skybox::get_instance()->fog.equation, 0, 2);
+
 
          // LIGHT
          ImGui::SeparatorText("LIGHT");
@@ -53,7 +56,7 @@ namespace imgui {
          ImGui::SliderFloat("quadratic", &light.quadratic, 0.0f, 1.0f);
         
          Light::get_instance()->flashlight = light;
-         if (Camera::get_instance()->is_flying)
+         if (Camera::get_instance()->get_instance()->is_flying)
             ImGui::Text("FLYING ON");
          else
             ImGui::Text("FLYING OFF");
@@ -80,7 +83,7 @@ namespace imgui {
 
 void draw_grid(ImDrawList* draw_list, ImVec2 origin, float cell_size, ImU32 color){
    int width, height;
-   width = Camera::get_instance()->window_width, height = Camera::get_instance()->window_height;
+   width = Window::get_width(), height = Window::get_height();
    height /= cell_size;
    width  /= cell_size;
 

@@ -3,11 +3,11 @@
 #include <glm/geometric.hpp>
 #include <nlohmann/json.hpp>
 
-#include "camera.hpp"
-#include "core.hpp"
-#include "model.hpp"
-#include "collision.hpp"
-#include "light.hpp"
+#include "core/camera.hpp"
+#include "core/core.hpp"
+#include "objects/model.hpp"
+#include "physics/collision.hpp"
+#include "shaders/light.hpp"
 
 
 ////////////////////////////////////////////////////////////////////////////

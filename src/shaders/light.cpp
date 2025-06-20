@@ -1,6 +1,7 @@
-#include "light.hpp"
-#include "camera.hpp"
-#include <string>
+#include "shaders/light.hpp"
+#include "shaders/shader.hpp"
+#include "core/window.hpp"
+#include "core/camera.hpp"
 
 void Light::init_flashlight() {
    light_t light;
@@ -18,9 +19,9 @@ void Light::init_flashlight() {
 
 void Light::set_flashlight(Shader *shd){
 
-   shd->set_vec3("_flashlight.pos", Camera::get_instance()->pos);
-   shd->set_vec3("_flashlight.view_pos", Camera::get_instance()->pos);
-   shd->set_vec3("_flashlight.direction", Camera::get_instance()->front);
+   shd->set_vec3("_flashlight.pos", Camera::get_pos());
+   shd->set_vec3("_flashlight.view_pos", Camera::get_pos());
+   shd->set_vec3("_flashlight.direction", Camera::get_front());
    shd->set_vec3("_flashlight.color", flashlight.color);
    shd->set_float("_flashlight.cut_off", glm::cos(glm::radians(flashlight.cut_off)));
    shd->set_float("_flashlight.outer_cut_off", glm::cos(glm::radians(flashlight.outer_cut_off)));
@@ -34,8 +35,8 @@ void Light::set_flashlight(Shader *shd){
    shd->set_float("_time", state.deltatime);
    shd->set_float("_noise_intensity", state.noise_intensity);
    shd->set_float("_threshold", state.filter_threshold);
-   shd->set_float("_width", Camera::get_instance()->window_width);
-   shd->set_float("_height", Camera::get_instance()->window_height);
+   shd->set_float("_width", Window::get_width());
+   shd->set_float("_height", Window::get_height());
    shd->set_float("_cell_size", state.cell_size);
    shd->set_vec3("_luminance_color", state.filter_luminance_color);
    shd->set_fog();

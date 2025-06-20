@@ -42,39 +42,30 @@
 const std::string TEXTURES_DIR = "assets/textures/";
 const std::string MODELS_DIR  =  "assets/models/";
 
-class Sound;
-
-struct fog_t {
-   glm::vec3 color;
-   float start;
-   float end;
-   float density;
-
-   int equation;
-};
-
-
 struct STATE {
 
-   uint8_t mode;
-   Sound *sound;
-  
-   float cell_size = 8.0f;
+   uint8_t mode         = 0;
+   uint8_t global_state = 0;
+
+   float mouse_sensitivity = 0.05f;
+   bool first_mouse;        // just touched the mouse
+   glm::vec2 last_mouse_pos;
+   
+   // postprocessing (pixelated view)
+   // TODO: move it to another struct/class?
+   float cell_size = 8.0f; 
    glm::vec4 filter_luminance_color = {0.941, 0.561, 0.024, 1.0f};
-   float ground_level = -1.0f;
    float noise_intensity = 0.1f;
    float filter_threshold= 0.5f;
-   float mouse_sensitivity = 0.05f;
+
+   // time 
    float deltatime  = 0.0f;
    float last_frame = 0.0f; // for deltatime
-   float cooldown   = 0.4f; // seconds
-   uint8_t global_state = 0.0f;
+   float cooldown   = 0.4f; // seconds to pass for new event 
+                            // (aka key press)
+
    std::map<int, bool> keys;
    std::map<int, float> keys_lastpress;
-   glm::vec2 last_mouse_pos;
-   bool first_mouse;        // just touched the mouse
-   
-   fog_t fog;
 };
 
 extern STATE state;

@@ -1,13 +1,13 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H 
 
-#include "camera.hpp"
-#include "core.hpp"
-#include "vertices.hpp"
+#include "core/camera.hpp"
+#include "core/core.hpp"
+#include "objects/vertices.hpp"
+#include "core/window.hpp"
 
 #include <string>
 #include <vector>
-
 #include <string>
 #include <sys/stat.h>
 
@@ -77,14 +77,14 @@ class Animation{
             break;
          }
          glm::mat4 model(1.0f); 
-         glm::vec3 p = (glm::vec3(Camera::get_instance()->window_width - 190.0f, Camera::get_instance()->walk_offset*2.0f + 200.0f, 0.0f));
+         glm::vec3 p = (glm::vec3(Window::get_width() - 190.0f, Camera::get_instance()->walk_offset*2.0f + 200.0f, 0.0f));
          model = glm::translate(model, p);
          model = glm::scale(model, glm::vec3(450.0f));
          shd->use();
          shd->set_mat4fv("_model", Camera::get_instance()->get_projection_ortho() * model);
          shd->set_float("_cell_size", state.cell_size);
-         shd->set_float("_width", Camera::get_instance()->window_width);
-         shd->set_float("_height", Camera::get_instance()->window_height);
+         shd->set_float("_width",  Window::get_width());
+         shd->set_float("_height", Window::get_height());
          vert.draw_EBO(GL_TRIANGLES, count_vertices);
       }
    private:

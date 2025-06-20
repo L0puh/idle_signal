@@ -1,8 +1,9 @@
-#include "entity.hpp"
-#include "model.hpp"
-#include "physics.hpp"
-#include "light.hpp"
+#include "objects/entity.hpp"
+#include "objects/model.hpp"
+#include "physics/physics.hpp"
+#include "shaders/light.hpp"
 
+#include <glm/glm.hpp>
 #include <fstream>
 #include <nlohmann/json.hpp>
 

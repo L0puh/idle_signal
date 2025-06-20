@@ -1,9 +1,17 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
+#include "core/core.hpp"
+#include "core/state.hpp"
+#include "shaders/shader.hpp"
+#include "shaders/texture.hpp"
+#include "objects/vertex.hpp"
+
 #include <vector>
-#include "core.hpp"
-#include "state.hpp"
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 class Mesh;
 class Model;

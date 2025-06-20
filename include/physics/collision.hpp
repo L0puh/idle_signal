@@ -1,9 +1,9 @@
 #ifndef COLLISION_HPP
 #define COLLISION_HPP 
 
-#include "core.hpp"
-#include "model.hpp"
-#include "renderer.hpp"
+#include "core/core.hpp"
+#include "objects/model.hpp"
+#include "utils/renderer.hpp"
 
 
 
@@ -59,7 +59,7 @@ namespace collision {
          // draw closest point
          Renderer::get_instance()->draw_circle(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f,
                   0.0f), 0.1f, color::red, {
-               glm::vec3(closest.x, state.ground_level, closest.y),
+               glm::vec3(closest.x, -1.0f, closest.y),
                glm::vec3(1.0f)});
          
          glm::vec2 dist = closest - p;

@@ -3,10 +3,10 @@
 
 #include <imgui/imgui.h>
 #include <vector>
-#include "terrain.hpp"
-#include "object.hpp"
-#include "resources.hpp"
-#include "state.hpp"
+#include "objects/terrain.hpp"
+#include "objects/object.hpp"
+#include "utils/resources.hpp"
+#include "core/state.hpp"
 
 namespace imgui_color {
    const ImU32 yellow = IM_COL32(255, 255, 0, 255);

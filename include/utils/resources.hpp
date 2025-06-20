@@ -1,10 +1,11 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H 
 
-#include "entity.hpp"
-#include "model.hpp"
+#include <map>
 #include <vector>
-
+#include <string>
+#include "core/core.hpp"
+#include "objects/entity.hpp"
 
 enum shader_type {
    DEFAULT_SHADER,

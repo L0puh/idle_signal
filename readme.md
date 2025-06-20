@@ -1,15 +1,16 @@
 # 3D Engine in OpenGL
 
-![Screenshot 1](https://github.com/L0puh/3Dengine/blob/master/media/screenshot.png)  
-![Screenshot 2](https://github.com/L0puh/3Dengine/blob/master/media/screenshot2.png)
+![Screenshot 1](./media/screenshot.png)  
+![Screenshot 2](./media/screenshot2.png)
 
 ## Overview
 
-This project is a 3D engine built using OpenGL from scratch. It includes a basic map editor and supports loading 3D models, dynamic lighting, and collision detection.
+This project is a 3D engine built using OpenGL from scratch for Linux. It includes a basic map editor and supports loading 3D models, dynamic lighting, collision detection and etc.
 
 ## Features
 
 - **Audio** with `OpenAL`
+- **ImGui** debug windows
 - **Sprite Animation**
 - **Basic Map Editor**
   - Drawing static objects
@@ -40,3 +41,10 @@ This project is a 3D engine built using OpenGL from scratch. It includes a basic
 - Assimp (model importing)
 - Bullet3 (physics and collision detection)
 - OpenAL (audio)
+
+## Setup & Run
+
+1. Install all required libraries (`glad`, `glm`, `imgui`, `KHR`,
+   `stb_image`) and place them in the `libs` directory.
+2. Compile and run by: `./run.sh`
+

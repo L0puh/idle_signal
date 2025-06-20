@@ -44,7 +44,6 @@ This project is a 3D engine built using OpenGL from scratch for Linux. It includ
 
 ## Setup & Run
 
-1. Install all required libraries (`glad`, `glm`, `imgui`, `KHR`,
-   `stb_image`) and place them in the `libs` directory.
+1. Install all required libraries and place them in the `libs` directory.
 2. Compile and run by: `./run.sh`
 

@@ -24,7 +24,6 @@ Resources *Resources::instance = NULL;
 Skybox *Skybox::instance       = NULL; 
 Camera *Camera::instance       = NULL; 
 Renderer *Renderer::instance   = NULL; 
-Animation *Animation::instance = NULL; 
 Audio *Audio::instance         = NULL; 
 Terrain *Terrain::instance     = NULL; 
 Map *Map::instance             = NULL; 
@@ -56,13 +55,42 @@ int main() {
    camera->setup_camera();
    Sound::get_instance()->init_sounds();
 
+   /* TEST ANIMATION: #REMOVEME */
+   Model model("with_animation/dancing_vampire.dae");
+      model.set_pos({camera->get_pos().x, 1.0f, camera->get_pos().z});
+      model.set_size(glm::vec3(1.f));
+   Skeletal_animation anim("assets/models/with_animation/dancing_vampire.dae", &model);
+   Animator animator(&anim);
+   /***************************/
+
    while (!glfwWindowShouldClose(Window::get_window())){
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       imgui::frame();
       Window::get_instance()->update_deltatime();
       Skybox::get_instance()->draw();
-      Terrain::get_instance()->draw_terrain();
+      //Terrain::get_instance()->draw_terrain();
+
+      /* TEST ANIMATION: #REMOVEME */
+      animator.update_animation(state.deltatime);
+      auto trans = animator.get_bone_models();
+      
+      Shader* shd = Resources::get_instance()->shaders[ANIMATION_SHADER]; 
+      model.update();
+      shd->use();
+      for (int i = 0; i < trans.size(); i++){
+         shd->set_mat4fv("final[" + std::to_string(i) + "]", trans[i]);
+      }
+      shd->set_mat4fv("_projection", Camera::get_instance()->get_projection());
+      shd->set_mat4fv("_view", Camera::get_instance()->get_view());
+      shd->set_mat4fv("_model", model.model);
+      Light::get_instance()->set_all(shd);
+      for (uint i=0; i < model.meshes.size(); i++){
+         model.meshes.at(i).draw();
+      }
+      shd->unuse();
+
+      /***************************/
 
       if (state.mode & PLAY_MODE){
          camera->update();
@@ -79,7 +107,7 @@ int main() {
       
       if (!camera->is_flying){
          Physics::get_instance()->update_collisions();
-         Animation::get_instance()->draw(HAND_ANIMATION);
+         // Animation::get_instance()->draw(HAND_ANIMATION);
       }
 
       Renderer::get_instance()->add_text({"+", {Window::get_width()/2.0f,
@@ -102,7 +130,7 @@ void init_singletons(){
    Resources::get_instance()->init();
    Skybox::get_instance()->init();
    Camera::get_instance()->init(0);
-   Animation::get_instance()->init();
+//Animation::get_instance()->init();
    Audio::get_instance()->init();
    Terrain::get_instance()->init(400, 400);
    Map::get_instance()->init();

@@ -11,7 +11,9 @@
 #define IMGUI_FOCUSED 0b0010
 #define EDITING       0b0001
 
-#define WALKING_OGG "assets/sounds/footsteps.ogg"
+#define WALKING_OGG "assets/sounds/walking.mp3"
+
+#define ANIMATION_SHADER_VERT "shaders/skeletal.vert"
 
 #define DEFAULT_SHADER_VERT "shaders/default.vert"
 #define DEFAULT_SHADER_FRAG "shaders/default.frag"

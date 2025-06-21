@@ -1,6 +1,7 @@
 #ifndef COLLCONTROL
 #define COLLCONTROL 
 
+#include <assimp/matrix4x4.h>
 #include <cstdio>
 #include <filesystem>
 #include <random>
@@ -19,7 +20,7 @@
 #ifdef DEBUG_MODE
 #define log_info(msg) {printf("[+] INFO [%s:%d]: %s\n", __func__, __LINE__, msg);}
 #else
-#define log(msg) {}
+#define log_info(msg) {}
 #endif
 
 #define LEN(n) sizeof(n)/sizeof(n[0])
@@ -41,11 +42,6 @@ struct line_data_t {
    glm::vec3 rotation = glm::vec3(1.0f);
 };
 
-struct data_t {
-   glm::vec3 position;
-   glm::vec3 normal;
-   glm::vec2 texcoord;
-};
 
 namespace color {
    const GLfloat white[]  = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -112,6 +108,14 @@ inline char* read_binary(const char* filename, int& size){
     return p;
 }
 
+inline glm::mat4 matrix_to_glm(const aiMatrix4x4& from){
+   glm::mat4 to;
+   to[0][0] = from.a1; to[1][0] = from.a2; to[2][0] = from.a3; to[3][0] = from.a4;
+   to[0][1] = from.b1; to[1][1] = from.b2; to[2][1] = from.b3; to[3][1] = from.b4;
+   to[0][2] = from.c1; to[1][2] = from.c2; to[2][2] = from.c3; to[3][2] = from.c4;
+   to[0][3] = from.d1; to[1][3] = from.d2; to[2][3] = from.d3; to[3][3] = from.d4;
+	return to;
+}
 
 inline int count_files(std::string dir){
    struct stat sb;

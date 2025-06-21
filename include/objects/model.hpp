@@ -13,28 +13,50 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+
+#define MAX_BONE_WEIGHTS 4
+
 class Mesh;
 class Model;
 
 struct collider_t;
+struct bone_info_t {
+   int id;
+   glm::mat4 offset;
+};
+
+struct data_t {
+   glm::vec3 position;
+   glm::vec3 normal;
+   glm::vec2 texcoord;
+   int bone_ids[MAX_BONE_WEIGHTS];
+   float weights[MAX_BONE_WEIGHTS];
+
+};
 
 class Mesh {
    public:
+
+      bool is_animated = false;
       Vertex vertex;
       Shader *shd;
       std::vector<data_t> vertices;
+
       std::vector<uint> indices;
       std::vector<Texture> textures;
+
 
    public:
       Mesh(std::vector<data_t> verts,
            std::vector<uint> ind,
-           std::vector<Texture> text):
-           vertices(verts), indices(ind), textures(text)
+           std::vector<Texture> text, bool is_animated=false):
+           vertices(verts), indices(ind), textures(text), 
+           is_animated(is_animated)
       {
          vertex.create_VAO();
          vertex.setup_mesh(this);
       };
+
 
       ~Mesh() {};
    public:
@@ -51,7 +73,7 @@ class Mesh {
 class Model {
    private:
       glm::vec4 color;
-      bool with_texture = true;
+      bool with_texture = true, with_animataion = false;
    private:
       Shader *shd;
    public:
@@ -63,27 +85,35 @@ class Model {
       std::vector<Mesh> meshes;
       std::vector<Texture> textures_loaded;
 
+      /* BONES */
+      std::map<std::string, bone_info_t> bone_infos;
+      int bone_cnt = 0;
+
       Model(const std::string src):
-      size(glm::vec3(1.0f)), rotation(glm::vec3(1.0f)), 
-      rotation_angle(0.0f), pos(0.0f){ 
+         size(glm::vec3(1.0f)), rotation(glm::vec3(1.0f)), 
+         rotation_angle(0.0f), pos(0.0f)
+      { 
          char new_src[MODELS_DIR.length() + src.length()];
          sprintf(new_src, "%s%s", MODELS_DIR.c_str(), src.c_str());
          load_model(new_src);
       }
       ~Model(){};
    public:
-
-      void load_json_file(const std::string& filename);
       void update(){
          model = glm::mat4(1.0f); 
          model = glm::translate(model, pos);
          model = glm::rotate(model, (float)rotation_angle, rotation);
          model = glm::scale(model, size);
       }
+
+      void load_json_file(const std::string& filename);
       void draw();
       void draw_debug(glm::vec3 pos, glm::vec3 size);
       void draw_debug();
       void is_with_texture(bool t) { with_texture = t; }
+      void cleanup() {}
+
+   public:
       void set_shader(Shader *shd) { 
          this->shd = shd;
       }
@@ -105,10 +135,15 @@ class Model {
       line_data_t get_line_data(){
          return {pos, size, rotation_angle, rotation};
       }
+      inline Shader* get_shader() { return shd; }
+      inline std::map<std::string, bone_info_t>& get_bone_infos() { return bone_infos; }
+      inline int& get_bone_cnt() { return bone_cnt; }
       collider_t caclulate_boundaries();
-      void cleanup(){
-      }
+      void set_vertex_bone(data_t& vert, int id, float weight);
+      void to_defaul_vertex_data(data_t* vert);
+
    private:
+      void extract_bones(std::vector<data_t>& vertices, aiMesh* mesh, const aiScene* scene);
       void load_model(const std::string src);
       void process_node(aiNode *node, const aiScene *scene);
       Mesh process_mesh(aiMesh *mesh, const aiScene *scene);

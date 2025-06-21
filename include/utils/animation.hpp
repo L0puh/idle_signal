@@ -3,6 +3,7 @@
 
 #include "core/camera.hpp"
 #include "core/core.hpp"
+#include "glm/fwd.hpp"
 #include "objects/vertices.hpp"
 #include "core/window.hpp"
 
@@ -11,7 +12,7 @@
 #include <string>
 #include <sys/stat.h>
 
-#define DIR_HAND_FRAMES "assets/textures/frames/hand/"
+#define DIR_HAND_FRAMES       "assets/textures/frames/hand/"
 #define DIR_FLASHLIGHT_FRAMES "assets/textures/frames/flashlight/"
 
 enum animation_type {
@@ -19,17 +20,114 @@ enum animation_type {
    FLASHLIGHT
 };
 
-/*TODO: refactor, for now it's hardcoded */
-class Animation{
-   protected:
-      static Animation *instance;
-      Animation() {};
+struct node_data_t {
+   glm::mat4 model;
+   std::string name;
+   int children_cnt;
+   std::vector<node_data_t> children;
+};
+
+struct key_pos_t {
+   glm::vec3 pos;
+   float time_stamp;
+};
+
+struct key_rotation_t {
+   glm::quat orient;
+   float time_stamp;
+};
+struct key_scale_t {
+   glm::vec3 scale;
+   float time_stamp;
+};
+
+class Bone {
+  
+   private: 
+      std::vector<key_pos_t> positions;
+      std::vector<key_rotation_t> rotations;
+      std::vector<key_scale_t> scales;
+      glm::mat4 model;
+      std::string name;
+      int id;
+
+      int n_pos, n_rots, n_scales;
+
    public:
-      static Animation *get_instance() { 
-         if (instance == NULL) instance = new Animation();
-         return instance; 
+      Bone(const std::string& name, int ID, const aiNodeAnim* channel):
+         name(name), id(ID), model(1.0f)
+      {
+         unpack_data(channel);
       }
+   public:
+      inline int get_id() { return id; }
+      inline std::string get_name() { return name; }
+      inline glm::mat4 get_model() { return model; }
+   public:
+      void unpack_data(const aiNodeAnim* channel);
+      void update(float time);
+      int get_pos_index(float time);
+      int get_scale_index(float time);
+      int get_rotation_index(float time);
+      float get_scale_factor(float last, float next, float time);
+      glm::mat4 interpolate_pos(float time);
+      glm::mat4 interpolate_scale(float time);
+      glm::mat4 interpolate_rotation(float time);
+};
+
+class Skeletal_animation {
+   float duration;
+   int fps;
+   std::vector<Bone> bones;
+   node_data_t root;
+   std::map<std::string, bone_info_t> bone_infos;
+
+   public:
+      Skeletal_animation() = default;
+      Skeletal_animation(const std::string& src, Model* model){
+        Assimp::Importer importer;
+        const aiScene* scene = importer.ReadFile(src, aiProcess_Triangulate);
+        assert(scene && scene->mRootNode);
+        auto animation = scene->mAnimations[0];
+        duration = animation->mDuration;
+        fps = animation->mTicksPerSecond;
+        read_data(root, scene->mRootNode);
+        read_missing_bones(animation, *model);
+      }
+      ~Skeletal_animation(){}
+   public:
+      Bone* find_bone(const std::string& name);
+      inline int get_fps() { return fps; }
+      inline float get_duration() { return duration; }
+      inline node_data_t& get_root() { return root; }
+      inline std::map<std::string, bone_info_t> get_bone_infos() { return bone_infos; }
    
+   private:
+      void read_data(node_data_t& to, const aiNode* from);
+      void read_missing_bones(const aiAnimation* anim, Model& model);
+};
+
+
+class Animator {
+   std::vector<glm::mat4> bone_models;
+   Skeletal_animation* cur_anim;
+   float cur_time;
+   float deltatime;	
+   
+   public:
+      Animator(Skeletal_animation*);
+
+   public:
+      void update_animation(float dt);
+      void play_animation(Skeletal_animation *anim);
+      void calc_bone_transform(const node_data_t*, glm::mat4);	
+      
+      inline std::vector<glm::mat4> get_bone_models() { return bone_models; }
+		
+};
+
+
+class Frame_animation {
    private:
 
       Shader *shd;
@@ -116,7 +214,8 @@ class Animation{
          vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3*sizeof(float))); 
          count_vertices = LEN(vertices::rectangle_with_texture);
       }
-
 };
+
+
 
 #endif 

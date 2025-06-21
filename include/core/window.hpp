@@ -14,6 +14,7 @@ class Window {
       static Window* instance;
       Window () {}
    public:
+      Window(const Window&) = delete;
       static Window* get_instance() {
          if (instance == NULL) {
             instance = new Window();

@@ -20,7 +20,7 @@ void Model::draw(){
    shd->set_mat4fv("_projection", Camera::get_instance()->get_projection());
    shd->set_mat4fv("_view", Camera::get_instance()->get_view());
    shd->set_mat4fv("_model", model);
-   if (!with_texture) {
+   if (!with_texture && !with_animataion) {
       shd->set_vec3("_color", color);
    } else {
       Light::get_instance()->set_all(shd);
@@ -56,8 +56,7 @@ void Model::load_model(const std::string src){
    scene = importer.ReadFile(src, ASSIMP_FLAGS_LOAD);
    if (scene == NULL || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
       char info[64];
-      sprintf(info, "assimp error: %s", importer.GetErrorString());
-      log_info(info);
+      sprintf(info, "(%s) assimp error: %s", src.c_str(), importer.GetErrorString());
       error_and_exit(info);
       return;
    }
@@ -65,10 +64,9 @@ void Model::load_model(const std::string src){
    sprintf(info, "model is loaded: %s", src.c_str());
 
    process_node(scene->mRootNode, scene);
-   if (with_texture) 
-      shd = Resources::get_instance()->shaders[TEXTURE_SHADER];
-   else 
-      shd = Resources::get_instance()->shaders[DEFAULT_SHADER];
+   if (with_animataion) shd = Resources::get_instance()->shaders[ANIMATION_SHADER];
+   else if (with_texture) shd = Resources::get_instance()->shaders[TEXTURE_SHADER];
+   else shd = Resources::get_instance()->shaders[DEFAULT_SHADER];
 
    if (shd == NULL) error_and_exit("error in init shader for model");
 
@@ -87,6 +85,49 @@ void Model::process_node(aiNode* node, const aiScene* scene){
    }
 }
 
+void Model::to_defaul_vertex_data(data_t* vert){
+   for (int i = 0; i < MAX_BONE_WEIGHTS; i++){
+      vert->bone_ids[i] = -1;
+      vert->weights[i]  = 0.0f;
+   }
+}
+void Model::set_vertex_bone(data_t& vert, int id, float weight){
+   for (int i = 0; i < MAX_BONE_WEIGHTS; i++){
+      if(vert.bone_ids[i] < 0) {
+         vert.weights[i] = weight;
+         vert.bone_ids[i] = id;
+      }
+   }
+}
+
+void Model::extract_bones(std::vector<data_t>& vertices, aiMesh* mesh, const aiScene* scene){
+   for (int indx = 0; indx < mesh->mNumBones; indx++){
+      int id = -1;
+      std::string name = mesh->mBones[indx]->mName.C_Str();
+      if (bone_infos.find(name) == bone_infos.end()){
+         bone_info_t info;
+         info.id = bone_cnt;
+         info.offset = matrix_to_glm(mesh->mBones[indx]->mOffsetMatrix);
+         bone_infos[name] = info; 
+         id = bone_cnt;
+         bone_cnt++;
+      } else {
+         id = bone_infos[name].id;
+      }
+      assert(id != -1);
+      auto weights = mesh->mBones[indx]->mWeights;
+      int n_weights = mesh->mBones[indx]->mNumWeights;
+
+      for (int windx = 0; windx < n_weights; windx++){
+         int vert_id = weights[windx].mVertexId;
+         int weight = weights[windx].mWeight;
+         assert(vert_id <= vertices.size());
+         set_vertex_bone(vertices[vert_id], id, weight);
+      }
+
+   }
+}
+
 Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
    std::vector<data_t> verts;
    std::vector<uint> indices;
@@ -101,6 +142,11 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
          vert.normal= { mesh->mNormals[i].x, 
                         mesh->mNormals[i].y,
                         mesh->mNormals[i].z };
+      }
+
+      if (mesh->HasBones()) {
+         with_animataion = true;
+         to_defaul_vertex_data(&vert); 
       }
       if (mesh->mTextureCoords[0]){
          with_texture = 1;
@@ -119,15 +165,18 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
       }
    }
 
+   extract_bones(verts, mesh, scene);
    if (mesh->mMaterialIndex >= 0){
       aiMaterial *mat = scene->mMaterials[mesh->mMaterialIndex];
       std::vector<Texture> diffuse = load_texture(mat, aiTextureType_DIFFUSE, "diffuse");
       text.insert(text.end(), diffuse.begin(), diffuse.end());
-      return Mesh(verts, indices, text);
-   }
 
-   return Mesh(verts, indices, text);
+   }
+   
+
+   return Mesh(verts, indices, text, with_animataion);
 }
+
 
 std::vector<Texture> Model::load_texture(aiMaterial *mat, aiTextureType type, std::string name){
    bool skip;
@@ -201,10 +250,3 @@ void Mesh::draw(){
       textures.at(0).unuse();
 }
 
-void Vertex::setup_mesh(Mesh *mesh){
-   create_VBO(&mesh->vertices[0], mesh->vertices.size() * sizeof(data_t));
-   create_EBO(&mesh->indices[0], mesh->indices.size() * sizeof(uint));
-   add_atrib(0, 3, GL_FLOAT, sizeof(data_t), 0);
-   add_atrib(1, 3, GL_FLOAT, sizeof(data_t), (void*)offsetof(data_t, normal)); 
-   add_atrib(2, 2, GL_FLOAT, sizeof(data_t), (void*)offsetof(data_t, texcoord)); 
-}

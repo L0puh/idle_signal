@@ -37,7 +37,7 @@ if [ $IS_VERBOSE == 1 ]; then
    make
    cd ..
    echo " + running"
-   ./build/app 
+ #  ./build/app 
 else
    echo " + compilation..."
    make >> /dev/null

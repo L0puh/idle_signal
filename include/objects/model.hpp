@@ -79,7 +79,7 @@ class Model {
    public:
       glm::mat4 model;
       uint bt_object;
-      bool with_texture = true, with_animataion = false;
+      bool with_texture = true, with_animation = false;
       bool is_picked = false;
       float rotation_angle;
       glm::vec3 pos, rotation, size;
@@ -87,9 +87,9 @@ class Model {
       std::vector<Texture> textures_loaded;
 
 
-      Model(const std::string src):
+      Model(const std::string src, bool with_animation=false):
          size(glm::vec3(1.0f)), rotation(glm::vec3(1.0f)), 
-         rotation_angle(0.0f), pos(0.0f)
+         rotation_angle(0.0f), pos(0.0f), with_animation(with_animation)
       { 
          char new_src[MODELS_DIR.length() + src.length()];
          sprintf(new_src, "%s%s", MODELS_DIR.c_str(), src.c_str());
@@ -124,6 +124,7 @@ class Model {
 
 
    public:
+      inline Animator* get_animator() { return animator; }
       void set_shader(Shader *shd) { 
          this->shd = shd;
       }

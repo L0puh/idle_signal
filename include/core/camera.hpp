@@ -63,6 +63,7 @@ class Camera {
       glm::mat4 get_projection();
       void update();
       void update_mouse_turn(glm::vec2 offset);
+      glm::mat4 get_hands_transform();
 
    public:
       void hide_cursor();

@@ -18,22 +18,22 @@
 void Model::draw(){
    update();
 
-   if (with_animataion) {
+   if (with_animation) {
       animator->update_animation(state.deltatime);
    }
-
+   
    shd->use();
    shd->set_mat4fv("_projection", Camera::get_instance()->get_projection());
    shd->set_mat4fv("_view", Camera::get_instance()->get_view());
    shd->set_mat4fv("_model", model);
 
-   if (!with_texture && !with_animataion) {
+   if (!with_texture && !with_animation) {
       shd->set_vec3("_color", color);
    } else {
       Light::get_instance()->set_all(shd);
    }
 
-   if (with_animataion){
+   if (with_animation){
       auto trans = animator->get_bone_models();
       for (int i = 0; i < trans.size(); i++){
          shd->set_mat4fv("final[" + std::to_string(i) + "]", trans[i]);
@@ -76,12 +76,12 @@ void Model::load_model(const std::string src){
    sprintf(info, "model is loaded: %s", src.c_str());
 
    process_node(scene->mRootNode, scene);
-   if (with_animataion) shd = Resources::get_instance()->shaders[ANIMATION_SHADER];
+   if (with_animation) shd = Resources::get_instance()->shaders[ANIMATION_SHADER];
    else if (with_texture) shd = Resources::get_instance()->shaders[TEXTURE_SHADER];
    else shd = Resources::get_instance()->shaders[DEFAULT_SHADER];
    if (shd == NULL) error_and_exit("error in init shader for model");
 
-   if (with_animataion){
+   if (with_animation){
       animator = new Animator(new Skeletal_animation(src, this));
       if (animator == NULL) error_and_exit("loading animator failed");
    }
@@ -131,7 +131,6 @@ void Model::extract_bones(std::vector<data_t>& vertices, aiMesh* mesh, const aiS
    auto& map = bone_infos;
    int& cnt = bone_cnt;
    for (int bone_indx = 0; bone_indx < mesh->mNumBones; bone_indx++){
-      with_animataion = 1;
       int bone_id = -1;
       std::string bone_name = mesh->mBones[bone_indx]->mName.C_Str();
       if (map.find(bone_name) == map.end()){
@@ -193,12 +192,14 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
    aiMaterial *mat = scene->mMaterials[mesh->mMaterialIndex];
    std::vector<Texture> diffuse = load_texture(mat, aiTextureType_DIFFUSE, "diffuse");
    textures.insert(textures.end(), diffuse.begin(), diffuse.end());
-
-   extract_bones(verts, mesh, scene);
+   
+   if (with_animation && mesh->HasBones())
+      extract_bones(verts, mesh, scene);
+   else with_animation = 0;
    //print_debug_vertex_info(verts);
    
 
-   return Mesh(verts, indices, textures, with_animataion);
+   return Mesh(verts, indices, textures, with_animation);
 }
 
 

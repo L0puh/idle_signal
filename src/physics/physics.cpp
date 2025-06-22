@@ -16,6 +16,7 @@ void Physics::init_world(){
    world->setGravity(gravity);
 }
 
+
 void Physics::clear_objects(){
    // camera isn't removed, just map objects 
    log_info("clearing objects");

@@ -99,6 +99,7 @@ void Texture::load_texture(){
       stbi_set_flip_vertically_on_load(true);
    else 
       stbi_set_flip_vertically_on_load(false);
+
    data = stbi_load(path.c_str(), &width, &height, &channels, 0);
   
    if (is_hand){
@@ -115,11 +116,11 @@ void Texture::load_texture(){
    if (!data){
       char info[64];
       sprintf(info, "error in loading texture: %s\n", path.c_str());
-      error_and_exit(info);
+      //error_and_exit(info);
       return;
    }
    
-   if (path.find(".png") != -1){
+   if (channels == 4){
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
                    width, height, 0, GL_RGBA,
                    GL_UNSIGNED_BYTE, data);

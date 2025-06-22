@@ -2,6 +2,8 @@
 #include "objects/model.hpp"
 #include "physics/physics.hpp"
 #include "shaders/light.hpp"
+#include "core/camera.hpp"
+
 
 #include <glm/glm.hpp>
 #include <fstream>
@@ -11,6 +13,7 @@ using json = nlohmann::json;
 
 void Entity::update() {
    for (int i = 0; i < component.collision.size(); i++){
+
       Physics::get_instance()->update_position(component.collision[i], pos);
       Physics::get_instance()->update_size(component.collision[i], size);
    }
@@ -53,6 +56,8 @@ void Entity::load_entity(const std::string& filename){
    is_door     = doc["is_door"];
    is_wall     = doc["is_wall"]; 
    has_light   = doc["has_light"];
+   if (doc.contains("is_animated"))
+      is_animated = doc["is_animated"];
 
    is_main_collide = doc["main_collide"];
 
@@ -68,7 +73,7 @@ void Entity::load_entity(const std::string& filename){
       light_color = glm::vec3(p[0], p[1], p[2]);
    }
    
-   component.main = new Model(doc["main_path"]);
+   component.main = new Model(doc["main_path"], is_animated);
 
    if (has_light) init_light();
 }
@@ -84,8 +89,7 @@ void Entity::draw_entity(){
    // }
    if (is_door)
       component.door->draw_debug();
-   
-   component.main->draw_debug();
+
    component.main->draw();
 }
 

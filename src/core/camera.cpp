@@ -2,6 +2,7 @@
 #include "core/core.hpp"
 #include "audio/audio.hpp"
 #include "core/camera.hpp"
+#include "glm/ext/matrix_transform.hpp"
 #include "utils/input.hpp"
 #include "core/window.hpp"
 #include "physics/collision.hpp"
@@ -137,6 +138,18 @@ void Camera::update_vectors(){
    right = glm::normalize(glm::cross(front, worldup));
    up = glm::normalize(glm::cross(right, front));
 }
+
+glm::mat4 Camera::get_hands_transform(){
+   //TODO
+   glm::vec3 p = pos + front; 
+   p.y = 0.3f;
+   glm::mat4 res = glm::mat4(1.0f);
+   res = glm::translate(res, p);
+   res = glm::scale(res, glm::vec3(1.0f));
+   
+   return res;
+}
+
 void Camera::update_mouse_turn(glm::vec2 offset){
 
    yaw += offset.x;

@@ -2,10 +2,11 @@
   "name": "vampire",
   "type": "static",
   "is_floor": false,
+  "is_animated": true,
   "main_collide": true,
   "has_light": false,
   "is_wall": false,
   "is_door": false,
   "is_pickable": false,
-  "main_path": "with_animation/dancing_vampire.dae"
+  "main_path": "with_animation/Smooth_Female_Casual.glb"
 }

@@ -19,8 +19,8 @@ void Terrain::create_vertex(){
    vert.create_VBO(&vbo_data[0], vbo_data.size() * sizeof(float));
    vert.create_EBO(&indices[0], indices.size() * sizeof(uint));
    vert.add_atrib(0, 3, GL_FLOAT, 8 * sizeof(float)); //pos
-   vert.add_atrib(1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3*sizeof(float))); 
-   vert.add_atrib(2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6*sizeof(float))); 
+   vert.add_atrib(1, 3, GL_FLOAT, 8 * sizeof(float), (3*sizeof(float))); 
+   vert.add_atrib(2, 2, GL_FLOAT, 8 * sizeof(float), (6*sizeof(float))); 
 }
 void Terrain::generate_indices(){
    for(uint i = 0; i < height-1; i++)

@@ -1,5 +1,5 @@
 {
-  "name": "skeleton",
+  "name": "vampire",
   "type": "static",
   "is_floor": false,
   "main_collide": true,
@@ -7,5 +7,5 @@
   "is_wall": false,
   "is_door": false,
   "is_pickable": false,
-  "main_path": "with_animation/skeleton.fbx"
+  "main_path": "with_animation/dancing_vampire.dae"
 }

@@ -28,8 +28,8 @@ class Vertex {
       void setup_mesh(Mesh *mesh);
       
       void sub_data(const void* data, size_t size);
-      void add_atrib(uint id, GLint size, GLenum type, GLsizei stride, void* offset=0);
-      void add_atribi(uint id, GLint size, GLenum type, GLsizei stride, void* offset);
+      void add_atrib(uint id, GLint size, GLenum type, GLsizei stride, size_t offset=0);
+      void add_atribi(uint id, GLint size, GLenum type, GLsizei stride, size_t offset=0);
       int draw_EBO(GLenum mode, size_t size);
       int draw_VBO(GLenum mode, size_t size);
       void update_data(const void *data, size_t);

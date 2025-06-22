@@ -85,6 +85,7 @@ void Entity::draw_entity(){
    if (is_door)
       component.door->draw_debug();
    
+   component.main->draw_debug();
    component.main->draw();
 }
 
@@ -103,7 +104,7 @@ void Entity::init_physics(){
       component.collision.push_back(physics->add_model(*component.door, DOOR)); 
  
    if (is_main_collide)
-       component.collision.push_back(physics->add_model(*component.main, NOTHING));
+       component.collision.push_back(physics->add_model(*component.main, DEFAULT));
 }
 
 

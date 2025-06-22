@@ -44,25 +44,25 @@ struct key_scale_t {
 class Bone {
   
    private: 
-      std::vector<key_pos_t> positions;
-      std::vector<key_rotation_t> rotations;
-      std::vector<key_scale_t> scales;
-      glm::mat4 model;
-      std::string name;
       int id;
+      std::vector<key_pos_t>      positions;
+      std::vector<key_rotation_t> rotations;
+      std::vector<key_scale_t>    scales;
+      glm::mat4   model;
+      std::string name;
 
       int n_pos, n_rots, n_scales;
 
    public:
-      Bone(const std::string& name, int ID, const aiNodeAnim* channel):
-         name(name), id(ID), model(1.0f)
+      Bone(const std::string& name, int bone_id, const aiNodeAnim* channel):
+         name(name), id(bone_id), model(1.0f)
       {
          unpack_data(channel);
       }
    public:
-      inline int get_id() { return id; }
-      inline std::string get_name() { return name; }
-      inline glm::mat4 get_model() { return model; }
+      inline int         get_id()    const { return id; }
+      inline std::string get_name()  const { return name; }
+      inline glm::mat4   get_model() const { return model; }
    public:
       void unpack_data(const aiNodeAnim* channel);
       void update(float time);
@@ -99,8 +99,8 @@ class Skeletal_animation {
       Bone* find_bone(const std::string& name);
       inline int get_fps() { return fps; }
       inline float get_duration() { return duration; }
-      inline node_data_t& get_root() { return root; }
-      inline std::map<std::string, bone_info_t> get_bone_infos() { return bone_infos; }
+      inline const node_data_t& get_root() { return root; }
+      inline const std::map<std::string, bone_info_t>& get_bone_infos() { return bone_infos; }
    
    private:
       void read_data(node_data_t& to, const aiNode* from);
@@ -121,7 +121,6 @@ class Animator {
       void update_animation(float dt);
       void play_animation(Skeletal_animation *anim);
       void calc_bone_transform(const node_data_t*, glm::mat4);	
-      
       inline std::vector<glm::mat4> get_bone_models() { return bone_models; }
 		
 };
@@ -211,7 +210,7 @@ class Frame_animation {
          vert.create_VBO(vertices::rectangle_with_texture, sizeof(vertices::rectangle_with_texture));
          vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
          vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float)); 
-         vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3*sizeof(float))); 
+         vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (3*sizeof(float))); 
          count_vertices = LEN(vertices::rectangle_with_texture);
       }
 };

@@ -14,7 +14,7 @@ Animator::Animator(Skeletal_animation *anim):
 void Animator::update_animation(float dt){
    deltatime = dt;
    if (cur_anim){
-      cur_time += cur_anim->get_fps() * dt;
+      cur_time += cur_anim->get_fps() * deltatime;
       cur_time = fmod(cur_time, cur_anim->get_duration());
       calc_bone_transform(&cur_anim->get_root(), glm::mat4(1.0f));
       

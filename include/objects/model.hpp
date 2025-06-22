@@ -17,6 +17,7 @@
 #define MAX_BONE_WEIGHTS 4
 
 class Mesh;
+class Animator;
 class Model;
 
 struct collider_t;
@@ -29,9 +30,8 @@ struct data_t {
    glm::vec3 position;
    glm::vec3 normal;
    glm::vec2 texcoord;
-   int bone_ids[MAX_BONE_WEIGHTS];
+   int   bone_ids[MAX_BONE_WEIGHTS];
    float weights[MAX_BONE_WEIGHTS];
-
 };
 
 class Mesh {
@@ -73,21 +73,19 @@ class Mesh {
 class Model {
    private:
       glm::vec4 color;
-      bool with_texture = true, with_animataion = false;
    private:
+      Animator *animator;
       Shader *shd;
    public:
       glm::mat4 model;
       uint bt_object;
+      bool with_texture = true, with_animataion = false;
       bool is_picked = false;
       float rotation_angle;
       glm::vec3 pos, rotation, size;
       std::vector<Mesh> meshes;
       std::vector<Texture> textures_loaded;
 
-      /* BONES */
-      std::map<std::string, bone_info_t> bone_infos;
-      int bone_cnt = 0;
 
       Model(const std::string src):
          size(glm::vec3(1.0f)), rotation(glm::vec3(1.0f)), 
@@ -99,6 +97,17 @@ class Model {
       }
       ~Model(){};
    public:
+      /* BONES */
+      int bone_cnt = 0;
+      std::map<std::string, bone_info_t> bone_infos;
+      inline std::map<std::string, bone_info_t>& get_bone_infos() { return bone_infos; }
+      inline int& get_bone_cnt() { return bone_cnt; }
+      void extract_bones(std::vector<data_t>& vertices, aiMesh* mesh, const aiScene* scene);
+      void set_vertex_bone(data_t& vert, int id, float weight);
+      void to_defaul_vertex_data(data_t& vert);
+
+   public:
+
       void update(){
          model = glm::mat4(1.0f); 
          model = glm::translate(model, pos);
@@ -110,8 +119,9 @@ class Model {
       void draw();
       void draw_debug(glm::vec3 pos, glm::vec3 size);
       void draw_debug();
-      void is_with_texture(bool t) { with_texture = t; }
+      void set_with_texture(bool t) { with_texture = t; }
       void cleanup() {}
+
 
    public:
       void set_shader(Shader *shd) { 
@@ -136,14 +146,9 @@ class Model {
          return {pos, size, rotation_angle, rotation};
       }
       inline Shader* get_shader() { return shd; }
-      inline std::map<std::string, bone_info_t>& get_bone_infos() { return bone_infos; }
-      inline int& get_bone_cnt() { return bone_cnt; }
       collider_t caclulate_boundaries();
-      void set_vertex_bone(data_t& vert, int id, float weight);
-      void to_defaul_vertex_data(data_t* vert);
 
    private:
-      void extract_bones(std::vector<data_t>& vertices, aiMesh* mesh, const aiScene* scene);
       void load_model(const std::string src);
       void process_node(aiNode *node, const aiScene *scene);
       Mesh process_mesh(aiMesh *mesh, const aiScene *scene);

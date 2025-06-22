@@ -62,36 +62,35 @@ void Vertex::update_data(const void *data, size_t sz){
    unbind();
 }
 
-void Vertex::add_atribi(uint id, GLint size, GLenum type, GLsizei stride, void* offset){
+void Vertex::add_atribi(uint id, GLint size, GLenum type, GLsizei stride, size_t offset){
    bind();
-   glBindBuffer(GL_ARRAY_BUFFER, VBO);
-   if (stride == 0) stride = size * sizeof(float);
-   glVertexAttribIPointer(id, size, type, stride, offset);
    glEnableVertexAttribArray(id);
+   if (stride == 0) stride = size * sizeof(int);
+   glVertexAttribIPointer(id, size, type, stride, (const void*)offset);
    unbind();
 }
-void Vertex::add_atrib(uint id, GLint size, GLenum type, GLsizei stride, void* offset)
+void Vertex::add_atrib(uint id, GLint size, GLenum type, GLsizei stride, size_t offset)
 {
    bind();
-   glBindBuffer(GL_ARRAY_BUFFER, VBO);
-   if (stride == 0) stride = size * sizeof(float);
-   glVertexAttribPointer(id, size, type, GL_FALSE, stride, (void*)offset);
    glEnableVertexAttribArray(id);
+   if (stride == 0) stride = size * sizeof(float);
+   glVertexAttribPointer(id, size, type, GL_FALSE, stride, (const void*)offset);
    unbind();
 }
 
 void Vertex::setup_mesh(Mesh *mesh){
    create_VBO(&mesh->vertices[0], mesh->vertices.size() * sizeof(data_t));
    create_EBO(&mesh->indices[0], mesh->indices.size() * sizeof(uint));
+
    if (mesh->is_animated){
-      add_atrib(0, 3, GL_FLOAT, sizeof(data_t), 0);
-      add_atrib(1, 3, GL_FLOAT, sizeof(data_t), (void*)offsetof(data_t, normal)); 
-      add_atrib(2, 2, GL_FLOAT, sizeof(data_t), (void*)offsetof(data_t, texcoord)); 
-      add_atribi(3, 4, GL_INT,   sizeof(data_t), (void*)offsetof(data_t, bone_ids)); 
-      add_atrib(4, 4, GL_FLOAT, sizeof(data_t), (void*)offsetof(data_t, weights)); 
+      add_atrib (0, 3, GL_FLOAT, sizeof(data_t), 0);
+      add_atrib (1, 3, GL_FLOAT, sizeof(data_t), offsetof(data_t, normal)); 
+      add_atrib (2, 2, GL_FLOAT, sizeof(data_t), offsetof(data_t, texcoord)); 
+      add_atribi(3, 4, GL_INT,   sizeof(data_t), offsetof(data_t, bone_ids)); 
+      add_atrib (4, 4, GL_FLOAT, sizeof(data_t), offsetof(data_t, weights)); 
    } else {
       add_atrib(0, 3, GL_FLOAT, sizeof(data_t), 0);
-      add_atrib(1, 3, GL_FLOAT, sizeof(data_t), (void*)offsetof(data_t, normal)); 
-      add_atrib(2, 2, GL_FLOAT, sizeof(data_t), (void*)offsetof(data_t, texcoord)); 
+      add_atrib(1, 3, GL_FLOAT, sizeof(data_t), offsetof(data_t, normal)); 
+      add_atrib(2, 2, GL_FLOAT, sizeof(data_t), offsetof(data_t, texcoord)); 
    }
 }

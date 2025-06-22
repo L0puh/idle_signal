@@ -10,8 +10,8 @@ void Bone::unpack_data(const aiNodeAnim* channel){
    for (int i = 0; i < n_pos; i++){
       key_pos_t data;
       aiVector3D ai_pos = channel->mPositionKeys[i].mValue;
-      data.time_stamp = channel->mPositionKeys[i].mTime;
       data.pos = glm::vec3(ai_pos.x, ai_pos.y, ai_pos.z);
+      data.time_stamp = channel->mPositionKeys[i].mTime;
       positions.push_back(data);
    }
 
@@ -29,8 +29,8 @@ void Bone::unpack_data(const aiNodeAnim* channel){
    for (int i = 0; i < n_scales; i ++){
       key_scale_t data;
       aiVector3D scale = channel->mScalingKeys[i].mValue;
-      data.time_stamp = channel->mScalingKeys[i].mTime;
       data.scale = glm::vec3(scale.x, scale.y, scale.z);
+      data.time_stamp = channel->mScalingKeys[i].mTime;
       scales.push_back(data);
    }
 }
@@ -101,9 +101,11 @@ glm::mat4 Bone::interpolate_scale(float time){
    int p1 = get_scale_index(time);
    int p2 = p1 + 1;
    float scale_factor = get_scale_factor(scales[p1].time_stamp,
-                                      scales[p2].time_stamp, time);
+                                         scales[p2].time_stamp, time);
 
-   glm::vec3 scale = glm::mix(scales[p1].scale, scales[p2].scale,
-                                                     scale_factor);
+   glm::vec3 scale = glm::mix(scales[p1].scale, 
+                              scales[p2].scale,
+                              scale_factor);
+
    return glm::scale(glm::mat4(1.0f), scale);
 }

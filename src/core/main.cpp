@@ -1,6 +1,7 @@
 #include "core/core.hpp"
 #include "audio/audio.hpp"
 #include "map/map.hpp"
+#include "player/arms.hpp"
 #include "shaders/light.hpp"
 #include "utils/animation.hpp"
 #include "utils/renderer.hpp"
@@ -29,6 +30,7 @@ Terrain *Terrain::instance     = NULL;
 Map *Map::instance             = NULL; 
 Sound *Sound::instance         = NULL;
 Animator *Animator::instance   = NULL;
+Arms *Arms::instance           = NULL;
 
 /* init static parameters */
 GLFWwindow* Window::window = NULL;
@@ -66,6 +68,8 @@ int main() {
       Terrain::get_instance()->draw_terrain();
 
 
+      Arms::get_instance()->update_action();
+      Arms::get_instance()->draw();
       if (state.mode & PLAY_MODE){
          camera->update();
          camera->hide_cursor();
@@ -107,6 +111,7 @@ void init_singletons(){
    Terrain::get_instance()->init(400, 400);
    Map::get_instance()->init();
    Sound::get_instance()->init();
+   Arms::get_instance()->init();
 }
 
 

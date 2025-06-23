@@ -104,6 +104,7 @@ class Model {
       std::unordered_map<std::string, bone_info_t> bone_infos;
       
       inline std::unordered_map<std::string, bone_info_t>& get_bone_infos() { return bone_infos; }
+      void set_rotation_to_camera();
       inline int& get_bone_cnt() { return bone_cnt; }
       void extract_bones(std::vector<data_t>& vertices, aiMesh* mesh, const aiScene* scene);
       void set_vertex_bone(data_t& vert, int id, float weight);
@@ -120,6 +121,7 @@ class Model {
 
       void load_json_file(const std::string& filename);
       void draw();
+      void draw_meshes();
       void draw_debug(glm::vec3 pos, glm::vec3 size);
       void draw_debug();
       void cleanup() {}
@@ -134,6 +136,7 @@ class Model {
       inline void set_color(const GLfloat color[4])        { this->color = {color[0], color[1], color[2], color[3]}; }
       inline void set_rotation(float angle, glm::vec3 pos) { this->rotation_angle = angle; this->rotation = pos; }
       inline line_data_t get_line_data()                   { return {pos, size, rotation_angle, rotation}; }
+      inline const glm::mat4 get_transf_model()            { return model; }
       inline Shader* get_shader() { return shd; }
       collider_t caclulate_boundaries();
 

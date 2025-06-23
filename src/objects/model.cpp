@@ -38,6 +38,12 @@ void Model::load_model(const std::string src){
    log_info(info);
 }
 
+void Model::draw_meshes(){
+   for (uint i=0; i < meshes.size(); i++){
+      meshes.at(i).draw();
+   }
+}
+
 
 void Model::draw(){
    update();
@@ -60,9 +66,7 @@ void Model::draw(){
          shd->set_mat4fv("final[" + std::to_string(i) + "]", trans[i]);
       }
    }
-   for (uint i=0; i < meshes.size(); i++){
-      meshes.at(i).draw();
-   }
+   draw_meshes();
    shd->unuse();
 }
 

@@ -28,6 +28,14 @@ void Camera::change_mode(uint8_t mode){
       update();
    }
 }
+
+glm::vec3 Camera::get_arms_position(){
+   float front_offset = 0.01f;
+   float right_offset = 0.01f;
+   float down_offset = -0.5f;
+   return {front * front_offset  + right * right_offset + up * down_offset};
+
+}
 void Camera::hide_cursor() {
    input::hide_cursor();
    last_yaw = yaw;
@@ -139,24 +147,14 @@ void Camera::update_vectors(){
    up = glm::normalize(glm::cross(right, front));
 }
 
-glm::mat4 Camera::get_hands_transform(){
-   //TODO
-   glm::vec3 p = pos + front; 
-   p.y = 0.3f;
-   glm::mat4 res = glm::mat4(1.0f);
-   res = glm::translate(res, p);
-   res = glm::scale(res, glm::vec3(1.0f));
-   
-   return res;
-}
 
 void Camera::update_mouse_turn(glm::vec2 offset){
 
    yaw += offset.x;
    pitch += offset.y;
 
-   if (pitch > 89.0f) pitch = 89.0f; 
-   if (pitch < -89.0f) pitch = -89.0f; 
+   if (pitch > 55.0f) pitch = 55.0f; 
+   if (pitch < -10.0f) pitch = -10.0f; 
 
    update_vectors();
 }

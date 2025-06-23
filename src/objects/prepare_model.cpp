@@ -12,6 +12,8 @@ void Model::process_node(aiNode* node, const aiScene* scene){
    }
 }
 
+
+
 void Model::to_defaul_vertex_data(data_t& vert){
    for (int i = 0; i < MAX_BONE_WEIGHTS; i++){
       vert.bone_ids[i] = -1;

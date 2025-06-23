@@ -63,7 +63,6 @@ class Camera {
       glm::mat4 get_projection();
       void update();
       void update_mouse_turn(glm::vec2 offset);
-      glm::mat4 get_hands_transform();
 
    public:
       void hide_cursor();
@@ -76,13 +75,14 @@ class Camera {
       void clear_flag(uint8_t flag) { flags &= ~flag; }
       void set_flag(uint8_t flag)   { flags |= flag; }
       void change_mode(uint8_t mode);
-
       static glm::vec3 get_pos()   { return pos; }
       static glm::vec3 get_size()  { return size; }
       static glm::vec3 get_front() { return front; }
       static glm::vec3 get_up()    { return up; }
+      glm::vec3 get_right()        { return right; }
 
    public:
+      glm::vec3 get_arms_position();
       bool is_pointing_to_object(glm::vec3& pos, float threshold=0.9f);
       inline bool is_close_to_object(glm::vec3& pos, float threshold=1.5f) {
          float dist = glm::length(this->pos - pos);

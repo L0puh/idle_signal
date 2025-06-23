@@ -25,7 +25,12 @@ void Skeletal_animation::read_data(node_data_t& to, const aiNode* from){
 void Skeletal_animation::load_animation(const std::string& src, Model* model){
    Assimp::Importer importer;
    const aiScene* scene = importer.ReadFile(src, aiProcess_Triangulate);
-   assert(scene && scene->mRootNode);
+   if (scene == NULL || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
+      char info[64];
+      sprintf(info, "(%s) assimp error: %s", src.c_str(), importer.GetErrorString());
+      error_and_exit(info);
+      return;
+   }
    auto animation = scene->mAnimations[0];
    duration = animation->mDuration;
    fps = animation->mTicksPerSecond;

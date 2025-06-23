@@ -1,5 +1,6 @@
+#include "core/core.hpp"
 #include "objects/model.hpp"
-
+#include <fstream>
 
 void Model::process_node(aiNode* node, const aiScene* scene){
    for (uint i=0; i < node->mNumMeshes; i++){
@@ -56,7 +57,7 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
    }
 
    aiMaterial *mat = scene->mMaterials[mesh->mMaterialIndex];
-   std::vector<Texture> diffuse = load_texture(mat, aiTextureType_DIFFUSE, "diffuse");
+   std::vector<Texture> diffuse = load_texture(mat, aiTextureType_DIFFUSE, "diffuse", scene);
    textures.insert(textures.end(), diffuse.begin(), diffuse.end());
    
    if (with_animation && mesh->HasBones())
@@ -67,7 +68,26 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
 }
 
 
-std::vector<Texture> Model::load_texture(aiMaterial *mat, aiTextureType type, std::string name){
+void Model::extract_embedded_texture(aiMaterial* mat, const aiScene* scene, std::string* name){
+   /* used for .glb mostly: extracts and saves to the folder with textures */
+
+   log_info("extracing textures...");
+   uint8_t indx = std::stoi(name->substr(1));
+   const aiTexture* tex = scene->mTextures[indx];
+   std::string ext = tex->achFormatHint;
+
+   std::string filename = source_file + std::to_string(indx) + "." + ext;
+   std::filesystem::path path = "assets/textures/" + filename;
+
+   if (std::ofstream file(path, std::ios::binary); file.is_open()){
+      if (tex->mHeight == 0){
+          file.write(reinterpret_cast<const char*>(tex->pcData), tex->mWidth);
+      } else error_and_exit("error in extracting textures");
+   }
+   *name = filename;
+}
+
+std::vector<Texture> Model::load_texture(aiMaterial *mat, aiTextureType type, std::string name, const aiScene* scene){
    bool skip;
    aiString str;
    std::vector<Texture> texs;
@@ -86,7 +106,9 @@ std::vector<Texture> Model::load_texture(aiMaterial *mat, aiTextureType type, st
          }
       }
       if (!skip){
-         Texture tex(str.C_Str());
+         std::string name = str.C_Str();
+         if (name.front() == '*') extract_embedded_texture(mat, scene, &name);
+         Texture tex(name);
          tex.set_type(name);
          texs.push_back(tex);
          textures_loaded.push_back(tex);

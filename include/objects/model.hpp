@@ -82,11 +82,17 @@ class Model {
       std::vector<Mesh> meshes;
       std::vector<Texture> textures_loaded;
 
+      std::string source_file;
+
 
       Model(const std::string src, bool with_animation=false):
          size(glm::vec3(1.0f)), rotation(glm::vec3(1.0f)), 
          rotation_angle(0.0f), pos(0.0f), with_animation(with_animation)
       { 
+         size_t indx = src.find_last_of('/');
+         source_file = src;
+         if (indx != std::string::npos) source_file = src.substr(indx+1);
+
          char new_src[MODELS_DIR.length() + src.length()];
          sprintf(new_src, "%s%s", MODELS_DIR.c_str(), src.c_str());
          load_model(new_src);
@@ -135,8 +141,8 @@ class Model {
       void load_model(const std::string src);
       void process_node(aiNode *node, const aiScene *scene);
       Mesh process_mesh(aiMesh *mesh, const aiScene *scene);
-      std::vector<Texture> load_texture(aiMaterial *mat, aiTextureType type, std::string name);
-
+      std::vector<Texture> load_texture(aiMaterial *mat, aiTextureType type, std::string name, const aiScene* scene);
+      void extract_embedded_texture(aiMaterial* material, const aiScene* scene, std::string*);
 };
 
 #endif

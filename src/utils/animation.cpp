@@ -22,6 +22,17 @@ void Skeletal_animation::read_data(node_data_t& to, const aiNode* from){
       to.children.push_back(data);
    }
 }
+void Skeletal_animation::load_animation(const std::string& src, Model* model){
+   Assimp::Importer importer;
+   const aiScene* scene = importer.ReadFile(src, aiProcess_Triangulate);
+   assert(scene && scene->mRootNode);
+   auto animation = scene->mAnimations[0];
+   duration = animation->mDuration;
+   fps = animation->mTicksPerSecond;
+   read_data(root, scene->mRootNode);
+   read_missing_bones(animation, *model);
+}
+
 void Skeletal_animation::read_missing_bones(const aiAnimation* anim, Model& model){
    int size = anim->mNumChannels;
    auto& infos = model.get_bone_infos();
@@ -36,7 +47,6 @@ void Skeletal_animation::read_missing_bones(const aiAnimation* anim, Model& mode
       }
       bones.push_back(Bone(name, infos[name].id, chan));
    }
-   
    this->bone_infos = infos;
 }
 

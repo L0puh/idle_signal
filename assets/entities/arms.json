@@ -1,5 +1,5 @@
 {
-  "name": "vampire",
+  "name": "arms",
   "type": "static",
   "is_floor": false,
   "is_animated": true,
@@ -8,5 +8,5 @@
   "is_wall": false,
   "is_door": false,
   "is_pickable": false,
-  "main_path": "with_animation/dancing_vampire.dae"
+  "main_path": "with_animation/arms.glb"
 }

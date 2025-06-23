@@ -7,6 +7,7 @@
 #include "shaders/texture.hpp"
 #include "objects/vertex.hpp"
 
+#include <unordered_map>
 #include <vector>
 
 #include <assimp/Importer.hpp>
@@ -39,10 +40,8 @@ class Mesh {
 
       bool is_animated = false;
       Vertex vertex;
-      Shader *shd;
-      std::vector<data_t> vertices;
-
-      std::vector<uint> indices;
+      std::vector<data_t>  vertices;
+      std::vector<uint>    indices;
       std::vector<Texture> textures;
 
 
@@ -61,9 +60,6 @@ class Mesh {
       ~Mesh() {};
    public:
       void draw();
-      void set_shader(Shader *shd) { 
-         this->shd = shd;
-      }
 
    private:
 
@@ -74,11 +70,11 @@ class Model {
    private:
       glm::vec4 color;
    private:
-      Animator *animator;
       Shader *shd;
    public:
       glm::mat4 model;
       uint bt_object;
+      int id_animation = -1;
       bool with_texture = true, with_animation = false;
       bool is_picked = false;
       float rotation_angle;
@@ -99,8 +95,9 @@ class Model {
    public:
       /* BONES */
       int bone_cnt = 0;
-      std::map<std::string, bone_info_t> bone_infos;
-      inline std::map<std::string, bone_info_t>& get_bone_infos() { return bone_infos; }
+      std::unordered_map<std::string, bone_info_t> bone_infos;
+      
+      inline std::unordered_map<std::string, bone_info_t>& get_bone_infos() { return bone_infos; }
       inline int& get_bone_cnt() { return bone_cnt; }
       void extract_bones(std::vector<data_t>& vertices, aiMesh* mesh, const aiScene* scene);
       void set_vertex_bone(data_t& vert, int id, float weight);
@@ -119,33 +116,18 @@ class Model {
       void draw();
       void draw_debug(glm::vec3 pos, glm::vec3 size);
       void draw_debug();
-      void set_with_texture(bool t) { with_texture = t; }
       void cleanup() {}
 
 
    public:
-      inline Animator* get_animator() { return animator; }
-      void set_shader(Shader *shd) { 
-         this->shd = shd;
-      }
-      void set_size(glm::vec3 size) { 
-         this->size = size; 
-      }
-      void set_pos(glm::vec3 pos) { 
-         this->pos = pos; 
-      }
-      void set_color(glm::vec4 color) { 
-         this->color = color; }
-      void set_color(const GLfloat color[4]) { 
-            this->color = {color[0], color[1], color[2], color[3]}; }
-      void set_rotation(float angle, glm::vec3 pos) {
-         this->rotation_angle = angle;
-         this->rotation = pos;
-      }
-
-      line_data_t get_line_data(){
-         return {pos, size, rotation_angle, rotation};
-      }
+      inline void set_with_texture(bool t)   { with_texture = t; }
+      inline void set_shader(Shader *shd)    { this->shd = shd; }
+      inline void set_size(glm::vec3 size)   { this->size = size; }
+      inline void set_pos(glm::vec3 pos)     { this->pos = pos; }
+      inline void set_color(glm::vec4 color) { this->color = color; }
+      inline void set_color(const GLfloat color[4])        { this->color = {color[0], color[1], color[2], color[3]}; }
+      inline void set_rotation(float angle, glm::vec3 pos) { this->rotation_angle = angle; this->rotation = pos; }
+      inline line_data_t get_line_data()                   { return {pos, size, rotation_angle, rotation}; }
       inline Shader* get_shader() { return shd; }
       collider_t caclulate_boundaries();
 

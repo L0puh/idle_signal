@@ -8,6 +8,7 @@
 #include "core/window.hpp"
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <string>
 #include <sys/stat.h>
@@ -75,145 +76,156 @@ class Bone {
       glm::mat4 interpolate_rotation(float time);
 };
 
+
 class Skeletal_animation {
    float duration;
    int fps;
    std::vector<Bone> bones;
    node_data_t root;
-   std::map<std::string, bone_info_t> bone_infos;
+   std::unordered_map<std::string, bone_info_t> bone_infos;
 
    public:
       Skeletal_animation() = default;
-      Skeletal_animation(const std::string& src, Model* model){
-        Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(src, aiProcess_Triangulate);
-        assert(scene && scene->mRootNode);
-        auto animation = scene->mAnimations[0];
-        duration = animation->mDuration;
-        fps = animation->mTicksPerSecond;
-        read_data(root, scene->mRootNode);
-        read_missing_bones(animation, *model);
-      }
+      Skeletal_animation(const std::string& src, Model* model){ load_animation(src, model); }
       ~Skeletal_animation(){}
+
    public:
       Bone* find_bone(const std::string& name);
-      inline int get_fps() { return fps; }
-      inline float get_duration() { return duration; }
+      inline const int get_fps() { return fps; }
+      inline const float get_duration() { return duration; }
       inline const node_data_t& get_root() { return root; }
-      inline const std::map<std::string, bone_info_t>& get_bone_infos() { return bone_infos; }
+      inline const std::unordered_map<std::string, bone_info_t>& get_bone_infos() { return bone_infos; }
    
    private:
+      void load_animation(const std::string& src, Model* model);
       void read_data(node_data_t& to, const aiNode* from);
       void read_missing_bones(const aiAnimation* anim, Model& model);
 };
 
+struct playback_t {
+   Skeletal_animation* animation;
+   float current_time = 0.0f;
+   std::vector<glm::mat4> bone_models;
+};
 
 class Animator {
-   std::vector<glm::mat4> bone_models;
-   Skeletal_animation* cur_anim;
-   float cur_time;
-   float deltatime;	
+   int animations_counter = 0;
+   int current_animation  = -1;
+   std::unordered_map<int, playback_t> animations;
    
+   protected:
+      static Animator* instance;
+      Animator(){}
    public:
-      Animator(Skeletal_animation*);
+      static Animator* get_instance() {
+         if (instance == NULL) instance = new Animator();
+         return instance;
+      }
 
    public:
-      void update_animation(float dt);
-      void play_animation(Skeletal_animation *anim);
+      int  add_animation(Skeletal_animation*);
+      void update_animation(int animation_id=-1);
+      void clear_animations();
+      void set_current_animation(int id);
+      void set_transform(int id, glm::vec3 pos, glm::vec3 size);
       void calc_bone_transform(const node_data_t*, glm::mat4);	
-      inline std::vector<glm::mat4> get_bone_models() { return bone_models; }
-		
+   public:
+      inline const std::vector<glm::mat4> get_bone_models(int id) { 
+         if (animations.count(id) == 0) error_and_exit("animation isn't added");
+         return animations[id].bone_models;
+      }
 };
 
 
-class Frame_animation {
-   private:
+// FIXME:
+// class Frame_animation {
+//    private:
 
-      Shader *shd;
-      Vertex vert;
+//       Shader *shd;
+//       Vertex vert;
      
-      float last_change = 0.0f, framerate = 20/60.0f;;
+//       float last_change = 0.0f, framerate = 20/60.0f;;
       
-      std::vector<Texture*> frames_flashlight;
-      std::vector<Texture*> frames_hand;
+//       std::vector<Texture*> frames_flashlight;
+//       std::vector<Texture*> frames_hand;
 
-      int frame = 0;
-      int count_vertices;
-      int count_frames_hand, count_frames_flashlight;
+//       int frame = 0;
+//       int count_vertices;
+//       int count_frames_hand, count_frames_flashlight;
    
 
-   public: 
-      void init() {
-         create_sprite_vertex();
-         load_frames();
-      }
-      void cleanup(){
-         for (int i = 0; i < count_frames_hand; i++){
-            delete frames_hand[i];
-         }
-         for (int i = 0; i < count_frames_flashlight; i++){
-            delete frames_flashlight[i];
-         }
-         delete shd;
-      }
-      void draw(animation_type type){
-         float time = glfwGetTime();
-         switch (type) {
-            case HAND_ANIMATION:
-               {
-                  if (time - last_change >= framerate){
-                     last_change = time;
-                     frames_hand[frame++]->use();
-                  } else {
-                     frames_hand[frame]->use();
-                  }
-                  if (frame == count_frames_hand) frame = 0;
-                  break;
-               }
-            case FLASHLIGHT:
-            break;
-         }
-         glm::mat4 model(1.0f); 
-         glm::vec3 p = (glm::vec3(Window::get_width() - 190.0f, Camera::get_instance()->walk_offset*2.0f + 200.0f, 0.0f));
-         model = glm::translate(model, p);
-         model = glm::scale(model, glm::vec3(450.0f));
-         shd->use();
-         shd->set_mat4fv("_model", Camera::get_instance()->get_projection_ortho() * model);
-         shd->set_float("_cell_size", state.cell_size);
-         shd->set_float("_width",  Window::get_width());
-         shd->set_float("_height", Window::get_height());
-         vert.draw_EBO(GL_TRIANGLES, count_vertices);
-      }
-   private:
+//    public: 
+//       void init() {
+//          create_sprite_vertex();
+//          load_frames();
+//       }
+//       void cleanup(){
+//          for (int i = 0; i < count_frames_hand; i++){
+//             delete frames_hand[i];
+//          }
+//          for (int i = 0; i < count_frames_flashlight; i++){
+//             delete frames_flashlight[i];
+//          }
+//          delete shd;
+//       }
+//       void draw(animation_type type){
+//          float time = glfwGetTime();
+//          switch (type) {
+//             case HAND_ANIMATION:
+//                {
+//                   if (time - last_change >= framerate){
+//                      last_change = time;
+//                      frames_hand[frame++]->use();
+//                   } else {
+//                      frames_hand[frame]->use();
+//                   }
+//                   if (frame == count_frames_hand) frame = 0;
+//                   break;
+//                }
+//             case FLASHLIGHT:
+//             break;
+//          }
+//          glm::mat4 model(1.0f); 
+//          glm::vec3 p = (glm::vec3(Window::get_width() - 190.0f, Camera::get_instance()->walk_offset*2.0f + 200.0f, 0.0f));
+//          model = glm::translate(model, p);
+//          model = glm::scale(model, glm::vec3(450.0f));
+//          shd->use();
+//          shd->set_mat4fv("_model", Camera::get_instance()->get_projection_ortho() * model);
+//          shd->set_float("_cell_size", state.cell_size);
+//          shd->set_float("_width",  Window::get_width());
+//          shd->set_float("_height", Window::get_height());
+//          vert.draw_EBO(GL_TRIANGLES, count_vertices);
+//       }
+//    private:
 
-      void load_frames(){
-         std::string name;
+//       void load_frames(){
+//          std::string name;
          
-         count_frames_flashlight = count_files(DIR_FLASHLIGHT_FRAMES);
-         count_frames_hand = count_files(DIR_HAND_FRAMES);
-         for (int i = 1; i <= count_frames_hand; i++){
-            name = "frames/hand/" + std::to_string(i) + ".png";
-            Texture *tex = new Texture(name, 1, 1);
-            frames_hand.push_back(tex);
-         }
+//          count_frames_flashlight = count_files(DIR_FLASHLIGHT_FRAMES);
+//          count_frames_hand = count_files(DIR_HAND_FRAMES);
+//          for (int i = 1; i <= count_frames_hand; i++){
+//             name = "frames/hand/" + std::to_string(i) + ".png";
+//             Texture *tex = new Texture(name, 1, 1);
+//             frames_hand.push_back(tex);
+//          }
 
-         for (int i = 1; i <= count_frames_flashlight; i++){
-            name = "frames/flashlight/" + std::to_string(i) + ".png";
-            Texture *tex = new Texture(name, 1, 1);
-            frames_hand.push_back(tex);
-         }
+//          for (int i = 1; i <= count_frames_flashlight; i++){
+//             name = "frames/flashlight/" + std::to_string(i) + ".png";
+//             Texture *tex = new Texture(name, 1, 1);
+//             frames_hand.push_back(tex);
+//          }
 
-      }
+//       }
 
-      void create_sprite_vertex(){
-         shd = Resources::get_instance()->shaders[BLANK_SHADER]; 
-         vert.create_VBO(vertices::rectangle_with_texture, sizeof(vertices::rectangle_with_texture));
-         vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
-         vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float)); 
-         vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (3*sizeof(float))); 
-         count_vertices = LEN(vertices::rectangle_with_texture);
-      }
-};
+//       void create_sprite_vertex(){
+//          shd = Resources::get_instance()->shaders[BLANK_SHADER]; 
+//          vert.create_VBO(vertices::rectangle_with_texture, sizeof(vertices::rectangle_with_texture));
+//          vert.create_EBO(indices::rectangle, sizeof(indices::rectangle));
+//          vert.add_atrib(0, 3, GL_FLOAT, 5 * sizeof(float)); 
+//          vert.add_atrib(1, 2, GL_FLOAT, 5 * sizeof(float), (3*sizeof(float))); 
+//          count_vertices = LEN(vertices::rectangle_with_texture);
+//       }
+// };
 
 
 

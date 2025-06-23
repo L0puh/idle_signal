@@ -28,6 +28,7 @@ Audio *Audio::instance         = NULL;
 Terrain *Terrain::instance     = NULL; 
 Map *Map::instance             = NULL; 
 Sound *Sound::instance         = NULL;
+Animator *Animator::instance   = NULL;
 
 /* init static parameters */
 GLFWwindow* Window::window = NULL;
@@ -80,11 +81,7 @@ int main() {
       
       if (!camera->is_flying){
          Physics::get_instance()->update_collisions();
-         // Animation::get_instance()->draw(HAND_ANIMATION);
       }
-
-
-
 
       Renderer::get_instance()->add_text({"+", {Window::get_width()/2.0f,
                Window::get_height()/2.0f}, 0.5, color::white});
@@ -106,7 +103,6 @@ void init_singletons(){
    Resources::get_instance()->init();
    Skybox::get_instance()->init();
    Camera::get_instance()->init(0);
-//Animation::get_instance()->init();
    Audio::get_instance()->init();
    Terrain::get_instance()->init(400, 400);
    Map::get_instance()->init();

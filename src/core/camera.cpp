@@ -30,9 +30,6 @@ void Camera::change_mode(uint8_t mode){
 }
 
 glm::vec3 Camera::get_arms_position(){
-   float front_offset = 0.01f;
-   float right_offset = 0.01f;
-   float down_offset = -0.5f;
    return {front * front_offset  + right * right_offset + up * down_offset};
 
 }

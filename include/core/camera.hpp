@@ -29,6 +29,9 @@ class Camera {
       glm::mat4 view;
       float default_speed = 3.4f;
       float speed, zoom;
+      float front_offset = 1.0f,
+            right_offset = 1.0f,
+         down_offset = -0.5f;
 
       glm::mat4 last_view;
       bool is_flying = false;

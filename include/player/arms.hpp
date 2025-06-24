@@ -6,13 +6,13 @@
 
 #define ARMS_IDLE_FILE     "assets/models/with_animation/idle_arms.glb"
 #define ARMS_PICKING_FILE  "assets/models/with_animation/picking_arms.glb"
+#define ARMS_HOLDING_FILE  "assets/models/with_animation/holding_arms.glb"
 #define ARMS_MODEL_FILE    "with_animation/arms.glb"
 
 enum arm_actions {
    IDLE,
    PICKING,
-  // punching....
-
+   HOLDING,
    ACTIONS_CNT
 };
 
@@ -23,8 +23,10 @@ class Arms {
    int current_action = 0;
    glm::mat4 transform = glm::mat4(1.0f);
 
-   glm::vec3 pos_offset    = {0.0f, -5.5f, -0.6f};
-   glm::vec3 size          = glm::vec3(1.0f);
+
+   public:
+      glm::vec3 pos_offset    = glm::vec3(.01f, 1.8f, .01f);
+      glm::vec3 size          = glm::vec3(1.0f, 1.0f, 2.4f);
 
 
    protected:
@@ -40,6 +42,9 @@ class Arms {
       void init();
       void update_action();
       void draw();
+
+   private:
+      void update_position();
 
 
 };

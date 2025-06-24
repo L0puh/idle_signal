@@ -2,6 +2,7 @@
 #include "core/camera.hpp"
 #include "core/window.hpp"
 #include "shaders/light.hpp"
+#include "player/arms.hpp"
 #include "objects/skybox.hpp"
 
 #include <imgui/imgui.h>
@@ -26,6 +27,9 @@ namespace imgui {
    void main_draw(){
       ImGui::Begin("main window", 0, ImGuiWindowFlags_AlwaysAutoResize);
       {
+
+
+         
          ImGui::SliderFloat("ZOOM OF CAMERA:", &Camera::get_instance()->zoom, -90.0f, 90.0f, "%.5f", 0);
          ImGui::SliderFloat3("POS OF CAMERA:", &Camera::get_instance()->pos.x, -100.0f, 100.0f, "%.5f", 0);
          ImGui::SliderFloat("NOISE INTENSITY:", &state.noise_intensity, 0.0f, 1.0f, "%.8f");
@@ -38,6 +42,12 @@ namespace imgui {
          ImGui::SliderFloat("FOG START", &Skybox::get_instance()->fog.start, 0.0f, 2.0f, "%.8f");
          ImGui::SliderFloat("FOG END", &Skybox::get_instance()->fog.end, 0.0f, 2.0f, "%.8f");
          ImGui::SliderInt("FOG EQUATION:", &Skybox::get_instance()->fog.equation, 0, 2);
+
+         ImGui::SliderFloat3("ARMS OFFSET:", &Arms::get_instance()->pos_offset.x, -10.0f, 10.0f);
+         ImGui::SliderFloat3("ARMS SIZE:", &Arms::get_instance()->size.x, 0.0f, 10.0f);
+         ImGui::SliderFloat("ARMS CAMERA FRONT OFFSET:", &Camera::get_instance()->front_offset, -5.0f, 5.0f);
+         ImGui::SliderFloat("ARMS CAMERA RIGHT OFFSET:", &Camera::get_instance()->right_offset, -5.0f, 5.0f);
+         ImGui::SliderFloat("ARMS CAMERA DOWN OFFSET:", &Camera::get_instance()->down_offset, -5.0f, 5.0f);
 
 
          // LIGHT

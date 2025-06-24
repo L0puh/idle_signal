@@ -70,6 +70,7 @@ int main() {
 
       Arms::get_instance()->update_action();
       Arms::get_instance()->draw();
+
       if (state.mode & PLAY_MODE){
          camera->update();
          camera->hide_cursor();

@@ -44,14 +44,14 @@ void Resources::init_text(){
       error_and_exit("init text shader and texture first");
    }
    text_obj = new Text();
-   log_info("init text done");
+   Log::get_logger()->info("init text");
 }
 
 void Resources::load_textures(){
    textures[TERRAIN_TEXTURE] = new Texture("terrain.jpg");
    textures[CUBEMAP_TEXTURE] = new Texture(cubemap_faces);
    textures[TEXT_TEXTURE] = new Texture;
-   log_info("textures init done");
+   Log::get_logger()->info("init textures");
 }
 
 void Resources::load_shaders(){
@@ -62,7 +62,7 @@ void Resources::load_shaders(){
    shaders[BLANK_SHADER] = new Shader(BLANK_SHADER_TEXTURE_VERT, BLANK_SHADER_TEXTURE_FRAG);
    shaders[CUBEMAP_SHADER] = new Shader(SKYBOX_SHADER_VERT, SKYBOX_SHADER_FRAG);
    shaders[TEXT_SHADER] = new Shader;
-   log_info("shaders init done");
+   Log::get_logger()->info("init shaders");
 }
 
 void Resources::init_resources(){

@@ -9,11 +9,12 @@
 #include <sys/types.h>
 
 #include <glm/glm.hpp>
-#include <glad/glad.h>
+#include <glad.h>
 #include <GLFW/glfw3.h>
 
 #include <sys/stat.h>
 
+#include "utils/log.hpp"
 
 
 #define error_and_exit(msg) { printf("[-] error[%s:%s:%d]%s\n", __FILE__, __func__, __LINE__, msg); exit(-1);}
@@ -34,6 +35,11 @@ class Shader;
 class Vertex;
 class Model;
 class Mesh;
+
+struct bone_info_t {
+   int id;
+   glm::mat4 offset;
+};
 
 struct line_data_t {
    glm::vec3 pos;

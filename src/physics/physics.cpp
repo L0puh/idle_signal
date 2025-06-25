@@ -19,7 +19,7 @@ void Physics::init_world(){
 
 void Physics::clear_objects(){
    // camera isn't removed, just map objects 
-   log_info("clearing objects");
+   Log::get_logger()->info("clearing objects in physics");
    for (auto obj: objects)
       world->removeCollisionObject(obj);
 }

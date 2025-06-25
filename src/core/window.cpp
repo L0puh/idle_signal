@@ -21,15 +21,13 @@ GLFWwindow* Window::init_window(int width, int height){
 
    window = glfwCreateWindow(width, height, "window", 0, 0);
    if (window == NULL) {
-     printf("[-] error[%s:%s:%d]: %s\n",
-            __FILE__, __func__, 16,
-            "window init failed");
-     exit(-1);
+      Log::get_logger()->error("window init failed");
+      exit(-1);
    };
 
    glfwMakeContextCurrent(window);
    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) 
-      error_and_exit("glad load failed");
+      Log::get_logger()->error("glad load failed");
    
    glfwSetFramebufferSizeCallback(window, frame_buffer_size);
    glfwSetMouseButtonCallback(window, input::mouse_callback);
@@ -37,9 +35,6 @@ GLFWwindow* Window::init_window(int width, int height){
    glfwSetCursorPosCallback(window, input::cursor_callback);
    // glfwSetScrollCallback(window, input::scroll_callback); // TODO
 
-
-   log_info("init window");
-   
    // glfwWindowHint(GLFW_DEPTH_BITS, 24);
    glEnable(GL_DEPTH_TEST);
    glEnable(GL_BLEND);
@@ -53,14 +48,13 @@ void Window::debug_message_callback(GLenum src, GLenum type,
                       const GLchar* msg, const GLvoid* parm)
 {
    if (type == GL_DEBUG_TYPE_ERROR){
-      printf("[-] error (debug) [%d]: %s\n", type, msg);
+      Log::get_logger()->error("({}){}", type, msg);
       exit(-1);
    }
 }
 
 void Window::update_deltatime(){
-   float time;
-   time = glfwGetTime();
+   float time = glfwGetTime();
    state.deltatime = time - state.last_frame;
    state.last_frame = time;
 }
@@ -78,7 +72,7 @@ glm::vec2 Window::from_screen_to_ndc(const glm::ivec2& pos, const glm::ivec2& wi
 void Window::shutdown(){
    glfwDestroyWindow(window);
    glfwTerminate();
-   log_info("shutting down");
+   Log::get_logger()->info("shut down");
 }
 
 

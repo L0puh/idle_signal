@@ -1,6 +1,7 @@
 #include "core/core.hpp"
 #include "audio/audio.hpp"
 #include "map/map.hpp"
+#include "utils/log.hpp"
 #include "player/arms.hpp"
 #include "shaders/light.hpp"
 #include "utils/animation.hpp"
@@ -31,6 +32,7 @@ Map *Map::instance             = NULL;
 Sound *Sound::instance         = NULL;
 Animator *Animator::instance   = NULL;
 Arms *Arms::instance           = NULL;
+Log  *Log::instance            = NULL;
 
 /* init static parameters */
 GLFWwindow* Window::window = NULL;
@@ -45,6 +47,7 @@ glm::vec3 Camera::size    = {0.1f, 0.2f, 0.1f};
 glm::vec3 Camera::pos     = glm::vec3(0.0f);
 
 int main() {
+   Log::get_instance()->init();
    Window::get_instance()->init_window(500, 500);
    imgui::init();
   
@@ -64,12 +67,10 @@ int main() {
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       imgui::frame();
       Window::get_instance()->update_deltatime();
-      Skybox::get_instance()->draw();
-      Terrain::get_instance()->draw_terrain();
-
-
       Arms::get_instance()->update_action();
       Arms::get_instance()->draw();
+      Skybox::get_instance()->draw();
+      Terrain::get_instance()->draw_terrain();
 
       if (state.mode & PLAY_MODE){
          camera->update();
@@ -84,6 +85,7 @@ int main() {
          imgui::main_draw();
       }
       
+
       if (!camera->is_flying){
          Physics::get_instance()->update_collisions();
       }
@@ -121,7 +123,7 @@ void enable_if_debug(){
    glEnable(GL_DEBUG_OUTPUT);
 
    glDebugMessageCallback(Window::debug_message_callback, 0);
-   log_info("debug mode is on");
+
 #endif
 }
 

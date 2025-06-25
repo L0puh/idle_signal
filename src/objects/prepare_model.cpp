@@ -73,7 +73,6 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene){
 void Model::extract_embedded_texture(aiMaterial* mat, const aiScene* scene, std::string* name){
    /* used for .glb mostly: extracts and saves to the folder with textures */
 
-   log_info("extracing textures...");
    uint8_t indx = std::stoi(name->substr(1));
    const aiTexture* tex = scene->mTextures[indx];
    std::string ext = tex->achFormatHint;
@@ -84,9 +83,10 @@ void Model::extract_embedded_texture(aiMaterial* mat, const aiScene* scene, std:
    if (std::ofstream file(path, std::ios::binary); file.is_open()){
       if (tex->mHeight == 0){
           file.write(reinterpret_cast<const char*>(tex->pcData), tex->mWidth);
-      } else error_and_exit("error in extracting textures");
+      } else Log::get_logger()->error("couldn't extract texture ({}/{})", filename, *name);
    }
    *name = filename;
+   Log::get_logger()->debug("extracted texture: {}", filename);
 }
 
 std::vector<Texture> Model::load_texture(aiMaterial *mat, aiTextureType type, std::string name, const aiScene* scene){

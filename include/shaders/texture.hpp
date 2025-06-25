@@ -24,10 +24,7 @@ class Texture {
          char new_src[TEXTURES_DIR.length() + src.length()];
          sprintf(new_src, "%s%s", TEXTURES_DIR.c_str(), src.c_str());
          path = new_src;
-         
-         char info[64];
-         sprintf(info, "loading texture: %s", path.c_str());
-         log_info(info);
+         Log::get_logger()->debug("loading texture {}", path); 
          load_texture(); 
       };
       Texture(std::vector<std::string> faces) { load_cubemap(faces); };

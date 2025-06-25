@@ -26,7 +26,7 @@ class Arms {
 
    public:
       glm::vec3 pos_offset    = glm::vec3(.01f, 1.8f, .01f);
-      glm::vec3 size          = glm::vec3(1.0f, 1.0f, 2.4f);
+      glm::vec3 size          = glm::vec3(1.0f, 1.0f, 2.205f);
 
 
    protected:

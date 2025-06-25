@@ -13,17 +13,17 @@ void Texture::load_font(){
    FT_Library ft;
    
    if (FT_Init_FreeType(&ft)) 
-      error_and_exit("error in init freetype library");
+      Log::get_logger()->error("failed init freetype");
 
    if (FT_New_Face(ft, FONT_PATH, 0, &face)) {
-      error_and_exit("error in font loading");
+      Log::get_logger()->error("failed load font");
       return;
    } else {
       FT_Set_Pixel_Sizes(face, 0, 48);
       glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       for (unsigned char c = 0; c < 128; c++){
          if (FT_Load_Char(face, c, FT_LOAD_RENDER)) 
-            error_and_exit("failed to load glyph");
+            Log::get_logger()->error("failed load glyph");
 
          uint id;
          glGenTextures(1, &id);
@@ -48,7 +48,7 @@ void Texture::load_font(){
    FT_Done_Face(face);
    FT_Done_FreeType(ft);
 
-   log_info("font is loaded");
+   Log::get_logger()->info("font is loaded");
 }
 
 void Texture::load_cubemap(std::vector<std::string> faces){
@@ -63,9 +63,7 @@ void Texture::load_cubemap(std::vector<std::string> faces){
       char new_src[DIR.length() + faces[i].length()];
       sprintf(new_src, "%s%s", DIR.c_str(), faces[i].c_str());
       path = new_src;
-      char info[64];
-      sprintf(info, "loading texture: %s", path.c_str());
-      log_info(info);
+      Log::get_logger()->debug("loading texture {}", path);
       stbi_set_flip_vertically_on_load(false);
       data = stbi_load(path.c_str(), &width, &height, &channels, 0);
       if (data){
@@ -114,9 +112,7 @@ void Texture::load_texture(){
 
    
    if (!data){
-      char info[64];
-      sprintf(info, "error in loading texture: %s\n", path.c_str());
-      //error_and_exit(info);
+      Log::get_logger()->error("error in loading texture {}", path);
       return;
    }
    

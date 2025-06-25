@@ -42,9 +42,8 @@
 - assimp (model importing)
 - bullet3 (physics and collision detection)
 - openal (audio)
+- spdlog (loging)
 
 ## setup & run
-
-1. Install all required libraries and place them in the `libs` directory.
-2. Compile and run by: `./run.sh`
+compile and run by: `./run.sh`
 

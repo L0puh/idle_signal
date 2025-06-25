@@ -22,10 +22,6 @@ class Animator;
 class Model;
 
 struct collider_t;
-struct bone_info_t {
-   int id;
-   glm::mat4 offset;
-};
 
 struct data_t {
    glm::vec3 position;

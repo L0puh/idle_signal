@@ -2,7 +2,7 @@
 #define PHYSICS_H 
 
 
-#include <btBulletDynamicsCommon.h>
+#include <bullet/btBulletDynamicsCommon.h>
 #include <vector>
 
 #include "objects/model.hpp"

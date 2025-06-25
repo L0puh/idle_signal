@@ -1,4 +1,8 @@
 #include "utils/animation.hpp"
+#include "objects/model.hpp"
+
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
 
 
 Bone* Skeletal_animation::find_bone(const std::string& name){

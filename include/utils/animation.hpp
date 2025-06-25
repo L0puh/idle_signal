@@ -1,17 +1,22 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H 
 
-#include "core/camera.hpp"
+
 #include "core/core.hpp"
-#include "glm/fwd.hpp"
-#include "objects/vertices.hpp"
-#include "core/window.hpp"
+
+#include <assimp/anim.h>
+#include <assimp/scene.h>
+#include <glm/glm.hpp>
 
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <string>
 #include <sys/stat.h>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 #define DIR_HAND_FRAMES       "assets/textures/frames/hand/"
 #define DIR_FLASHLIGHT_FRAMES "assets/textures/frames/flashlight/"
@@ -83,10 +88,11 @@ class Skeletal_animation {
    std::vector<Bone> bones;
    node_data_t root;
    std::unordered_map<std::string, bone_info_t> bone_infos;
+   std::string src;
 
    public:
       Skeletal_animation() = default;
-      Skeletal_animation(const std::string& src, Model* model){ load_animation(src, model); }
+      Skeletal_animation(const std::string& src, Model* model): src(src){ load_animation(src, model); }
       ~Skeletal_animation(){}
 
    public:
@@ -95,6 +101,7 @@ class Skeletal_animation {
       inline const float get_duration() { return duration; }
       inline const node_data_t& get_root() { return root; }
       inline const std::unordered_map<std::string, bone_info_t>& get_bone_infos() { return bone_infos; }
+      inline const std::string get_source() { return src; }
    
    private:
       void load_animation(const std::string& src, Model* model);

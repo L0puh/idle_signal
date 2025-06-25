@@ -2,9 +2,10 @@
 #include <assimp/material.h>
 #include <glm/geometric.hpp>
 #include <nlohmann/json.hpp>
-#include "utils/animation.hpp"
 
+#include "utils/animation.hpp"
 #include "core/camera.hpp"
+#include "utils/log.hpp"
 #include "core/core.hpp"
 #include "objects/model.hpp"
 #include "physics/collision.hpp"
@@ -18,13 +19,9 @@ void Model::load_model(const std::string src){
    
    scene = importer.ReadFile(src, ASSIMP_FLAGS_LOAD);
    if (scene == NULL || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
-      char info[64];
-      sprintf(info, "(%s) assimp error: %s", src.c_str(), importer.GetErrorString());
-      error_and_exit(info);
+      Log::get_logger()->error("{} assimp error: {}", src, importer.GetErrorString());
       return;
    }
-   char info[64];
-   sprintf(info, "model is loaded: %s", src.c_str());
    process_node(scene->mRootNode, scene);
    
    if (with_animation) shd = Resources::get_instance()->shaders[ANIMATION_SHADER];
@@ -35,7 +32,7 @@ void Model::load_model(const std::string src){
    if (with_animation){
       this->id_animation = Animator::get_instance()->add_animation(new Skeletal_animation(src, this));
    }
-   log_info(info);
+   Log::get_logger()->debug("{} is loaded", src);
 }
 
 void Model::draw_meshes(){
@@ -47,7 +44,7 @@ void Model::draw_meshes(){
 
 void Model::draw(){
    update();
-   Animator::get_instance()->update_animation(id_animation);
+   if (with_animation) Animator::get_instance()->update_animation(id_animation);
    
    shd->use();
    shd->set_mat4fv("_projection", Camera::get_instance()->get_projection());

@@ -2,7 +2,6 @@
 #include "objects/model.hpp"
 #include "physics/physics.hpp"
 #include "shaders/light.hpp"
-#include "core/camera.hpp"
 
 
 #include <glm/glm.hpp>

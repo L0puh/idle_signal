@@ -61,18 +61,12 @@ void Shader::compile(uint *shader, std::string src, GLenum type){
    glGetShaderiv(sh, GL_COMPILE_STATUS, &res);
    if (!res) {
       glGetShaderInfoLog(sh, 512, NULL, info);
-      char* msg = (char*) malloc(512 * 2);
-      sprintf(msg, "file: %s, error: %s\n", src.c_str(), info);
-      error_and_exit(msg);
-      free(msg);
+      Log::get_logger()->error("{} ({})", info, src);
    } 
-   if (shader == NULL) error_and_exit("no shader provided");
+   if (shader == NULL) Log::get_logger()->error("no shader provided");
    *shader = sh;
    
-   char* msg = (char*)malloc(512 * 2);
-   sprintf(msg, "file shader (%s) is loaded", src.c_str());
-   log_info(msg);
-   free(msg);
+   Log::get_logger()->debug("shader {} is loaded", src);
    return;
 }
 
@@ -87,9 +81,8 @@ void Shader::link(uint vrt, uint frag, uint geom){
    glGetProgramiv(id, GL_LINK_STATUS, &res);
    if (!res) {
       glGetProgramInfoLog(id, 512, NULL, info);
-      error_and_exit(info);
+      Log::get_logger()->error("{}", info);
    } 
-   log_info("link shader");
    return;
 
 }
@@ -103,9 +96,8 @@ void Shader::link(uint vrt, uint frag){
    glGetProgramiv(id, GL_LINK_STATUS, &res);
    if (!res) {
       glGetProgramInfoLog(id, 512, NULL, info);
-      error_and_exit(info);
+      Log::get_logger()->error("{}", info);
    } 
-   log_info("link shader");
    return;
 
 }
@@ -119,7 +111,7 @@ const int Shader::get_location(std::string name){
       return cached_locations[name];
    location = glGetUniformLocation(id, name.c_str());
    if (location == -1) 
-      error_and_exit(name.c_str());
+      Log::get_logger()->error("error in finding location {}", name);
    cached_locations[name] = location;
    return location;
 }

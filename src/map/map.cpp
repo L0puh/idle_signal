@@ -3,10 +3,10 @@
 #include "utils/renderer.hpp"
 #include "core/camera.hpp"
 #include "objects/object.hpp"
+#include "utils/log.hpp"
 #include "physics/physics.hpp"
 #include "objects/terrain.hpp"
 
-#include <imgui/imgui.h>
 #include <vector>
 
 
@@ -55,7 +55,8 @@ void Map::generate_random_items(){
          for (const auto& item: coords){
             items.push_back({(models_type)random_item, {item.x, item.y}});
          }
-         log_info("random generation done");
+
+         Log::get_logger()->info("random generation is done");
       }
    }
    amount_random_items = size;
@@ -138,8 +139,8 @@ void Map::generate_coords(){
          entities_obj.push_back(obj);
       }
    }
-
-   log_info("items are loaded");
+   
+   Log::get_logger()->info("items are loaded");
 }
 
 void Map::draw_objects_on_terrain(){

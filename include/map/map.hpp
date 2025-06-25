@@ -1,12 +1,12 @@
 #ifndef MAP_HPP
 #define MAP_HPP 
-
-#include <imgui/imgui.h>
-#include <vector>
 #include "objects/terrain.hpp"
 #include "objects/object.hpp"
 #include "utils/resources.hpp"
 #include "core/state.hpp"
+
+#include <vector>
+#include <imgui.h>
 
 namespace imgui_color {
    const ImU32 yellow = IM_COL32(255, 255, 0, 255);

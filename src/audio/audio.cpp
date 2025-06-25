@@ -1,5 +1,6 @@
 #include "core/core.hpp"
 #include "audio/audio.hpp"
+#include "utils/log.hpp"
 
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -26,7 +27,7 @@ void Audio::init(){
    if (!name || alcGetError(device) != AL_NO_ERROR)
       error_and_exit("failed to get name");
    
-   log_info("init audio manager");
+   Log::get_logger()->info("init audio manager");
 }
 
 

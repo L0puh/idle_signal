@@ -1,9 +1,5 @@
 #include "utils/animation.hpp"
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/quaternion.hpp>
-#include <glm/ext/matrix_transform.hpp>
-
 
 void Bone::unpack_data(const aiNodeAnim* channel){
    n_pos = channel->mNumPositionKeys;

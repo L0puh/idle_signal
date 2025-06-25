@@ -102,7 +102,7 @@ void Terrain::generate_normals(){
 }
 
 void Terrain::prepare_data(){
-   log_info("preparing data for terrain");
+   Log::get_logger()->info("preparing data for terrain");
    for (int i = 0; i < height; i++){
       for (int j = 0; j < width; j++){
          glm::vec3 pos = vertices[i][j]; 
@@ -161,7 +161,7 @@ void Terrain::generate_random_coordinates(int count, std::vector<glm::vec2>* coo
 
 
 void Terrain::generate_heights(){
-   log_info("generating heights for terrain");
+   Log::get_logger()->info("generating heights for terrain");
 
 	std::random_device rd;
 	std::mt19937 generator(rd());

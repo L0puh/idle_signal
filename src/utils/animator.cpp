@@ -1,5 +1,8 @@
-#include "glm/ext/matrix_transform.hpp"
+
+#include "core/core.hpp"
+#include "core/state.hpp"
 #include "utils/animation.hpp"
+
 #include <string>
 
 
@@ -10,7 +13,7 @@ void Animator::clear_animations(){
 }
 
 int Animator::add_animation(Skeletal_animation* animation){
-   if (animation == NULL) error_and_exit("animation isn't loaded");
+   if (animation == NULL) Log::get_logger()->error("failed to load animation {}", animation->get_source()); 
    animations[animations_counter].bone_models.reserve(100);
    for (int i = 0; i < 100; i++){
       animations[animations_counter].bone_models.push_back(glm::mat4(1.0f));
@@ -18,22 +21,23 @@ int Animator::add_animation(Skeletal_animation* animation){
    current_animation = animations_counter;
    animations_counter++;
    animations[current_animation].animation = animation;
-   log_info("added new animation");
+   animations[current_animation].current_time = 0.0f;
+   Log::get_logger()->debug("added new animation {}", animation->get_source());
    return animations_counter-1;
 }
 
 void Animator::update_animation(int animation_id){
-   if (animation_id >= animations_counter) error_and_exit("NO SUCH ANIMATION FOUND, ID EXCEEDS COUNTER. ADD ANIMATION FIRST");
-   if (animation_id == -1) animation_id = current_animation;
-   else current_animation = animation_id; 
+   if (animation_id >= animations_counter) Log::get_logger()->error("animation id {} exceeds count {}", animation_id, animations_counter);
+   if (animation_id != -1)  current_animation = animation_id; 
+
    if (current_animation != -1){
-      float cur_time = animations[animation_id].current_time;
+      float cur_time = animations[current_animation].current_time;
       Skeletal_animation* current = animations[current_animation].animation;
       
-      if (current == NULL) error_and_exit("ERROR LOADING ANIMATION, POINTER IS INCORRECT");
+      if (current == NULL) Log::get_logger()->error("incorrect pointer for animation with id {}", animation_id); 
       cur_time += current->get_fps() * state.deltatime;
       cur_time = fmod(cur_time, current->get_duration());
-      animations[animation_id].current_time = cur_time;
+      animations[current_animation].current_time = cur_time;
       calc_bone_transform(&current->get_root(), glm::mat4(1.0f));
    }
 }
@@ -43,7 +47,7 @@ void Animator::set_transform(int id, glm::vec3 pos, glm::vec3 size){
 }
 
 void Animator::set_current_animation(int id){
-   if (id >= animations_counter) error_and_exit("NO SUCH ANIMATION FOUND, ID EXCEEDS COUNTER. ADD ANIMATION FIRST");
+   if (id >= animations_counter) Log::get_logger()->error("animation id {} exceeds count {}", id, animations_counter);
    current_animation = id;
 }
 
@@ -54,7 +58,7 @@ void Animator::calc_bone_transform(const node_data_t* node, glm::mat4 trans){
    float cur_time = animations[current_animation].current_time;
    Skeletal_animation* current = animations[current_animation].animation;
   
-   if (current == NULL) error_and_exit("ERROR LOADING ANIMATION, POINTER IS INCORRECT");
+   if (current == NULL) Log::get_logger()->error("incorrect pointer for animation with id {}", current_animation); 
    
    Bone *bone = current->find_bone(name);
    if (bone) {

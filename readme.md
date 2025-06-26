@@ -2,6 +2,7 @@
 
 ![Screenshot 1](./media/screenshot.png) 
 ![Screenshot 2](./media/screenshot2.png)
+![Screenshot 3](./media/screenshot3.png)
 
 ## overview
 

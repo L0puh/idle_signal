@@ -1,9 +1,9 @@
+#include "core/core.hpp"
 #include "map/map.hpp"
 #include "core/window.hpp"
 #include "utils/renderer.hpp"
 #include "core/camera.hpp"
 #include "objects/object.hpp"
-#include "utils/log.hpp"
 #include "physics/physics.hpp"
 #include "objects/terrain.hpp"
 

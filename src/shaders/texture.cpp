@@ -72,9 +72,7 @@ void Texture::load_cubemap(std::vector<std::string> faces){
             stbi_image_free(data);
       }
       else {
-         char info[64];
-         sprintf(info, "error in loading texture[cubemap]: %s\n", path.c_str());
-         error_and_exit(info);
+         Log::get_logger()->error("error in loading cubemap texture {}", path);
          return;
       }
    }

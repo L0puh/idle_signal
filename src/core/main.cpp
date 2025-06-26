@@ -1,17 +1,15 @@
-#include "core/core.hpp"
 #include "audio/audio.hpp"
+#include "core/camera.hpp"
+#include "core/core.hpp"
+#include "core/window.hpp"
 #include "map/map.hpp"
-#include "utils/log.hpp"
+#include "objects/skybox.hpp"
+#include "physics/physics.hpp"
 #include "player/arms.hpp"
 #include "shaders/light.hpp"
 #include "utils/animation.hpp"
 #include "utils/renderer.hpp"
 #include "utils/resources.hpp"
-#include "core/state.hpp"
-#include "objects/skybox.hpp"
-#include "physics/physics.hpp"
-#include "objects/terrain.hpp"
-#include "core/window.hpp"
 
 void enable_if_debug();
 void init_singletons();
@@ -60,7 +58,6 @@ int main() {
    
    camera->setup_camera();
    Sound::get_instance()->init_sounds();
-
 
    while (!glfwWindowShouldClose(Window::get_window())){
 

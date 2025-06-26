@@ -41,7 +41,7 @@ void Resources::init_models(){
 
 void Resources::init_text(){ 
    if (textures[TEXT_TEXTURE] == NULL || shaders[TEXT_SHADER] == NULL){
-      error_and_exit("init text shader and texture first");
+      Log::get_logger()->error("text init failed. no shader or texture found. init it first");
    }
    text_obj = new Text();
    Log::get_logger()->info("init text");

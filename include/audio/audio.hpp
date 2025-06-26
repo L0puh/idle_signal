@@ -1,6 +1,8 @@
 #ifndef AUDIO_H
 #define AUDIO_H 
+
 #include "core/state.hpp"
+#include "core/core.hpp"
 
 #include <glm/glm.hpp>
 #include <AL/al.h>

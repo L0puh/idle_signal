@@ -8,10 +8,9 @@
 std::shared_ptr<spdlog::logger> Log::logger;
 
 void Log::init(){
-
-   spdlog::set_pattern(pattern);
    logger = spdlog::stdout_color_mt("console");
-   logger->set_level(spdlog::level::debug);
+   logger->set_pattern(pattern);
+   logger->set_level(level);
 
 }
 

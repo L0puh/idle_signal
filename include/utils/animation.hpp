@@ -138,7 +138,8 @@ class Animator {
       void calc_bone_transform(const node_data_t*, glm::mat4);	
    public:
       inline const std::vector<glm::mat4> get_bone_models(int id) { 
-         if (animations.count(id) == 0) error_and_exit("animation isn't added");
+         if (animations.count(id) == 0) 
+            Log::get_logger()->error("animation with {} id isn't added", id);
          return animations[id].bone_models;
       }
 };

@@ -1,6 +1,4 @@
-#include "core/core.hpp"
 #include "audio/audio.hpp"
-#include "utils/log.hpp"
 
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -11,21 +9,21 @@
 void Audio::init(){ 
    device = alcOpenDevice(nullptr);
    if (!device) 
-      error_and_exit("no device found");
+      Log::get_logger()->error("no device found");
    context = alcCreateContext(device, nullptr);
 
    if (!context)
-      error_and_exit("failed to create context");
+      Log::get_logger()->error("failed to create context of sound device");
 
    if (!alcMakeContextCurrent(context))
-      error_and_exit("failed to make current context");
+      Log::get_logger()->error("failed to make current context of sound device");
 
    const ALCchar* name = nullptr;
    if (alcIsExtensionPresent(device, "ALC_ENUMERATE_ALL_EXT"))
       name = alcGetString(device, ALC_ALL_DEVICES_SPECIFIER);
    
    if (!name || alcGetError(device) != AL_NO_ERROR)
-      error_and_exit("failed to get name");
+      Log::get_logger()->error("failed to get name of sound device");
    
    Log::get_logger()->info("init audio manager");
 }
@@ -43,12 +41,12 @@ ALuint Audio::add_sound_effect(const char* filename){
 	sndfile = sf_open(filename, SFM_READ, &sfinfo);
 	if (!sndfile)
 	{
-      error_and_exit("couldn't open file");
+      Log::get_logger()->error("couldn't open file {}", filename);
 		return 0;
 	}
 	if (sfinfo.frames < 1 || sfinfo.frames >(sf_count_t)(INT_MAX / sizeof(short)) / sfinfo.channels)
 	{
-      error_and_exit("bad sample");
+      Log::get_logger()->error("bad sample of sound {}", filename);
 		sf_close(sndfile);
 		return 0;
 	}
@@ -70,7 +68,7 @@ ALuint Audio::add_sound_effect(const char* filename){
 	}
 	if (!format)
 	{
-      error_and_exit("unsupported channel count");
+      Log::get_logger()->error("unsupported channel count {}", filename);
 		sf_close(sndfile);
 		return 0;
 	}
@@ -80,7 +78,7 @@ ALuint Audio::add_sound_effect(const char* filename){
 	{
 		free(membuf);
 		sf_close(sndfile);
-      error_and_exit("failed reading samples");
+      Log::get_logger()->error("failed reading samples {}", filename);
 		return 0;
 	}
 	num_bytes = (ALsizei)(num_frames * sfinfo.channels) * (ALsizei)sizeof(short);
@@ -96,7 +94,7 @@ ALuint Audio::add_sound_effect(const char* filename){
 	{
 		if (buffer && alIsBuffer(buffer))
 			alDeleteBuffers(1, &buffer);
-      error_and_exit("OpenAL error");
+      Log::get_logger()->error("openal error in {}", filename);
 		return 0;
 	}
 

@@ -1,5 +1,6 @@
 #ifndef MAP_HPP
 #define MAP_HPP 
+
 #include "objects/terrain.hpp"
 #include "objects/object.hpp"
 #include "utils/resources.hpp"

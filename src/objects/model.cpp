@@ -3,10 +3,9 @@
 #include <glm/geometric.hpp>
 #include <nlohmann/json.hpp>
 
+#include "core/core.hpp"
 #include "utils/animation.hpp"
 #include "core/camera.hpp"
-#include "utils/log.hpp"
-#include "core/core.hpp"
 #include "objects/model.hpp"
 #include "physics/collision.hpp"
 #include "shaders/light.hpp"
@@ -27,7 +26,8 @@ void Model::load_model(const std::string src){
    if (with_animation) shd = Resources::get_instance()->shaders[ANIMATION_SHADER];
    else if (with_texture) shd = Resources::get_instance()->shaders[TEXTURE_SHADER];
    else shd = Resources::get_instance()->shaders[DEFAULT_SHADER];
-   if (shd == NULL) error_and_exit("error in init shader for model");
+   if (shd == NULL) 
+         Log::get_logger()->error("error in init shader for model", src);
 
    if (with_animation){
       this->id_animation = Animator::get_instance()->add_animation(new Skeletal_animation(src, this));

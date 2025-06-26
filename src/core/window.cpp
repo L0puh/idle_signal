@@ -13,7 +13,7 @@ void Window::frame_buffer_size(GLFWwindow* wind, int width, int height){
 GLFWwindow* Window::init_window(int width, int height){
 
    if (!glfwInit())
-      error_and_exit("glfw init failed");
+      Log::get_logger()->critical("glfw init failed");
 
    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -21,13 +21,13 @@ GLFWwindow* Window::init_window(int width, int height){
 
    window = glfwCreateWindow(width, height, "window", 0, 0);
    if (window == NULL) {
-      Log::get_logger()->error("window init failed");
+      Log::get_logger()->critical("window init failed");
       exit(-1);
    };
 
    glfwMakeContextCurrent(window);
    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) 
-      Log::get_logger()->error("glad load failed");
+      Log::get_logger()->critical("glad load failed");
    
    glfwSetFramebufferSizeCallback(window, frame_buffer_size);
    glfwSetMouseButtonCallback(window, input::mouse_callback);

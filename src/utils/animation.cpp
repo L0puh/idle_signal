@@ -30,9 +30,7 @@ void Skeletal_animation::load_animation(const std::string& src, Model* model){
    Assimp::Importer importer;
    const aiScene* scene = importer.ReadFile(src, aiProcess_Triangulate);
    if (scene == NULL || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
-      char info[64];
-      sprintf(info, "(%s) assimp error: %s", src.c_str(), importer.GetErrorString());
-      error_and_exit(info);
+      Log::get_logger()->error("assimp error in loading animation: {}", importer.GetErrorString());
       return;
    }
    auto animation = scene->mAnimations[0];

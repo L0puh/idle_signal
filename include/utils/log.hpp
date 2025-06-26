@@ -2,12 +2,14 @@
 #define LOG_H 
 
 #include <memory>
+#include <spdlog/common.h>
 #include <spdlog/logger.h>
 
 class Log {
 
    const std::string pattern = "%^[%T] %n%$: %v";
    static std::shared_ptr<spdlog::logger> logger;
+   spdlog::level::level_enum level = spdlog::level::info;
 
    protected:
       static Log* instance;   
@@ -19,7 +21,10 @@ class Log {
       }
    public:
       void init();
-      static std::shared_ptr<spdlog::logger> get_logger() { return logger; }
+
+   public:
+      inline static std::shared_ptr<spdlog::logger> get_logger() { return logger; }
+
 
 };
 

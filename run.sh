@@ -27,10 +27,10 @@ if [ ! -d "$BUILDDIR" ]; then
       echo " + verbose is off"
       cmake .. >> /dev/null
    fi
-
 else 
    echo " + build folder exists"
    cd build
+   rm app
 fi
 if [ $IS_VERBOSE == 1 ]; then
    echo " + compilation..."

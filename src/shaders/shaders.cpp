@@ -41,7 +41,7 @@ std::string Shader::load_src(std::string& src){
       res = stream.str();
    }
    catch(std::ifstream::failure error){
-      error_and_exit(error.what());
+      Log::get_logger()->error("error in loading shader: {}", error.what());
    }
    return res;
 }

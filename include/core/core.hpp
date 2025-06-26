@@ -16,16 +16,7 @@
 
 #include "utils/log.hpp"
 
-
-#define error_and_exit(msg) { printf("[-] error[%s:%s:%d]%s\n", __FILE__, __func__, __LINE__, msg); exit(-1);}
-#ifdef DEBUG_MODE
-#define log_info(msg) {printf("[+] INFO [%s:%d]: %s\n", __func__, __LINE__, msg);}
-#else
-#define log_info(msg) {}
-#endif
-
 #define LEN(n) sizeof(n)/sizeof(n[0])
-
 class Window;
 class Light;
 class Camera;
@@ -70,9 +61,6 @@ struct character_t {
 };
 
 
-
-
-
 namespace imgui {
 
    void init();
@@ -88,7 +76,7 @@ inline char* read_binary(const char* filename, int& size){
     FILE* f = fopen(filename, "rb");
 
     if (!f) {
-       error_and_exit("error reading binary file(opening)");
+       Log::get_logger()->error("error opening binary file: {}", filename);
        return nullptr;
     }
 
@@ -96,8 +84,8 @@ inline char* read_binary(const char* filename, int& size){
     int error = stat(filename, &stat_buf);
 
     if (error) {
-       error_and_exit("error reading binary file(stat)");
-        return NULL;
+       Log::get_logger()->error("failed reading binary: {}", strerror(errno));
+       return NULL;
     }
 
     size = stat_buf.st_size;
@@ -106,7 +94,7 @@ inline char* read_binary(const char* filename, int& size){
     assert(p);
     size_t bytes_read = fread(p, 1, size, f);
     if (bytes_read != size) {
-       error_and_exit("error reading binary file(reading)");
+       Log::get_logger()->error("failed reading binary, bytes don't match: {} bytes", bytes_read);
         exit(0);
     }
 

@@ -44,21 +44,21 @@ int Bone::get_pos_index(float time){
    for (int i = 0; i < n_pos-1; i++){
       if (time < positions[i+1].time_stamp) return i;
    }
-   error_and_exit("Time isn't in the score of animation");
+   Log::get_logger()->warn("time isn't in the scope of animation");
    return -1;
 }
 int Bone::get_scale_index(float time){
    for (int i = 0; i < n_scales-1; i++){
       if (time < scales[i+1].time_stamp) return i;
    }
-   error_and_exit("Time isn't in the score of animation");
+   Log::get_logger()->warn("time isn't in the scope of animation");
    return -1;
 }
 int Bone::get_rotation_index(float time){
    for (int i = 0; i < n_rots-1; i++){
       if (time < rotations[i+1].time_stamp) return i;
    }
-   error_and_exit("Time isn't in the score of animation");
+   Log::get_logger()->warn("time isn't in the scope of animation");
    return -1;
 }
 

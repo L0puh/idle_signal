@@ -1,8 +1,8 @@
 # 3d engine in opengl
 
-![Screenshot 1](./media/screenshot.png) 
-![Screenshot 2](./media/screenshot2.png)
-![Screenshot 3](./media/screenshot3.png)
+![Screenshot 1](./media/1.png) 
+![Screenshot 2](./media/2.png)
+![Screenshot 3](./media/3.png)
 
 ## overview
 
